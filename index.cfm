@@ -16,7 +16,7 @@
     <cfinclude template = "act_candidates.cfm">
 </cfif>
 <cfscript>
-    objCandidates = createObject('component', 'pbscorp-cfc.candidates');
+    objCandidates = createObject('component', 'interview-cfc.candidates');
     getQuestions = objCandidates.getQuestions();
     qryEvaluation = objCandidates.getEvaluation(1);
     qryAllCandidates = objCandidates.getCandidate('all');
@@ -30,6 +30,7 @@
 
 <HTML>
     <head>
+        <link rel="stylesheet" href="mystyle.css">
         <style>
             table {
                 margin: auto;
