@@ -141,7 +141,7 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Please Rate The Following Categories:</th>
+                                    <th>Please Rate The Following Categories</th>
                                     <cfloop index="i" from="1" to="#intListLenWeights#">
                                         <cfset intWtHdr = listGetAt(lstGradesWt, i)>
                                         <cfset strWtHdr = listGetAt(lstWtLiterals, i)>
