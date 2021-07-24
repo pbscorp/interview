@@ -62,19 +62,6 @@
             .bold {
                 font-weight: bold;
             }
-            #addressTableDiv {
-                float: right;
-                background-color: #a4dded;
-                width: 410px;
-            }
-            #addressTableDiv span {
-                font-weight: bold;
-                display: inline-block;
-                width: 115px;
-                text-align: right;
-                margin: auto;
-                padding: 5px;
-            }
             #errorMsgDiv {
                 text-align: left;
                 color: red;
