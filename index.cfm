@@ -31,60 +31,6 @@
 <HTML>
     <head>
         <link rel="stylesheet" href="mystyle.css">
-        <style>
-            table {
-                margin: auto;
-            }
-            th, td {
-                padding: 5px;
-                text-align: center;
-            }
-            th {
-                font-weight: bold;
-            }
-            .grades {
-                font-size: x-small;
-            }
-            p {
-                padding: 5px;
-                text-align: justify; 
-                font-weight: bold;
-                margin: auto;
-            }
-            h2 {
-                text-align: center;
-            }
-            .left {
-                text-align: left;
-            }
-            .red {
-                color: red;
-            }
-            .bold {
-                font-weight: bold;
-            }
-            #errorMsgDiv {
-                text-align: left;
-                color: red;
-                font-weight: bold;
-                max-width: 600px;
-                padding: 5px;
-            }
-            #successMsgDiv {
-                text-align: center;
-                border-style: dotted;
-                border-width: 2px;
-                border-color: green;
-                color: green;
-                font-weight: bold;
-                max-width: 200px;
-                background-color: #CEFCF2;
-                margin: auto;
-                padding: 5px;
-            }
-
-
-        </style>
     </head>
     <body id="bodyID">
         <h2>Candidate Review</h2>
@@ -247,7 +193,7 @@
                 window.location.href = m_strThisURL;
             }
         </script>
-        <script src="/pbscorp/js/beforeunload.js" defer></script>
+        <script src="js/beforeunload.js" defer></script>
     </body>
 </cfprocessingdirective>
 </HTML>

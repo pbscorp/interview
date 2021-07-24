@@ -28,74 +28,9 @@
 <cfprocessingdirective suppressWhiteSpace = "yes">
 <HTML>
     <head>
-        <style>
-            table {
-                margin: auto;
-            }
-            th, td {
-                padding: 5px;
-                text-align: center;
-            }
-            th {
-                font-weight: bold;
-            }
-            .grades {
-                font-size: x-small;
-            }
-            p {
-                padding: 5px;
-                text-align: justify; 
-                font-weight: bold;
-                margin: auto;
-            }
-            h2 {
-                text-align: center;
-            }
-            .left {
-                text-align: left;
-            }
-            .red {
-                color: red;
-            }
-            .bold {
-                font-weight: bold;
-            }
-            #addressTableDiv {
-                background-color: #a4dded;
-                width: 410px;
-                margin: auto;
-            }
-            #addressTableDiv span {
-                font-weight: bold;
-                display: inline-block;
-                width: 115px;
-                text-align: right;
-                padding: 5px;
-            }
-            #errorMsgDiv {
-                text-align: left;
-                color: red;
-                font-weight: bold;
-                max-width: 600px;
-                padding: 5px;
-            }
-            #successMsgDiv {
-                text-align: center;
-                border-style: dotted;
-                border-width: 2px;
-                border-color: green;
-                color: green;
-                font-weight: bold;
-                max-width: 200px;
-                background-color: #CEFCF2;
-                margin: auto;
-                padding: 5px;
-            }
-
-
-        </style>
+        <link rel="stylesheet" href="css/stylesheet.css">
         <cfscript>
-            objCandidates = createObject('component', 'pbscorp-cfc.candidates');
+            objCandidates = createObject('component', 'interview-cfc.candidates');
             stcStates = objCandidates.getstates();
             function CFfncFormatPhone(n_intPhone)   {
                 var m_intPhone = trim(n_intPhone);
