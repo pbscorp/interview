@@ -17,6 +17,9 @@
         <cfquery name="qryCandidate">
             SELECT `candidates`.`ID`,
                 `candidates`.`strName`,
+                `candidates`.`strInterviewer`,
+                `candidates`.`dtmInterviewDate`,
+                `candidates`.`strPosition`
                 `address`.`ID`,
                 `address`.`strNameFirst`,
                 `address`.`strNameMiddle`,
