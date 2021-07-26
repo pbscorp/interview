@@ -30,7 +30,9 @@
 
 <HTML>
     <head>
-        <link rel="stylesheet" href="mystyle.css">
+        <cfoutput>
+        <link rel="stylesheet" href="#application.applicationBaseURLPath#/css/stylesheet.css">
+        </cfoutput>
     </head>
     <body id="bodyID">
         <h2>Candidate Review</h2>
@@ -193,7 +195,9 @@
                 window.location.href = m_strThisURL;
             }
         </script>
-        <script src="js/beforeunload.js" defer></script>
+        <cfoutput>
+            <script src="#application.applicationBaseURLPath#/js/beforeunload.js" defer></script>
+        </cfoutput>
     </body>
 </cfprocessingdirective>
 </HTML>

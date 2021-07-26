@@ -1,4 +1,7 @@
 ﻿component {
   this.datasource="candidates"
-	this.Name = "Lucee";
+	this.Name = "interview";
+  function onApplicationStart() {
+      application.applicationBaseURLPath = "/samplecode/interview";
+    }
 }
