@@ -4,6 +4,9 @@
 <cfparam name="form.ID" default="">
 <cfparam name="form.strEmail" default="">
 <cfparam name="form.strCandidatesName" default="">
+<cfparam name="form.strInterviewer" default="">
+<cfparam name="form.strDate" default="">
+<cfparam name="form.strPosition" default="">
 <cfparam name="form.strName" default="#form.strCandidatesName#">
 <cfparam name="form.strSelectedCandidateID" default="5">
 <cfparam name="form.submitButton" default="">
@@ -25,7 +28,7 @@
         form.strName = qryCandidate.strName;
         form.ID = qryCandidate.ID;
     }
-    strSuccessMessage = "record updated";
+    strSuccessMessage = "";
 </cfscript>
 
 <HTML>
@@ -52,26 +55,44 @@
                     <cfif len(strSuccessMessage)>
                         <div id="successMsgDiv">#strSuccessMessage#</div>
                     </cfif> 
-                    <div id="addressSectionID">
+                    <div>
                         <fieldset>
-                            <Legend>Candidate</legend>
-                            <cfif lCase(strTransaction) EQ "add">
-                            <span >Candidate: </span>
-                                <input type="text" name="strCandidatesName" id="strCandidatesName"  value="#form.strName#">
-                            <cfelse>
-                            <span >Select Candidate: </span>
-                                <select size="1" name="objNameSelect" id="objNameSelect" 
-                                    onChange="fncChangeCandidates(this.options[this.selectedIndex]);">
-                                    <option>Select a Candidate</option>
-                                    <cfoutput query = "qryAllCandidates">
-                                        <option value="#qryAllCandidates.ID#" 
-                                            <cfif qryAllCandidates.ID EQ form.ID>selected</cfif>>#qryAllCandidates.strName#
-                                        </option>
-                                    </cfoutput>
-                                    <option value="add">Add Candidate</option>
-                                </select>
-                            </cfif>
+                            <Legend>Interview</legend>
+                            <span class="addressSection bold">
+                                <label>Interviewer:</label>
+                                <input type="text" name="strInterviewer" id="strInterviewer"  value="#form.strInterviewer#"/>
+                            </span>
+                            <span class="addressSection">
+                                <label>Date:</label>
+                                <input type="date" name="strDate" id="strDate"
+                                    min="#dateFormat(#dateAdd('yyyy', -2, #now()#)#, "yyyy-mm-dd")#" max="#dateFormat(#now()#, "yyyy-mm-dd")#" value="#form.strDate#"/>
+                            </span>
+                            <br/><br/>
+                            <span class="addressSection">
+                                <label>Candidate:</label>
+                                <cfif lCase(strTransaction) EQ "add">
+                                    <input type="text" name="strCandidatesName" id="strCandidatesName"  value="#form.strName#">
+                                <cfelse>
+                                    <select size="1" name="objNameSelect" id="objNameSelect" 
+                                        onChange="fncChangeCandidates(this.options[this.selectedIndex]);">
+                                        <option>Select a Candidate</option>
+                                        <cfoutput query = "qryAllCandidates">
+                                            <option value="#qryAllCandidates.ID#" 
+                                                <cfif qryAllCandidates.ID EQ form.ID>selected</cfif>>#qryAllCandidates.strName#
+                                            </option>
+                                        </cfoutput>
+                                        <option value="add">Add Candidate</option>
+                                    </select>
+                                </cfif> 
+                            </span>
+                            <span class="addressSection">
+                                <label>Position:</label>
+                                <input type="text" name="strPosition" id="strPosition"  value="#form.strPosition#"/>
+                            </span>
+                            <br/><br/>
+
                         </fieldset>
+                        <br/>
                         <fieldset>
                             <Legend>Candidate Evaluation</legend>
                             <p >#qryEvaluation.strEvaluationText#</p>

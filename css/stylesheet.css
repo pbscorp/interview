@@ -1,5 +1,4 @@
 
-        <style>
         table {
             margin: auto;
         }
@@ -9,6 +8,9 @@
         }
         th {
             font-weight: bold;
+        }
+        span {
+            display: inline-block;
         }
         .grades {
             font-size: x-small;
@@ -38,7 +40,6 @@
         }
         #addressTableDiv span {
             font-weight: bold;
-            display: inline-block;
             width: 115px;
             text-align: right;
             padding: 5px;
@@ -62,6 +63,11 @@
             margin: auto;
             padding: 5px;
         }
-
-
-    </style>
+        span.addressSection {
+            width: 300px;
+        }
+        label {
+            display: inline-block;
+            font-weight: bold;
+            width: 100px;
+        }
