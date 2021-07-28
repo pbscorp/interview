@@ -1,13 +1,13 @@
 <c<cfcomponent name="candidates">
     <cffunction name="getQuestions" output="false" returntype="query">
         <cfquery name="qryQuestions">
-            SELECT `questions`.`ID`,
-                `questions`.`intSequence`,
-                `questions`.`strQuestion`,
-                `questions`.`intWeight`,
-                `questions`.`blnRequired`
-            FROM `candidates`.`questions`
-            ORDER BY  `questions`.`intSequence` ASC;
+            SELECT questions.ID,
+                questions.intSequence,
+                questions.strQuestion,
+                questions.intWeight,
+                questions.blnRequired
+            FROM candidates.questions
+            ORDER BY  questions.intSequence ASC;
         </cfquery>
         <cfreturn qryQuestions>
     </cffunction>
@@ -15,27 +15,24 @@
     <cffunction name="getCandidate" output="false" returntype="query">
         <cfargument name="n_ID" type="string" required="yes" default="0">
         <cfquery name="qryCandidate">
-            SELECT `candidates`.`ID`,
-                `candidates`.`strName`,
-                `candidates`.`strInterviewer`,
-                `candidates`.`dtmInterviewDate`,
-                `candidates`.`strPosition`
-                `address`.`ID`,
-                `address`.`strNameFirst`,
-                `address`.`strNameMiddle`,
-                `address`.`strNameLast`,
-                `address`.`strAddressLine1`,
-                `address`.`strAddressLine2`,
-                `address`.`strCity`,
-                `address`.`strState`,
-                `address`.`strZip`,
-                `address`.`strEmail`,
-                `address`.`intPhone`,
-                `address`.`intMobile`
-            FROM `candidates`.`candidates`,  `candidates`.`address`
-                WHERE `candidates`.`Address_ID` = `address`.`ID`
+            SELECT candidates.ID as candidatesID,
+                candidates.strInterviewer,
+                candidates.dtmInterviewDate,
+                candidates.strPosition,
+                address.ID as addressID,
+                CONCAT(address.strNameFirst, ' ', address.strNameMiddle, ' ', address.strNameLast) as strName,
+                address.strAddressLine1,
+                address.strAddressLine2,
+                address.strCity,
+                address.strState,
+                address.strZip,
+                address.strEmail,
+                address.intPhone,
+                address.intMobile
+            FROM candidates.candidates,  candidates.address
+                WHERE candidates.Address_ID = address.ID
                 <cfif lCase(arguments.n_ID) NEQ 'all'> 
-                    AND `candidates`.`ID`= <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.n_ID#">
+                    AND candidates.ID= <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.n_ID#">
                 </cfif>
         </cfquery>
         <cfreturn qryCandidate>
@@ -52,12 +49,12 @@
     <cffunction name="getEvaluation" output="false" returntype="query">
         <cfargument name="n_ID" type="string" required="yes" default="0">
         <cfquery name="qryEvaluation">
-           SELECT `evaluation`.`ID`,
-                    `evaluation`.`strEvaluationText`,
-                    `evaluation`.`lstWeight`,
-                    `evaluation`.`lstWtLiterals`
-                FROM `candidates`.`evaluation`
-                WHERE `evaluation`.`ID`= <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.n_ID#">
+           SELECT evaluation.ID,
+                    evaluation.strEvaluationText,
+                    evaluation.lstWeight,
+                    evaluation.lstWtLiterals
+                FROM candidates.evaluation
+                WHERE evaluation.ID= <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.n_ID#">
         </cfquery>
         <cfreturn qryEvaluation>
     </cffunction>
@@ -71,28 +68,29 @@
         </cfif>
         <cfquery name="qryQuiz">
             SELECT 
-                `quiz`.`ID`,
-                `quiz`.`intResponse_value`,
-                `quiz`.`strComment`,
-                `quiz`.`dtmAdded`,
-                `quiz`.`dtmModified`,
-                `quiz`.`questions_ID`,
-                `quiz`.`candidates_ID`,
-                `quiz`.`evaluation_ID`,
+                quiz.ID,
+                quiz.intResponse_value,
+                quiz.strComment,
+                quiz.dtmAdded,
+                quiz.dtmModified,
+                quiz.questions_ID,
+                quiz.candidates_ID,
+                quiz.evaluation_ID,
                 
-                `questions`.`intSequence`,
-                `questions`.`strQuestion`,
-                `questions`.`strCategory`,
-                `questions`.`intWeight`,
-                `questions`.`blnRequired`
+                questions.ID as questionsID,
+                questions.intSequence,
+                questions.strQuestion,
+                questions.strCategory,
+                questions.intWeight,
+                questions.blnRequired
                 
-                FROM `candidates`.`quiz`,  `candidates`.`questions`
+                FROM candidates.quiz,  candidates.questions
 
-                WHERE `quiz`.`questions_ID` =  `questions`.`ID`
-                    AND `quiz`.`evaluation_ID` =  `questions`.`evaluation_ID`
-                    AND `quiz`.`evaluation_ID` = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.n_evaluation_ID#">
-                    AND `quiz`.`candidates_ID` = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.n_candidates_ID#">
-                ORDER BY `questions`.`intSequence` ASC;
+                WHERE quiz.questions_ID =  questions.ID
+                    AND quiz.evaluation_ID =  questions.evaluation_ID
+                    AND quiz.evaluation_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.n_evaluation_ID#">
+                    AND quiz.candidates_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.n_candidates_ID#">
+                ORDER BY questions.intSequence ASC;
 
         </cfquery>
         <cfreturn qryQuiz>
@@ -101,18 +99,19 @@
     <cffunction name="fncSetTempQuiz" output="false" returntype="any">
         <cfargument name="n_evaluation_ID" type="numeric" default=1>
         <cfquery name="deleteOldRows">
-            DELETE FROM `candidates`.`quiz`
-                WHERE `quiz`.`candidates_ID` = 9999
-                AND `quiz`.`evaluation_ID` = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.n_evaluation_ID#">;
+            DELETE FROM candidates.quiz
+                WHERE quiz.candidates_ID = 9999
+                AND quiz.evaluation_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.n_evaluation_ID#">;
         </cfquery>
         <cfquery name="addTempRows">
-            INSERT INTO `candidates`.`quiz`
+            INSERT INTO candidates.quiz
             (questions_ID, candidates_ID, evaluation_ID)
                 SELECT 
-                `questions`.`ID`, 9999,  <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.n_evaluation_ID#">
-                FROM `candidates`.`questions`
-                WHERE `questions`.`evaluation_ID` = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.n_evaluation_ID#">
+                questions.ID, 9999,  <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.n_evaluation_ID#">
+                FROM candidates.questions
+                WHERE questions.evaluation_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.n_evaluation_ID#">
         </cfquery>
         <cfreturn 9999>
     </cffunction>
+
 </cfcomponent>

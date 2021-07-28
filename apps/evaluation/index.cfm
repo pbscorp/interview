@@ -1,14 +1,13 @@
-<!DOCTYPE HTML PUBLIC ‘-//W3C//DTD HT\lL 4.0 Transitional//EN’>
-<cfprocessingdirective suppressWhiteSpace = "yes"><cfparam name="url.strTransaction" default="">
+<cfparam name="url.strTransaction" default="">
 <cfparam name="form.strTransaction" default="#url.strTransaction#">
-<cfparam name="form.ID" default="">
 <cfparam name="form.strEmail" default="">
-<cfparam name="form.strCandidatesName" default="">
+<cfparam name="form.strName" default="">
 <cfparam name="form.strInterviewer" default="">
-<cfparam name="form.strDate" default="">
+<cfparam name="form.dtmInterviewDate" default="#dateFormat(#now()#, "yyyy-mm-dd")#">
 <cfparam name="form.strPosition" default="">
-<cfparam name="form.strName" default="#form.strCandidatesName#">
-<cfparam name="form.strSelectedCandidateID" default="5">
+<cfparam name="form.evaluationID" default="1">
+<cfparam name="url.candidatesID" default="">
+<cfparam name="form.candidatesID" default="#url.candidatesID#">
 <cfparam name="form.submitButton" default="">
 <cfparam name="form.blnHasError" default="0">
 <cfparam name="form.strErorMessage" default="">
@@ -18,15 +17,20 @@
 <cfif len(form.submitButton)>
     <cfinclude template = "act_candidates.cfm">
 </cfif>
+<!DOCTYPE HTML PUBLIC ‘-//W3C//DTD HT\lL 4.0 Transitional//EN’>
+<cfprocessingdirective suppressWhiteSpace = "yes">
 <cfscript>
     objCandidates = createObject('component', 'interview-cfc.candidates');
     getQuestions = objCandidates.getQuestions();
-    qryEvaluation = objCandidates.getEvaluation(1);
+    qryEvaluation = objCandidates.getEvaluation("#form.evaluationID#");
     qryAllCandidates = objCandidates.getCandidate('all');
     if ( (!form.blnHasError) && (form.submitButton != "update") && (form.strTransaction != "add")) {
-        qryCandidate = objCandidates.getCandidate(form.strSelectedCandidateID);
+        qryCandidate = objCandidates.getCandidate(form.candidatesID);
         form.strName = qryCandidate.strName;
-        form.ID = qryCandidate.ID;
+        form.candidatesID = qryCandidate.candidatesID;
+        form.dtmInterviewDate = qryCandidate.dtmInterviewDate;
+        form.strInterviewer = qryCandidate.strInterviewer;
+        form.strPosition = qryCandidate.strPosition;
     }
     strSuccessMessage = "";
 </cfscript>
@@ -58,38 +62,67 @@
                     <div>
                         <fieldset>
                             <Legend>Interview</legend>
-                            <span class="addressSection bold">
-                                <label>Interviewer:</label>
-                                <input type="text" name="strInterviewer" id="strInterviewer"  value="#form.strInterviewer#"/>
-                            </span>
-                            <span class="addressSection">
-                                <label>Date:</label>
-                                <input type="date" name="strDate" id="strDate"
-                                    min="#dateFormat(#dateAdd('yyyy', -2, #now()#)#, "yyyy-mm-dd")#" max="#dateFormat(#now()#, "yyyy-mm-dd")#" value="#form.strDate#"/>
-                            </span>
-                            <br/><br/>
-                            <span class="addressSection">
-                                <label>Candidate:</label>
+                            <span class="interviewSpan">
                                 <cfif lCase(strTransaction) EQ "add">
-                                    <input type="text" name="strCandidatesName" id="strCandidatesName"  value="#form.strName#">
+                                    <label>Email:</label>
+                                    <input type="text" name="strEmail" id="strEmail"
+                                            placeholder="example@mail.com"
+                                            onChange="fncGetAddress(this);"
+                                            value="#form.strEmail#">
+                                    <input type="hidden" name="candidatesID" id="candidatesID"  value="">
                                 <cfelse>
-                                    <select size="1" name="objNameSelect" id="objNameSelect" 
+                                    <label>Candidate:</label>
+                                    <select size="1" name="candidatesID" id="candidatesID"
                                         onChange="fncChangeCandidates(this.options[this.selectedIndex]);">
                                         <option>Select a Candidate</option>
-                                        <cfoutput query = "qryAllCandidates">
-                                            <option value="#qryAllCandidates.ID#" 
-                                                <cfif qryAllCandidates.ID EQ form.ID>selected</cfif>>#qryAllCandidates.strName#
-                                            </option>
-                                        </cfoutput>
+                                    <cfoutput query = "qryAllCandidates">
+                                        <option value="#qryAllCandidates.candidatesID#"|
+                                                    #qryAllCandidates.strName#|
+                                                    #qryAllCandidates.strEmail#|
+                                                    #qryAllCandidates.dtmInterviewDate#|
+                                                    #qryAllCandidates.strInterviewer#|
+                                                    #qryAllCandidates.strPosition#"
+                                        <option value="#qryAllCandidates.candidatesID#"
+                                            title="#qryAllCandidates.strName# (#qryAllCandidates.strEmail#)
+                                                interviewed on #dateFormat(qryAllCandidates.dtmInterviewDate, 'mm/dd/yyyy')#
+                                                by #qryAllCandidates.strInterviewer#
+                                                for #qryAllCandidates.strPosition#"
+                                            <cfif qryAllCandidates.candidatesID EQ form.candidatesID>
+                                                selected
+                                            </cfif>
+                                            >
+                                            #qryAllCandidates.strEmail#
+                                        </option>
+                                    </cfoutput>
                                         <option value="add">Add Candidate</option>
                                     </select>
                                 </cfif> 
                             </span>
-                            <span class="addressSection">
-                                <label>Position:</label>
-                                <input type="text" name="strPosition" id="strPosition"  value="#form.strPosition#"/>
+
+                            <span class="interviewSpan">
+                                <label>Date:</label>
+                                <input type="date" name="dtmInterviewDate" id="dtmInterviewDate"
+                                    min="#dateFormat(#dateAdd('yyyy', -2, #now()#)#, "yyyy-mm-dd")#" max="#dateFormat(#now()#, "yyyy-mm-dd")#" 
+                                    value="#dateFormat(form.dtmInterviewDate, 'yyyy-mm-dd')#"
+                                    onBlur="fncValidateDate(this);"/>
                             </span>
-                            <br/><br/>
+                            <br/>
+                            <label>  </label>
+                            <span id="candidatesNameSpan" style="font-size: smaller" >#form.strName#</span>
+                            <br/>
+
+                            <span class="interviewSpan">
+                                <label>Interviewer:</label>
+                                <input type="text" name="strInterviewer" id="strInterviewer"  placeholder="Name"  value="#form.strInterviewer#"/>
+                            </span>
+
+                            
+                            <span class="interviewSpan">
+                                <label>Position:</label>
+                                <input type="text" name="strPosition" id="strPosition" placeholder="Position"   value="#form.strPosition#"/>
+                            </span>
+                            <br/>
+                            <br/>
 
                         </fieldset>
                         <br/>
@@ -127,10 +160,10 @@
                                     <th class="grades">Avg</th>
                                 </tr>
                             </thead>
-                            <cfif NOT len(form.ID)>
+                            <cfif NOT len(form.candidatesID)>
                                 <cfset qryQuiz = objCandidates.getQuiz('new')>
                             <cfelse>
-                                <cfset qryQuiz = objCandidates.getQuiz(form.ID)>
+                                <cfset qryQuiz = objCandidates.getQuiz(form.candidatesID)>
                             </cfif>
                             <tbody>
                                 <cfoutput query="qryQuiz">
@@ -144,7 +177,7 @@
                                                 title="#listGetAt(lstWtLiterals, i)#"
                                                 value="#i#"
                                                 <cfif qryQuiz.intResponse_value EQ i>
-                                                    selected
+                                                    checked
                                                     <cfset intLineResponse = listGetAt(lstGradesWt, i)>
                                                 </cfif>
                                                 >
@@ -153,7 +186,7 @@
                                         <td>
                                             <input type="radio" 
                                                 name="#qryQuiz.currentrow#rdoResponse" 
-                                                value="N/A"
+                                                value="0"
                                                 <cfif #qryQuiz.blnRequired#>
                                                     disabled
                                                 <cfelseif intLineResponse EQ 0>
@@ -162,7 +195,8 @@
                                             >
                                         </td>
                                         <td>
-                                            <span id ="#qryQuiz.currentrow#score" value="#intLineResponse#">#intLineResponse#</span>
+                                            <span id="#qryQuiz.currentrow#score" value="#intLineResponse#">#intLineResponse#</span>
+                                            <input type="hidden" name="#qryQuiz.currentrow#questionsID" id="#qryQuiz.currentrow#questionsID" value="#qryQuiz.questionsID#">
                                         </td>
                                         <td>
                                             <span id="#qryQuiz.currentrow#weight" value="#intWeight#">#intWeight#</span>
@@ -191,34 +225,58 @@
                             </tbody>
                         </table>
                     </div>
-                    <input type="hidden" name="strSelectedCandidateID" id="strSelectedCandidateID" value="#form.strSelectedCandidateID#">
-                    <input type="hidden" name="strCandidatesName" id="strCandidatesName" value="#form.strName#">
+                    <input type="hidden" name="recordcount" id="recordcount" value="#qryQuiz.recordcount#">
                     <input type="hidden" name="strTransaction" id="strTransaction" value="#form.strTransaction#">
+                    <input type="hidden" name="evaluationID" id="evaluationID" value="#form.evaluationID#">
                     <input type="submit" name="submitButton" id="submitButton" value="Post" disabled>
                 </form>
             </cfoutput>
         </div>
 
-        <script>
-            function fncAddCandidates(n_strName) {
-                let m_strName = n_strName.trim();
-                document.getElementById('strCandidatesName').value = m_strName;
-                document.getElementById('strSelectedCandidateID').value = '';
-            }
-            
-            function fncChangeCandidates(n_objOption) {
-                let m_strThisURL = window.location.href.split("?")[0] + "?strTransaction=";
-                if (n_objOption.value.toLowerCase() == "add") {
-                    m_strThisURL += "add";
-                } else {
-                    m_strThisURL += "update&strSelectedCandidateID=" + document.getElementById('strSelectedCandidateID').value;
-                }
-                window.location.href = m_strThisURL;
-            }
-        </script>
         <cfoutput>
             <script src="#application.applicationBaseURLPath#/js/beforeunload.js" defer></script>
-        </cfoutput>
-    </body>
+            <script src="#application.applicationBaseURLPath#/js/validation.js" defer></script>
+            <script>
+                function fncGetAddress (n_eleEmail) {
+                    if (fncValidateEmail(n_eleEmail)) {
+                        let m_strName=fncGetName(n_eleEmail);
+                        if (m_strName && m_strName.length) {
+                            alert(m_strName);
+                            document.getElementById("candidatesNameSpan").innerHTML = m_strName;
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            </script>
+
+            <script>
+                function fncGetName (n_eleEmail) {
+                    let xhttp = new XMLHttpRequest();
+                    xhttp.open("GET", "#application.applicationBaseURLPath#/resources/get_address?strTransaction=getname&strEmail=" + n_eleEmail.value, false);
+                    xhttp.send();
+                    return xhttp.responseText;
+                }
+            </script>
+            <script>
+                function fncOpenAddressWindow (n_eleEmail) {
+                    window.open("#application.applicationBaseURLPath#/apps/address/?strEmail=" + n_eleEmail.value, "winAddressWindow", "width=500,height=400");
+                     
+                }
+            </script>
+            <script>
+                function fncChangeCandidates (n_eleSelect) {
+                    let m_intCandidateID = n_eleSelect.value;
+                    let m_strThisURL = window.location.href.split("?")[0] + "?strTransaction=";
+                    if (m_intCandidateID.toLowerCase() == "add") {
+                        m_strThisURL += "add";
+                    } else {
+                        m_strThisURL += "update&candidatesID=" + m_intCandidateID;
+                    }
+                    window.location.href = m_strThisURL;
+                }
+            </script>
+        </cfoutput>      
+    </body> 
 </cfprocessingdirective>
 </HTML>

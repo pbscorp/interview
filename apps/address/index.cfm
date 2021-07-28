@@ -1,3 +1,4 @@
+<!DOCTYPE HTML PUBLIC ‘-//W3C//DTD HT\lL 4.0 Transitional//EN’>
 <cfparam name="url.strTransaction" default="">
 <cfparam name="form.strTransaction" default="#url.strTransaction#">
 <cfparam name="form.ID" default="">
@@ -20,11 +21,9 @@
 
 <cfset aryErrorMessage = ArrayNew(1)>
 
-<cfif len(form.submitButton)>
+<cfif len(form.submitButton) OR url.strTransaction EQ "getNameXX">
     <cfinclude template = "act_address.cfm">
-    <cfabort>
 </cfif>
-<!DOCTYPE HTML PUBLIC ‘-//W3C//DTD HT\lL 4.0 Transitional//EN’>
 <cfprocessingdirective suppressWhiteSpace = "yes">
 <HTML>
     <head>
@@ -124,7 +123,7 @@
                                         size="2" 
                                         style="text-transform:uppercase;"
                                         onFocus="this.select()"
-                                        onChange="fncValidateState(this.value);">
+                                        onChange="fncValidateState(this, 'datalistStates');">
                                     <datalist id="datalistStates">
                                         <option value="">State</option>
                                         <cfloop index="i" from="1" to="#m_intStrctSize#">
@@ -169,79 +168,9 @@
             </cfoutput>
         </div>
         
-        <script>
-                
-            function fncValidateEmail(n_elementEmail)   {
-                var m_strMailformat = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-                if(n_elementEmail.value.match(m_strMailformat)) {
-                    return true;
-                } else {
-                    alert("You have entered an invalid email address!");
-                    n_elementEmail.select();
-                    n_elementEmail.focus();
-                    return false;
-                }
-            }
-            
-            function fncFormatPhone(n_intPhone) {
-                var m_strFormattedPhone = "(" + n_intPhone.substring(0,3) + ')';
-                m_strFormattedPhone += " " + n_intPhone.substring(3,6);
-                m_strFormattedPhone += "-" + n_intPhone.substring(6,10);
-                return m_strFormattedPhone;
-            }
-
-            function fncValidatePhone(n_elementPhone)   {
-                var m_intPhone =  n_elementPhone.value.replace(/\D/g,'');
-                if(m_intPhone.length) {
-                    if(m_intPhone.length == 10) {
-                //alert("Valid phone !" + m_intPhone);
-                        n_elementPhone.value = fncFormatPhone(m_intPhone);
-                        return true;
-                    } else {
-                        alert("Invalid phone number must be 10 digits!");
-                        n_elementPhone.select();
-                        n_elementPhone.focus();
-                        return false;
-                    }
-                }
-            }
-            function fncValidateZip(n_elementZip)   {
-                var m_intZip =  n_elementZip.value.replace(/\D/g,'');
-                if (m_intZip.length) {
-                    if (m_intZip.length == 5) {
-                        n_elementZip.value =  m_intZip;
-                        return true;
-                    }
-                    if (m_intZip.length == 9) {
-                        n_elementZip.value =  m_intZip.substring(0,4) + '-' + m_intZip.substring(4,9);
-                        return true;
-                    } else {
-                        alert("Invalid zipcode must be 5 or 9 digits");
-                        n_elementZip.select();
-                        n_elementZip.focus();
-                        return false;
-                    }
-                }
-            }
-            function fncValidateState(n_stateCode) {
-                var aryDatalistStates = document.getElementById("datalistStates");
-                var i;
-                for (i = 0; i < aryDatalistStates.options.length; i++) {
-                    if (n_stateCode.toUpperCase() == aryDatalistStates.options[i].value) {
-                        return true;
-                    }
-                }
-                alert('error: ' + n_stateCode.toUpperCase() + ' not in found in state table');
-                document.getElementById("inputStates").select();
-                document.getElementById("inputStates").focus();
-                return false;
-            }
-            function fncFormatError(n_strError) {
-                document.getElementById("errorDiv").innerHTML += "<li>" + n_strError + "</li>";
-            }
-        </script>
         <cfoutput>
             <script src="#application.applicationBaseURLPath#/js/beforeunload.js" defer></script>
+            <script src="#application.applicationBaseURLPath#/js/validation.js" defer></script>
         </cfoutput>
     </body>
 </cfprocessingdirective>
