@@ -6,8 +6,8 @@
 <cfparam name="form.dtmInterviewDate" default="#dateFormat(#now()#, "yyyy-mm-dd")#">
 <cfparam name="form.strPosition" default="">
 <cfparam name="form.evaluationID" default="1">
-<cfparam name="url.candidatesID" default="">
-<cfparam name="form.candidatesID" default="#url.candidatesID#">
+<cfparam name="url.interviewsID" default="">
+<cfparam name="form.interviewsID" default="#url.interviewsID#">
 <cfparam name="form.submitButton" default="">
 <cfparam name="form.blnHasError" default="0">
 <cfparam name="form.strErorMessage" default="">
@@ -20,17 +20,17 @@
 <!DOCTYPE HTML PUBLIC ‘-//W3C//DTD HT\lL 4.0 Transitional//EN’>
 <cfprocessingdirective suppressWhiteSpace = "yes">
 <cfscript>
-    objCandidates = createObject('component', 'interview-cfc.candidates');
-    getQuestions = objCandidates.getQuestions();
-    qryEvaluation = objCandidates.getEvaluation("#form.evaluationID#");
-    qryAllCandidates = objCandidates.getCandidate('all');
+    objInterviews = createObject('component', 'interview-cfc.candidates');
+    getQuestions = objInterviews.getQuestions();
+    qryEvaluation = objInterviews.getEvaluation("#form.evaluationID#");
+    qryAllInterviews = objInterviews.getInterview('all');
     if ( (!form.blnHasError) && (form.submitButton != "update") && (form.strTransaction != "add")) {
-        qryCandidate = objCandidates.getCandidate(form.candidatesID);
-        form.strName = qryCandidate.strName;
-        form.candidatesID = qryCandidate.candidatesID;
-        form.dtmInterviewDate = qryCandidate.dtmInterviewDate;
-        form.strInterviewer = qryCandidate.strInterviewer;
-        form.strPosition = qryCandidate.strPosition;
+        qryInterview = objInterviews.getInterview(form.interviewsID );
+        form.strName = qryInterview.strName;
+        form.interviewsID  = qryInterview.interviewsID ;
+        form.dtmInterviewDate = qryInterview.dtmInterviewDate;
+        form.strInterviewer = qryInterview.strInterviewer;
+        form.strPosition = qryInterview.strPosition;
     }
     strSuccessMessage = "";
 </cfscript>
@@ -42,7 +42,7 @@
         </cfoutput>
     </head>
     <body id="bodyID">
-        <h2>Candidate Review</h2>
+        <h2>Interview Review</h2>
         <div>
             <cfoutput>
                 <form name="mainForm" id="mainForm" method="post" action="#cgi.script_name#" onSubmit="fncRemoveBeforeUnloadEvent()"
@@ -69,32 +69,26 @@
                                             placeholder="example@mail.com"
                                             onChange="fncGetAddress(this);"
                                             value="#form.strEmail#">
-                                    <input type="hidden" name="candidatesID" id="candidatesID"  value="">
+                                    <input type="hidden" name="interviewsID " id="interviewsID "  value="">
                                 <cfelse>
-                                    <label>Candidate:</label>
-                                    <select size="1" name="candidatesID" id="candidatesID"
-                                        onChange="fncChangeCandidates(this.options[this.selectedIndex]);">
-                                        <option>Select a Candidate</option>
-                                    <cfoutput query = "qryAllCandidates">
-                                        <option value="#qryAllCandidates.candidatesID#"|
-                                                    #qryAllCandidates.strName#|
-                                                    #qryAllCandidates.strEmail#|
-                                                    #qryAllCandidates.dtmInterviewDate#|
-                                                    #qryAllCandidates.strInterviewer#|
-                                                    #qryAllCandidates.strPosition#"
-                                        <option value="#qryAllCandidates.candidatesID#"
-                                            title="#qryAllCandidates.strName# (#qryAllCandidates.strEmail#)
-                                                interviewed on #dateFormat(qryAllCandidates.dtmInterviewDate, 'mm/dd/yyyy')#
-                                                by #qryAllCandidates.strInterviewer#
-                                                for #qryAllCandidates.strPosition#"
-                                            <cfif qryAllCandidates.candidatesID EQ form.candidatesID>
+                                    <label>Interview:</label>
+                                    <select size="1" name="interviewsID " id="interviewsID "
+                                        onChange="fncChangeInterviews(this.options[this.selectedIndex]);">
+                                        <option>Select an Interview</option>
+                                    <cfoutput query = "qryAllInterviews">
+                                        <option value="#qryAllInterviews.interviewsID #"
+                                            title="#qryAllInterviews.strName# (#qryAllInterviews.strEmail#)
+                                                interviewed on #dateFormat(qryAllInterviews.dtmInterviewDate, 'mm/dd/yyyy')#
+                                                by #qryAllInterviews.strInterviewer#
+                                                for #qryAllInterviews.strPosition#"
+                                            <cfif qryAllInterviews.interviewsID  EQ form.interviewsID >
                                                 selected
                                             </cfif>
                                             >
-                                            #qryAllCandidates.strEmail#
+                                            #qryAllInterviews.strEmail#
                                         </option>
                                     </cfoutput>
-                                        <option value="add">Add Candidate</option>
+                                        <option value="add">New Interview</option>
                                     </select>
                                 </cfif> 
                             </span>
@@ -108,7 +102,10 @@
                             </span>
                             <br/>
                             <label>  </label>
-                            <span id="candidatesNameSpan" style="font-size: smaller" >#form.strName#</span>
+                            <span id="candidatesNameSpan" 
+                                     style="font-size: smaller;vertical-align: top;font-style: italic;font-style: italic;" >
+                                #form.strName#
+                            </span>
                             <br/>
 
                             <span class="interviewSpan">
@@ -160,10 +157,10 @@
                                     <th class="grades">Avg</th>
                                 </tr>
                             </thead>
-                            <cfif NOT len(form.candidatesID)>
-                                <cfset qryQuiz = objCandidates.getQuiz('new')>
+                            <cfif NOT len(form.interviewsID )>
+                                <cfset qryQuiz = objInterviews.getQuiz('new')>
                             <cfelse>
-                                <cfset qryQuiz = objCandidates.getQuiz(form.candidatesID)>
+                                <cfset qryQuiz = objInterviews.getQuiz(form.interviewsID )>
                             </cfif>
                             <tbody>
                                 <cfoutput query="qryQuiz">
@@ -265,13 +262,13 @@
                 }
             </script>
             <script>
-                function fncChangeCandidates (n_eleSelect) {
-                    let m_intCandidateID = n_eleSelect.value;
+                function fncChangeInterviews (n_eleSelect) {
+                    let m_intInterviewsID = n_eleSelect.value;
                     let m_strThisURL = window.location.href.split("?")[0] + "?strTransaction=";
-                    if (m_intCandidateID.toLowerCase() == "add") {
+                    if (m_intInterviewsID.toLowerCase() == "add") {
                         m_strThisURL += "add";
                     } else {
-                        m_strThisURL += "update&candidatesID=" + m_intCandidateID;
+                        m_strThisURL += "update&interviewsID=" + m_intInterviewsID;
                     }
                     window.location.href = m_strThisURL;
                 }
