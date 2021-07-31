@@ -1,4 +1,25 @@
 
+            
+            function fncFormatError(n_element, n_strError, n_blnNoFucus) {
+                let m_blnNoFucus = false;
+                if (n_blnNoFucus) {
+                    m_blnNoFucus = true;
+                }
+                let m_blnListMode = false;
+                if (document.getElementById("errorMsgDiv") && document.getElementById("errorMsgDiv").innerHTML == "<ul>") {
+                    // initialize above when submitting the form
+                    m_blnListMode = true;
+                }
+                if (m_blnListMode) {
+                    document.getElementById("errorMsgDiv").innerHTML += "<li>" + n_element.title + ' ' + n_strError + "</li>";
+                } else {
+                    alert(n_strError);
+                    if (!m_blnNoFucus) {
+                        n_element.select();
+                        n_element.focus();
+                    }
+                }
+            }
             function fncValidateEmail(n_elementEmail)   {
                 let m_strMailformat = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
                 if(n_elementEmail.value.match(m_strMailformat)) {
@@ -63,25 +84,5 @@
                 if (!m_blnValidDate) {
                     fncFormatError(n_elementDate, 'error: date must be a valid date between ' + n_elementDate.min + ' and ' + n_elementDate.min, true );
                     return false;
-                }
-            }
-            function fncFormatError(n_element, n_strError, n_blnNoFucus) {
-                let m_blnNoFucus = false;
-                if (n_blnNoFucus) {
-                    m_blnNoFucus = true;
-                }
-                let m_blnListMode = false;
-                if (document.getElementById("errorMsgDiv") && document.getElementById("errorMsgDiv").innerHTML == "<ul>") {
-                    // initialize above when submitting the form
-                    m_blnListMode = true;
-                }
-                if (m_blnListMode) {
-                    document.getElementById("errorMsgDiv").innerHTML += "<li>" + n_element.title + ' ' + n_strError + "</li>";
-                } else {
-                    alert(n_strError);
-                    if (!m_blnNoFucus) {
-                        n_element.select();
-                        n_element.focus();
-                    }
                 }
             }

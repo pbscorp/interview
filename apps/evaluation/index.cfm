@@ -5,6 +5,7 @@
 <cfparam name="form.strInterviewer" default="">
 <cfparam name="form.dtmInterviewDate" default="#dateFormat(#now()#, "yyyy-mm-dd")#">
 <cfparam name="form.strPosition" default="">
+<cfparam name="form.addressID" default="">
 <cfparam name="form.evaluationID" default="1">
 <cfparam name="url.interviewsID" default="">
 <cfparam name="form.interviewsID" default="#url.interviewsID#">
@@ -27,6 +28,7 @@
     if ( (!form.blnHasError) && (form.submitButton != "update") && (form.strTransaction != "add")) {
         qryInterview = objInterviews.getInterview(form.interviewsID );
         form.strName = qryInterview.strName;
+        form.addressID  = qryInterview.addressID;
         form.interviewsID  = qryInterview.interviewsID ;
         form.dtmInterviewDate = qryInterview.dtmInterviewDate;
         form.strInterviewer = qryInterview.strInterviewer;
@@ -64,15 +66,15 @@
                             <Legend>Interview</legend>
                             <span class="interviewSpan">
                                 <cfif lCase(strTransaction) EQ "add">
-                                    <label>Email:</label>
+                                    <label class="interviewInputlabel">Email:</label>
                                     <input type="text" name="strEmail" id="strEmail"
                                             placeholder="example@mail.com"
                                             onChange="fncGetAddress(this);"
                                             value="#form.strEmail#">
-                                    <input type="hidden" name="interviewsID " id="interviewsID "  value="">
+                                    <input type="hidden" name="interviewsID" id="interviewsID" value="#form.interviewsID#">
                                 <cfelse>
-                                    <label>Interview:</label>
-                                    <select size="1" name="interviewsID " id="interviewsID "
+                                    <label class="interviewInputlabel">Interview:</label>
+                                    <select size="1" name="interviewsID" id="interviewsID"
                                         onChange="fncChangeInterviews(this.options[this.selectedIndex]);">
                                         <option>Select an Interview</option>
                                     <cfoutput query = "qryAllInterviews">
@@ -94,28 +96,31 @@
                             </span>
 
                             <span class="interviewSpan">
-                                <label>Date:</label>
+                                <label class="interviewInputlabel">Date:</label>
                                 <input type="date" name="dtmInterviewDate" id="dtmInterviewDate"
                                     min="#dateFormat(#dateAdd('yyyy', -2, #now()#)#, "yyyy-mm-dd")#" max="#dateFormat(#now()#, "yyyy-mm-dd")#" 
                                     value="#dateFormat(form.dtmInterviewDate, 'yyyy-mm-dd')#"
                                     onBlur="fncValidateDate(this);"/>
                             </span>
                             <br/>
-                            <label>  </label>
+                            <label class="interviewInputlabel">  </label>
                             <span id="candidatesNameSpan" 
-                                     style="font-size: smaller;vertical-align: top;font-style: italic;font-style: italic;" >
+                                     style="font-size: smaller;vertical-ali"gn: top;font-style: italic;font-style: italic;" >
+                                <span  style.display="inline" id="candidatesNameTextSpan">
                                 #form.strName#
+                                </span>
+                                <span class="button" onClick="fncEditAddress();">Edit Address</span>
                             </span>
                             <br/>
 
                             <span class="interviewSpan">
-                                <label>Interviewer:</label>
+                                <label class="interviewInputlabel">Interviewer:</label>
                                 <input type="text" name="strInterviewer" id="strInterviewer"  placeholder="Name"  value="#form.strInterviewer#"/>
                             </span>
 
                             
                             <span class="interviewSpan">
-                                <label>Position:</label>
+                                <label class="interviewInputlabel">Position:</label>
                                 <input type="text" name="strPosition" id="strPosition" placeholder="Position"   value="#form.strPosition#"/>
                             </span>
                             <br/>
@@ -225,6 +230,7 @@
                     <input type="hidden" name="recordcount" id="recordcount" value="#qryQuiz.recordcount#">
                     <input type="hidden" name="strTransaction" id="strTransaction" value="#form.strTransaction#">
                     <input type="hidden" name="evaluationID" id="evaluationID" value="#form.evaluationID#">
+                    <input type="hidden" name="addressID" id="addressID" value="#form.addressID#">
                     <input type="submit" name="submitButton" id="submitButton" value="Post" disabled>
                 </form>
             </cfoutput>
@@ -236,29 +242,53 @@
             <script>
                 function fncGetAddress (n_eleEmail) {
                     if (fncValidateEmail(n_eleEmail)) {
-                        let m_strName=fncGetName(n_eleEmail);
-                        if (m_strName && m_strName.length) {
-                            alert(m_strName);
-                            document.getElementById("candidatesNameSpan").innerHTML = m_strName;
-                            return true;
-                        }
+                        fncGetTableValues ('address', 'strEmail', n_eleEmail.value, 'strName', 'candidatesNameTextSpan', 'innerHTML');
                     }
                     return false;
                 }
             </script>
-
             <script>
-                function fncGetName (n_eleEmail) {
-                    let xhttp = new XMLHttpRequest();
-                    xhttp.open("GET", "#application.applicationBaseURLPath#/resources/get_address?strTransaction=getname&strEmail=" + n_eleEmail.value, false);
+                let xhttp = new XMLHttpRequest();
+                let parser = new DOMParser();
+                function fncGetTableValues (n_strDBTable, n_strKeyColumnName, n_strKeyColumnValue, n_lstColumns, n_lstRtnElementID, n_lstRtnElementChildName) {
+                    let m_strResponse = "no response";
+                    let m_strTable = n_strDBTable;
+                    let m_strKeyColumnName = n_strKeyColumnName;
+                    let m_strKeyColumnValue = encodeURIComponent(n_strKeyColumnValue);
+                    let m_lstColumns = encodeURIComponent(n_lstColumns);
+                    let m_lstRtnElementID = n_lstRtnElementID;
+                    let m_lstrRtnElementChildName = "innerHTML";
+                    if (n_lstRtnElementChildName) {
+                        m_lstrRtnElementChildName = n_lstRtnElementChildName;
+                    }
+                    let m_aryColumns = n_lstColumns.split('|');
+                    let m_aryRtnElementID = n_lstRtnElementID.split('|');
+                    let m_aryRtnElementChildName = m_lstrRtnElementChildName.split('|');
+                    let i = 0;
+                    xhttp.onreadystatechange = function() {
+                        if (this.readyState == 4 && this.status == 200) {
+                            m_strResponse = this.responseText;
+                            for (i = 0; i < m_aryRtnElementID.length; i++) {
+                                let m_xmlDoc = parser.parseFromString(m_strResponse,"text/xml");
+                                let m_strReturnValue = m_xmlDoc.getElementsByTagName(m_aryColumns[i])[0].childNodes[0].nodeValue;
+                                document.getElementById(m_aryRtnElementID[i])[m_aryRtnElementChildName[i]] = m_strReturnValue;
+                            }
+                        }
+                    };
+                    let m_strURL = "#application.applicationBaseURLPath#/resources/get_address.cfm?strTable=" + n_strDBTable + m_strKeyColumnName + "=" + m_strKeyColumnValue + "&lstColumns=" + m_lstColumns;
+                    xhttp.open("GET", m_strURL, true);
                     xhttp.send();
-                    return xhttp.responseText;
                 }
             </script>
+
             <script>
-                function fncOpenAddressWindow (n_eleEmail) {
-                    window.open("#application.applicationBaseURLPath#/apps/address/?strEmail=" + n_eleEmail.value, "winAddressWindow", "width=500,height=400");
-                     
+                function fncEditAddress() {
+                    let m_addressID = document.getElementById("addressID").value;
+                    let m_interviewsID = document.getElementById("interviewsID").value;
+                    let m_blnInterviewsID = !isNaN(m_interviewsID);
+                    if (m_addressID.length) {
+                        winAddressWindow=window.open("#application.applicationBaseURLPath#/apps/address/?addressID=" + n_addressID, "adresses", "width=500, height=300, left=300, top=200");
+                    }
                 }
             </script>
             <script>

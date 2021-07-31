@@ -1,7 +1,10 @@
 <!DOCTYPE HTML PUBLIC ‘-//W3C//DTD HT\lL 4.0 Transitional//EN’>
 <cfparam name="url.strTransaction" default="">
 <cfparam name="form.strTransaction" default="#url.strTransaction#">
-<cfparam name="form.ID" default="">
+<cfparam name="url.strTransaction" default="">
+<cfparam name="form.strTransaction" default="#url.strTransaction#">
+<cfparam name="url.addressID" default="">
+<cfparam name="form.addressID" default="#url.addressID#">
 <cfparam name="form.strNameFirst" default="">
 <cfparam name="form.strNameMiddle" default="">
 <cfparam name="form.strNameLast" default="">
@@ -21,7 +24,15 @@
 
 <cfset aryErrorMessage = ArrayNew(1)>
 
-<cfif len(form.submitButton) OR url.strTransaction EQ "getNameXX">
+<cfif NOT len(form.strTransaction)>
+    <cfif len(form.addressID)>
+        <cfset form.strTransaction = "update">
+    <cfelse>
+        <cfset form.strTransaction = "add">
+    </cfif>
+</cfif>
+
+<cfif len(form.submitButton)>
     <cfinclude template = "act_address.cfm">
 </cfif>
 <cfprocessingdirective suppressWhiteSpace = "yes">
@@ -31,8 +42,24 @@
         <link rel="stylesheet" href="#application.applicationBaseURLPath#/css/stylesheet.css">
         </cfoutput>
         <cfscript>
-            objCandidates = createObject('component', 'interview-cfc.candidates');
-            stcStates = objCandidates.getstates();
+            objAddress = createObject('component', 'interview-cfc.address');
+            stcStates = objAddress.getstates();
+            if ( (!form.blnHasError) && (form.strTransaction != "add")) {
+                qryAddress = objAddress.getAddress(form.addressID );
+                form.addressID  = qryAddress.addressID;
+                form.strNameFirst = qryaddress.strNameFirst;
+                form.strNameMiddle = qryaddress.strNameMiddle;
+                form.strNameLast = qryaddress.strNameLast;
+                form.strName = qryaddress.strName;
+                form.strAddressLine1 = qryaddress.strAddressLine1;
+                form.strAddressLine2 = qryaddress.strAddressLine2;
+                form.strCity = qryaddress.strCity;
+                form.strState = qryaddress.strState;
+                form.strZip = qryaddress.strZip;
+                form.strEmail = qryaddress.strEmail;
+                form.intPhone = qryaddress.intPhone;
+                form.intMobile = qryaddress.intMobile;
+            }
             function CFfncFormatPhone(n_intPhone)   {
                 var m_intPhone = trim(n_intPhone);
                 var r_intPhone = n_intPhone;
@@ -118,10 +145,10 @@
                                             size="13" maxLength="45" value="#form.strCity#">
                                     <cfset m_intStrctSize = stcStates.size()>
                                     <cfset  i = 1>
-                                    <input list="datalistStates" id="inputStates" name="inputStates" 
+                                    <input list="datalistStates" id="strState" name="strState" 
                                         value="#form.strState#"
                                         size="2" 
-                                        style="text-transform:uppercase;"
+                                        style="text-transform: uppercase;"
                                         onFocus="this.select()"
                                         onChange="fncValidateState(this, 'datalistStates');">
                                     <datalist id="datalistStates">
@@ -152,13 +179,16 @@
                                         eMail: </span>
                                     <input type="text" id="strEmail" name="strEmail" 
                                                         size="34" maxLength="255"
+                                                        style="text-transform: none;"
                                                         value="#form.strEmail#"
                                                         title="#form.strEmail#"
                                                         onchange="fncValidateEmail(this)"></br>
                                                         
                                     <span>
-                                        <input type="submit" name="submitButton" id="submitButton"
-                                            value="update" disabled>
+                                        <input type="hidden" name="strTransaction" id="strTransaction" value="#form.strTransaction#">
+                                        <input type="hidden" name="addressID" id="addressID" value="#form.addressID#">
+                                        <input type="submit" name="submitButton" id="submitButton" value="update" disabled>
+                                        <input type="button" name="closeButton" id="closeButton" value="close" onClick="window.close();">
                                     </span>
                                 </div>
                             </cfoutput>
@@ -169,6 +199,11 @@
         </div>
         
         <cfoutput>
+        <script>
+        if (opener) {
+            opener.document.getElementById("candidatesNameTextSpan").innerHTML = "#strName#";
+        }
+        </script>
             <script src="#application.applicationBaseURLPath#/js/beforeunload.js" defer></script>
             <script src="#application.applicationBaseURLPath#/js/validation.js" defer></script>
         </cfoutput>

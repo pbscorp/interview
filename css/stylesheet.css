@@ -38,6 +38,9 @@ h2 {
 #addressTableDiv span label {
   font-weight: bold;
 }
+#addressTableDiv input {
+  text-transform: capitalize;
+}
 #addressTableDiv span {
   width: 115px;
   text-align: right;
@@ -52,21 +55,36 @@ h2 {
 }
 #successMsgDiv {
   text-align: center;
-  border-style: dotted;
+  border-style: none;
   border-width: 2px;
   border-color: green;
   color: green;
-  font-weight: bold;
+  font-weight: inherit;
   max-width: 200px;
-  background-color: #cefcf2;
+  background-color: inherit;
   margin: auto;
   padding: 5px;
 }
 span.interviewSpan {
   width: 300px;
 }
-label {
+.interviewInputlabel {
   display: inline-block;
   font-weight: bold;
   width: 100px;
+}
+
+.button {
+  background-color: #5deccd;
+  border: none;
+  color: rgb(255, 255, 255);
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  margin: 2px 2px;
+  cursor: pointer;
+}
+.button:hover {
+  background-color: #cefcf2;
+  color: rgb(73, 121, 153);
 }

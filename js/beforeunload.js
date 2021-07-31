@@ -1,5 +1,8 @@
 function fncEnableSubmit() {
     document.getElementById("submitButton").disabled = false;
+    if (document.getElementById("successMsgDiv")) {
+        document.getElementById("successMsgDiv").innerText = "";
+    }
     g_blnFormHasUnsubmittedData = true;
 }
 function fncRemoveBeforeUnloadEvent(n_strDiv) {
