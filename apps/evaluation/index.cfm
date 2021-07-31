@@ -242,7 +242,8 @@
             <script>
                 function fncGetAddress (n_eleEmail) {
                     if (fncValidateEmail(n_eleEmail)) {
-                        fncGetTableValues ('address', 'strEmail', n_eleEmail.value, 'strName', 'candidatesNameTextSpan', 'innerHTML');
+                        let m_strEmailAddress = encodeURIComponent(n_eleEmail.value);
+                        fncGetTableValues ('address', 'strEmail', m_strEmailAddress, 'strName|strAddressID');
                     }
                     return false;
                 }
@@ -250,32 +251,28 @@
             <script>
                 let xhttp = new XMLHttpRequest();
                 let parser = new DOMParser();
-                function fncGetTableValues (n_strDBTable, n_strKeyColumnName, n_strKeyColumnValue, n_lstColumns, n_lstRtnElementID, n_lstRtnElementChildName) {
-                    let m_strResponse = "no response";
-                    let m_strTable = n_strDBTable;
-                    let m_strKeyColumnName = n_strKeyColumnName;
-                    let m_strKeyColumnValue = encodeURIComponent(n_strKeyColumnValue);
+                let g_jsonXHTTPRtnColumns;
+                function fncGetTableValues (n_strDBTable, n_strKeyColumnName, n_strKeyColumnValue, n_lstColumns) {
                     let m_lstColumns = encodeURIComponent(n_lstColumns);
-                    let m_lstRtnElementID = n_lstRtnElementID;
-                    let m_lstrRtnElementChildName = "innerHTML";
-                    if (n_lstRtnElementChildName) {
-                        m_lstrRtnElementChildName = n_lstRtnElementChildName;
-                    }
                     let m_aryColumns = n_lstColumns.split('|');
-                    let m_aryRtnElementID = n_lstRtnElementID.split('|');
-                    let m_aryRtnElementChildName = m_lstrRtnElementChildName.split('|');
-                    let i = 0;
                     xhttp.onreadystatechange = function() {
                         if (this.readyState == 4 && this.status == 200) {
                             m_strResponse = this.responseText;
-                            for (i = 0; i < m_aryRtnElementID.length; i++) {
-                                let m_xmlDoc = parser.parseFromString(m_strResponse,"text/xml");
-                                let m_strReturnValue = m_xmlDoc.getElementsByTagName(m_aryColumns[i])[0].childNodes[0].nodeValue;
-                                document.getElementById(m_aryRtnElementID[i])[m_aryRtnElementChildName[i]] = m_strReturnValue;
+                            let m_xmlDoc = parser.parseFromString(m_strResponse,"text/xml");
+                            g_jsonXHTTPRtnColumns = "'{"
+                            for (let i = 0; i < m_aryColumns.length; i++) {
+                                g_jsonXHTTPRtnColumns += '"' + m_aryColumns[i] + '":"';
+                                g_jsonXHTTPRtnColumns += m_xmlDoc.getElementsByTagName(m_aryColumns[i])[0].childNodes[0].nodeValue;
+                                g_jsonXHTTPRtnColumns += '"';
+                                if (i < m_aryColumns.length - 1) {
+                                    g_jsonXHTTPRtnColumns += ',';
+                                }
                             }
+                            g_jsonXHTTPRtnColumns += '}';
+                            alert(g_jsonXHTTPRtnColumns);
                         }
                     };
-                    let m_strURL = "#application.applicationBaseURLPath#/resources/get_address.cfm?strTable=" + n_strDBTable + m_strKeyColumnName + "=" + m_strKeyColumnValue + "&lstColumns=" + m_lstColumns;
+                    let m_strURL = "#application.applicationBaseURLPath#/resources/get_address.cfm?strTable=" + n_strDBTable + '&' + encodeURIComponent(n_strKeyColumnName) + "=" + n_strKeyColumnValue + "&lstColumns=" + encodeURIComponent(m_lstColumns);
                     xhttp.open("GET", m_strURL, true);
                     xhttp.send();
                 }
@@ -287,7 +284,7 @@
                     let m_interviewsID = document.getElementById("interviewsID").value;
                     let m_blnInterviewsID = !isNaN(m_interviewsID);
                     if (m_addressID.length) {
-                        winAddressWindow=window.open("#application.applicationBaseURLPath#/apps/address/?addressID=" + n_addressID, "adresses", "width=500, height=300, left=300, top=200");
+                        winAddressWindow=window.open("#application.applicationBaseURLPath#/apps/address/?addressID=" + m_addressID, "adresses", "width=500, height=300, left=300, top=200");
                     }
                 }
             </script>

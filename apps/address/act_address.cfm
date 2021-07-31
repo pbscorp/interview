@@ -27,13 +27,13 @@
             <cfqueryparam cfsqltype="cf_sql_integer" value="#reReplace(form.intMobile, "[^0-9]", "", "all")#">
         )
      </cfquery>
-        <cfquery name="qryNewAddress">
-            SELECT address.ID as addressID
-                FROM candidates.address
-                WHERE address.strEmail = "#form.strEmail#" ORDER BY address.dtmAdded DESC; 
-        </cfquery>
-        <cfset form.strTransaction = "update">
-        <cfset form.addressID = qryNewAddress.addressID>
+    <cfquery name="qryNewAddress">
+        SELECT address.ID as addressID
+            FROM candidates.address
+            WHERE address.strEmail = "#form.strEmail#" ORDER BY address.dtmAdded DESC; 
+    </cfquery>
+    <cfset form.strTransaction = "update">
+    <cfset form.addressID = qryNewAddress.addressID>
 <cfelseif form.strTransaction EQ "update">
     <cfquery name="qryUpdateAddress">
         UPDATE candidates.address
