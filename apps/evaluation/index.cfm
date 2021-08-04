@@ -241,40 +241,47 @@
             <script src="#application.applicationBaseURLPath#/js/validation.js" defer></script>
             <script>
                 function fncGetAddress (n_eleEmail) {
+                    var w_aryColNames;
                     if (fncValidateEmail(n_eleEmail)) {
                         let m_strEmailAddress = encodeURIComponent(n_eleEmail.value);
-                        fncGetTableValues ('address', 'strEmail', m_strEmailAddress, 'strName|strAddressID');
+                        fncGetTableValues ( 
+                            n_strDBTable = 'address', 
+                            n_strKeyColumnName ='strEmail',
+                            n_strKeyColumnValue = m_strEmailAddress,
+                            n_lstColumns = 'ID|strNameFirst|strNameMiddle|strNameLast',
+                            n_strOrderByClause = '',
+                            n_fncCallback = "fncAddressCallBack",
+                            n_jsonXHTTPRtnColumns=  "w_aryColNames");
                     }
                     return false;
                 }
             </script>
             <script>
-                let xhttp = new XMLHttpRequest();
-                let parser = new DOMParser();
-                let g_jsonXHTTPRtnColumns;
-                function fncGetTableValues (n_strDBTable, n_strKeyColumnName, n_strKeyColumnValue, n_lstColumns) {
-                    let m_lstColumns = encodeURIComponent(n_lstColumns);
-                    let m_aryColumns = n_lstColumns.split('|');
-                    xhttp.onreadystatechange = function() {
+                function fncAddressCallBack() {
+                    let i = 0;
+                    alert(w_aryColNames[0].strNameLast);
+                    alert(w_aryColNames[0].ID);
+                }
+            </script>
+            <script>
+                function fncGetTableValues (n_strDBTable, n_strKeyColumnName, n_strKeyColumnValue, n_lstColumns, n_strOrderByClause, n_fncCallback, n_jsonXHTTPRtnColumns) {
+                    let m_xhttp = new XMLHttpRequest();
+                    let m_parser = new DOMParser();
+                    let m_jsonXHTTPRtnColumns = "";
+                    m_xhttp.onreadystatechange = function() {
                         if (this.readyState == 4 && this.status == 200) {
-                            m_strResponse = this.responseText;
-                            let m_xmlDoc = parser.parseFromString(m_strResponse,"text/xml");
-                            g_jsonXHTTPRtnColumns = "'{"
-                            for (let i = 0; i < m_aryColumns.length; i++) {
-                                g_jsonXHTTPRtnColumns += '"' + m_aryColumns[i] + '":"';
-                                g_jsonXHTTPRtnColumns += m_xmlDoc.getElementsByTagName(m_aryColumns[i])[0].childNodes[0].nodeValue;
-                                g_jsonXHTTPRtnColumns += '"';
-                                if (i < m_aryColumns.length - 1) {
-                                    g_jsonXHTTPRtnColumns += ',';
-                                }
-                            }
-                            g_jsonXHTTPRtnColumns += '}';
-                            alert(g_jsonXHTTPRtnColumns);
+                            alert(this.responseText);
+                            window[n_jsonXHTTPRtnColumns] = JSON.parse(this.responseText);
+                            window[n_fncCallback]();
                         }
                     };
-                    let m_strURL = "#application.applicationBaseURLPath#/resources/get_address.cfm?strTable=" + n_strDBTable + '&' + encodeURIComponent(n_strKeyColumnName) + "=" + n_strKeyColumnValue + "&lstColumns=" + encodeURIComponent(m_lstColumns);
-                    xhttp.open("GET", m_strURL, true);
-                    xhttp.send();
+                    let m_strURL = "#application.applicationBaseURLPath#/resources/get_table.cfm?strTable=" + n_strDBTable;
+                    m_strURL += "&strKeyColumnName=" + encodeURIComponent(n_strKeyColumnName);
+                    m_strURL += "&strKeyColumnValue=" + encodeURIComponent(n_strKeyColumnValue);
+                    m_strURL += "&lstColumns=" + encodeURIComponent(n_lstColumns);
+                    m_strURL += "&strOrderByClause=" + encodeURIComponent(n_strOrderByClause);
+                    m_xhttp.open("GET", m_strURL, true);
+                    m_xhttp.send();
                 }
             </script>
 

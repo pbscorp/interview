@@ -1,8 +1,6 @@
 <!DOCTYPE HTML PUBLIC ‘-//W3C//DTD HT\lL 4.0 Transitional//EN’>
 <cfparam name="url.strTransaction" default="">
 <cfparam name="form.strTransaction" default="#url.strTransaction#">
-<cfparam name="url.strTransaction" default="">
-<cfparam name="form.strTransaction" default="#url.strTransaction#">
 <cfparam name="url.addressID" default="">
 <cfparam name="form.addressID" default="#url.addressID#">
 <cfparam name="form.strNameFirst" default="">
