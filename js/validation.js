@@ -1,4 +1,11 @@
-
+window.addEventListener('load', fncClearMessage);
+    function fncClearMessage () {
+        setTimeout(function(){  
+            if (document.getElementById("successMsgDiv")) {
+                document.getElementById("successMsgDiv").innerHTML = "";
+            };
+        }, 5000);
+    }
 
 function fncFormatError(n_element, n_strError, n_blnNoFucus) {
     let m_blnNoFucus = false;

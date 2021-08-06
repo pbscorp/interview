@@ -30,7 +30,7 @@
     </cfif>
 </cfif>
 
-<cfif len(form.submitButton)>
+<cfif len(form.submitButton) OR len(form.deleteButton)>
     <cfinclude template = "act_address.cfm">
 </cfif>
 <cfprocessingdirective suppressWhiteSpace = "yes">
@@ -42,7 +42,7 @@
         <cfscript>
             objAddress = createObject('component', 'interview-cfc.address');
             stcStates = objAddress.getstates();
-            if ( (!form.blnHasError) && (form.strTransaction != "add")) {
+            if ( (!form.blnHasError) && (lCase(form.strTransaction) != "add")) {
                 qryAddress = objAddress.getAddress(form.addressID );
                 form.addressID  = qryAddress.addressID;
                 form.strNameFirst = qryaddress.strNameFirst;
@@ -199,7 +199,8 @@
         <cfoutput>
         <script>
         if (opener) {
-            opener.document.getElementById("candidatesNameTextSpan").innerHTML = "#strName#";
+            opener.document.getElementById("candidatesNameTextSpan").innerHTML = "#form.strName#";
+            opener.document.getElementById("addressID").value = "#form.addressID#";
         }
         </script>
             <script src="#application.applicationBaseURLPath#/js/beforeunload.js" defer></script>

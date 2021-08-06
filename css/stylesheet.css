@@ -54,16 +54,16 @@ h2 {
   padding: 5px;
 }
 #successMsgDiv {
-  text-align: center;
+  text-align: left;
   border-style: none;
-  border-width: 2px;
+  border-width: 1px;
   border-color: green;
   color: green;
-  font-weight: inherit;
+  font-weight: bold;
   max-width: 200px;
   background-color: inherit;
-  margin: auto;
-  padding: 5px;
+  margin: none;
+  padding: none;
 }
 span.interviewSpan {
   width: 300px;

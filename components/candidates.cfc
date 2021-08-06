@@ -1,5 +1,6 @@
 <c<cfcomponent name="candidates">
     <cffunction name="getQuestions" output="false" returntype="query">
+        <cfargument name="n_ID" type="string" required="no" default="1">
         <cfquery name="qryQuestions">
             SELECT questions.ID,
                 questions.intSequence,
@@ -7,6 +8,7 @@
                 questions.intWeight,
                 questions.blnRequired
             FROM candidates.questions
+                WHERE questions.evaluation_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.n_ID#">
             ORDER BY  questions.intSequence ASC;
         </cfquery>
         <cfreturn qryQuestions>
@@ -14,11 +16,13 @@
 
     <cffunction name="getInterview" output="false" returntype="query">
         <cfargument name="n_ID" type="string" required="yes" default="0">
+        <cfargument name="n_evaluation_ID" type="string" required="no" default="1">
         <cfquery name="qryInterview">
             SELECT interviews.ID as interviewsID,
                 interviews.strInterviewer,
                 interviews.dtmInterviewDate,
                 interviews.strPosition,
+                interviews.evaluation_ID,
                 address.ID as addressID,
                 CONCAT(address.strNameFirst, ' ', address.strNameMiddle, ' ', address.strNameLast) as strName,
                 address.strAddressLine1,
@@ -31,6 +35,7 @@
                 address.intMobile
             FROM candidates.interviews,  candidates.address
                 WHERE interviews.address_ID = address.ID
+                    AND interviews.evaluation_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.n_evaluation_ID#">
                 <cfif lCase(arguments.n_ID) NEQ 'all'> 
                     AND interviews.ID= <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.n_ID#">
                 </cfif>
@@ -87,7 +92,6 @@
                 FROM candidates.quiz,  candidates.questions
 
                 WHERE quiz.questions_ID =  questions.ID
-                    AND quiz.evaluation_ID =  questions.evaluation_ID
                     AND quiz.evaluation_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.n_evaluation_ID#">
                     AND quiz.interviews_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.n_interviews_ID#">
                 ORDER BY questions.intSequence ASC;

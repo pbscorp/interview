@@ -10,23 +10,24 @@
 <cfparam name="url.interviewsID" default="">
 <cfparam name="form.interviewsID" default="#url.interviewsID#">
 <cfparam name="form.submitButton" default="">
+<cfparam name="form.deleteButton" default="">
 <cfparam name="form.blnHasError" default="0">
-<cfparam name="form.strErorMessage" default="">
+<cfparam name="strErrorMessage" default="">
 <cfparam name="strSuccessMessage" default="">
 
 <cfset aryErrorMessage = ArrayNew(1)>
-<cfif len(form.submitButton)>
+<cfif len(form.submitButton) OR len(form.deleteButton)>
     <cfinclude template = "act_candidates.cfm">
 </cfif>
 <!DOCTYPE HTML PUBLIC ‘-//W3C//DTD HT\lL 4.0 Transitional//EN’>
 <cfprocessingdirective suppressWhiteSpace = "yes">
 <cfscript>
     objInterviews = createObject('component', 'interview-cfc.candidates');
-    getQuestions = objInterviews.getQuestions();
-    qryEvaluation = objInterviews.getEvaluation("#form.evaluationID#");
-    qryAllInterviews = objInterviews.getInterview('all');
-    if ( (!form.blnHasError) && (form.submitButton != "update") && (form.strTransaction != "add")) {
-        qryInterview = objInterviews.getInterview(form.interviewsID );
+    getQuestions = objInterviews.getQuestions(form.evaluationID);
+    qryEvaluation = objInterviews.getEvaluation(form.evaluationID);
+    qryAllInterviews = objInterviews.getInterview('all', form.evaluationID);
+    if ( (!len(strErrorMessage)) && (lCase(form.strTransaction) != "add")) {
+        qryInterview = objInterviews.getInterview(form.interviewsID, form.evaluationID);
         form.strName = qryInterview.strName;
         form.addressID  = qryInterview.addressID;
         form.interviewsID  = qryInterview.interviewsID ;
@@ -34,7 +35,6 @@
         form.strInterviewer = qryInterview.strInterviewer;
         form.strPosition = qryInterview.strPosition;
     }
-    strSuccessMessage = "";
 </cfscript>
 
 <HTML>
@@ -50,16 +50,12 @@
                 <form name="mainForm" id="mainForm" method="post" action="#cgi.script_name#" onSubmit="fncRemoveBeforeUnloadEvent()"
                     onsubmit="return fncValidateForm()" target="_self">
                     <div id="errorMsgDiv">
-                        <cfif arrayLen(aryErrorMessage)>
-                            <ul>
-                            <cfloop from = "1" to = "#arrayLen(aryErrorMessage)#" index = "i">
-                                <li>#aryErrorMessage[#i#]#</li>
-                            </cfloop>
-                            </ul>
+                        <cfif len(strErrorMessage)>
+                            <ul><li>#strErrorMessage#</li></ul>
                         </cfif> 
                     </div>
                     <cfif len(strSuccessMessage)>
-                        <div id="successMsgDiv">#strSuccessMessage#</div>
+                        <div id="successMsgDiv"><ul><li>#strSuccessMessage#</li></ul></div>
                     </cfif> 
                     <div>
                         <fieldset>
@@ -103,13 +99,21 @@
                                     onBlur="fncValidateDate(this);"/>
                             </span>
                             <br/>
-                            <label class="interviewInputlabel">  </label>
+                            <label class="interviewInputlabel"></label>
                             <span id="candidatesNameSpan" 
-                                     style="font-size: smaller;vertical-ali"gn: top;font-style: italic;font-style: italic;" >
+                                     style="font-size: smaller;
+                                     vertical-align: top;
+                                     <cfif len(form.interviewsID) GT 0>
+                                         visibility: visible;
+                                     <cfelse> 
+                                         visibility: hidden;
+                                     </cfif> 
+                                     font-style: italic;">
+
                                 <span  style.display="inline" id="candidatesNameTextSpan">
                                 #form.strName#
                                 </span>
-                                <span class="button" onClick="fncEditAddress();">Edit Address</span>
+                                <span class="button" id = "addressButton" onClick="fncEditAddress();">Edit Address</span>
                             </span>
                             <br/>
 
@@ -231,7 +235,10 @@
                     <input type="hidden" name="strTransaction" id="strTransaction" value="#form.strTransaction#">
                     <input type="hidden" name="evaluationID" id="evaluationID" value="#form.evaluationID#">
                     <input type="hidden" name="addressID" id="addressID" value="#form.addressID#">
-                    <input type="submit" name="submitButton" id="submitButton" value="Post" disabled>
+                    <input type="submit" name="submitButton" id="submitButton" value="update" disabled>
+                    <cfif len(form.interviewsID) GT 0>
+                        <input type="submit" name="deleteButton" onClick="return fncConfirmDelete();"id="deleteButton" value="Delete">
+                    </cfif>
                 </form>
             </cfoutput>
         </div>
@@ -239,10 +246,16 @@
         <cfoutput>
             <script src="#application.applicationBaseURLPath#/js/beforeunload.js" defer></script>
             <script src="#application.applicationBaseURLPath#/js/validation.js" defer></script>
+            <script src="#application.applicationBaseURLPath#/js/ajax.js" defer></script>
             <script>
+                function fncConfirmDelete () {
+                    return confirm("Delete interview record for #form.strName# \n interviewed on #dateFormat(qryAllInterviews.dtmInterviewDate, 'mm-dd-yyyy')# by #form.strInterviewer# for #form.strPosition# OK");
+                };
                 function fncGetAddress (n_eleEmail) {
-                    var w_aryColNames;
                     if (fncValidateEmail(n_eleEmail)) {
+                        document.getElementById("candidatesNameSpan").style.visibility = "visible";
+                        document.getElementById("candidatesNameTextSpan").innerHTML = "";
+                        document.getElementById("addressID").value = "";
                         let m_strEmailAddress = encodeURIComponent(n_eleEmail.value);
                         fncGetTableValues ( 
                             n_strDBTable = 'address', 
@@ -250,49 +263,45 @@
                             n_strKeyColumnValue = m_strEmailAddress,
                             n_lstColumns = 'ID|strNameFirst|strNameMiddle|strNameLast',
                             n_strOrderByClause = '',
-                            n_fncCallback = "fncAddressCallBack",
-                            n_jsonXHTTPRtnColumns=  "w_aryColNames");
+                            n_fncCallback = "fncAddressCallBack");
                     }
                     return false;
                 }
             </script>
             <script>
-                function fncAddressCallBack() {
+                function fncAddressCallBack(n_responseText) {
                     let i = 0;
-                    alert(w_aryColNames[0].strNameLast);
-                    alert(w_aryColNames[0].ID);
-                }
-            </script>
-            <script>
-                function fncGetTableValues (n_strDBTable, n_strKeyColumnName, n_strKeyColumnValue, n_lstColumns, n_strOrderByClause, n_fncCallback, n_jsonXHTTPRtnColumns) {
-                    let m_xhttp = new XMLHttpRequest();
-                    let m_parser = new DOMParser();
-                    let m_jsonXHTTPRtnColumns = "";
-                    m_xhttp.onreadystatechange = function() {
-                        if (this.readyState == 4 && this.status == 200) {
-                            alert(this.responseText);
-                            window[n_jsonXHTTPRtnColumns] = JSON.parse(this.responseText);
-                            window[n_fncCallback]();
-                        }
+                    let m_aryColNames;
+                    let m_strName;
+                    document.getElementById("candidatesNameSpan").style.visibility = "visible";
+                    if (n_responseText.trim().substring(0, 1) != "[") {
+                        alert(n_responseText.trim());
+                        return;
                     };
-                    let m_strURL = "#application.applicationBaseURLPath#/resources/get_table.cfm?strTable=" + n_strDBTable;
-                    m_strURL += "&strKeyColumnName=" + encodeURIComponent(n_strKeyColumnName);
-                    m_strURL += "&strKeyColumnValue=" + encodeURIComponent(n_strKeyColumnValue);
-                    m_strURL += "&lstColumns=" + encodeURIComponent(n_lstColumns);
-                    m_strURL += "&strOrderByClause=" + encodeURIComponent(n_strOrderByClause);
-                    m_xhttp.open("GET", m_strURL, true);
-                    m_xhttp.send();
+                    m_aryColNames = JSON.parse(n_responseText);
+                    m_strName = m_aryColNames[0].strNameFirst + ' ';
+                    m_strName += m_aryColNames[0].strNameMiddle + ' ';
+                    m_strName += m_aryColNames[0].strNameLast + ' ';
+                    document.getElementById("candidatesNameTextSpan").innerHTML = m_strName;
+                    document.getElementById("addressID").value = m_aryColNames[0].ID;
                 }
             </script>
-
             <script>
                 function fncEditAddress() {
                     let m_addressID = document.getElementById("addressID").value;
                     let m_interviewsID = document.getElementById("interviewsID").value;
                     let m_blnInterviewsID = !isNaN(m_interviewsID);
+                    let m_strURL = "#application.applicationBaseURLPath#/apps/address/?";
                     if (m_addressID.length) {
-                        winAddressWindow=window.open("#application.applicationBaseURLPath#/apps/address/?addressID=" + m_addressID, "adresses", "width=500, height=300, left=300, top=200");
+                        m_strURL += "addressID=" + m_addressID;
+                    } else {
+                        m_strURL += "&strTransaction=Add";
+                        if (document.getElementById("strEmail") && document.getElementById("strEmail").value.length) {
+                            let m_strEmail = document.getElementById("strEmail").value;
+                            m_strURL += "&strEmail=" + m_strEmail;
+                        }
                     }
+                    winAddressWindow=window.open(m_strURL, "adresses", "width=500, height=300, left=300, top=200");
                 }
             </script>
             <script>
