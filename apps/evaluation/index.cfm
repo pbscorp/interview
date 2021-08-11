@@ -35,6 +35,11 @@
         form.strInterviewer = qryInterview.strInterviewer;
         form.strPosition = qryInterview.strPosition;
     }
+    if (!len(form.interviewsID )) {
+        qryQuiz = objInterviews.getQuiz('new', form.evaluationID)
+    } else {
+        qryQuiz = objInterviews.getQuiz(form.interviewsID, form.evaluationID );
+    }
 </cfscript>
 
 <HTML>
@@ -47,8 +52,8 @@
         <h2>Interview Review</h2>
         <div>
             <cfoutput>
-                <form name="mainForm" id="mainForm" method="post" action="#cgi.script_name#" onSubmit="fncRemoveBeforeUnloadEvent()"
-                    onsubmit="return fncValidateForm()" target="_self">
+                <form name="mainForm" id="mainForm" method="post" action="#cgi.script_name#"
+                                        onsubmit="return fncValidateForm()" target="_self">
                     <div id="errorMsgDiv">
                         <cfif len(strErrorMessage)>
                             <ul><li>#strErrorMessage#</li></ul>
@@ -57,193 +62,30 @@
                     <cfif len(strSuccessMessage)>
                         <div id="successMsgDiv"><ul><li>#strSuccessMessage#</li></ul></div>
                     </cfif> 
-                    <div>
-                        <fieldset>
-                            <Legend>Interview</legend>
-                            <span class="interviewSpan">
-                                <cfif lCase(strTransaction) EQ "add">
-                                    <label class="interviewInputlabel">Email:</label>
-                                    <input type="text" name="strEmail" id="strEmail"
-                                            placeholder="example@mail.com"
-                                            onChange="fncGetAddress(this);"
-                                            value="#form.strEmail#">
-                                    <input type="hidden" name="interviewsID" id="interviewsID" value="#form.interviewsID#">
-                                <cfelse>
-                                    <label class="interviewInputlabel">Interview:</label>
-                                    <select size="1" name="interviewsID" id="interviewsID"
-                                        onChange="fncChangeInterviews(this.options[this.selectedIndex]);">
-                                        <option>Select an Interview</option>
-                                    <cfoutput query = "qryAllInterviews">
-                                        <option value="#qryAllInterviews.interviewsID #"
-                                            title="#qryAllInterviews.strName# (#qryAllInterviews.strEmail#)
-                                                interviewed on #dateFormat(qryAllInterviews.dtmInterviewDate, 'mm/dd/yyyy')#
-                                                by #qryAllInterviews.strInterviewer#
-                                                for #qryAllInterviews.strPosition#"
-                                            <cfif qryAllInterviews.interviewsID  EQ form.interviewsID >
-                                                selected
-                                            </cfif>
-                                            >
-                                            #qryAllInterviews.strEmail#
-                                        </option>
-                                    </cfoutput>
-                                        <option value="add">New Interview</option>
-                                    </select>
-                                </cfif> 
-                            </span>
-
-                            <span class="interviewSpan">
-                                <label class="interviewInputlabel">Date:</label>
-                                <input type="date" name="dtmInterviewDate" id="dtmInterviewDate"
-                                    min="#dateFormat(#dateAdd('yyyy', -2, #now()#)#, "yyyy-mm-dd")#" max="#dateFormat(#now()#, "yyyy-mm-dd")#" 
-                                    value="#dateFormat(form.dtmInterviewDate, 'yyyy-mm-dd')#"
-                                    onBlur="fncValidateDate(this);"/>
-                            </span>
-                            <br/>
-                            <label class="interviewInputlabel"></label>
-                            <span id="candidatesNameSpan" 
-                                     style="font-size: smaller;
-                                     vertical-align: top;
-                                     <cfif len(form.interviewsID) GT 0>
-                                         visibility: visible;
-                                     <cfelse> 
-                                         visibility: hidden;
-                                     </cfif> 
-                                     font-style: italic;">
-
-                                <span  style.display="inline" id="candidatesNameTextSpan">
-                                #form.strName#
-                                </span>
-                                <span class="button" id = "addressButton" onClick="fncEditAddress();">Edit Address</span>
-                            </span>
-                            <br/>
-
-                            <span class="interviewSpan">
-                                <label class="interviewInputlabel">Interviewer:</label>
-                                <input type="text" name="strInterviewer" id="strInterviewer"  placeholder="Name"  value="#form.strInterviewer#"/>
-                            </span>
-
-                            
-                            <span class="interviewSpan">
-                                <label class="interviewInputlabel">Position:</label>
-                                <input type="text" name="strPosition" id="strPosition" placeholder="Position"   value="#form.strPosition#"/>
-                            </span>
-                            <br/>
-                            <br/>
-
-                        </fieldset>
-                        <br/>
-                        <fieldset>
-                            <Legend>Candidate Evaluation</legend>
-                            <p >#qryEvaluation.strEvaluationText#</p>
-                        </fieldset>
-                    </div>
-
-                    <cfset lstGradesWt = qryEvaluation.lstWeight>
-                    <cfset lstWtLiterals = qryEvaluation.lstWtLiterals>
-                    <cfset intListLenWeights = listLen(lstGradesWt)>
-                    <cfif intListLenWeights GT listLen(lstGradesWt)>
-                        <cfdump var="Error in elaluation table Grades Weight #lstGradesWt# #lstGradesWt#">
-                        <cfabort>
-                    </cfif> 
-
-                    <div id="quizSectionID">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Please Rate The Following Categories</th>
-                                    <cfloop index="i" from="1" to="#intListLenWeights#">
-                                        <cfset intWtHdr = listGetAt(lstGradesWt, i)>
-                                        <cfset strWtHdr = listGetAt(lstWtLiterals, i)>
-                                        <th>
-                                            <span<cfif intWtHdr LT 0 > class="red"</cfif>>#intWtHdr#</br></span>
-                                            <span class="grades">#strWtHdr#</span>
-                                        </th>
-                                    </cfloop>
-                                    <th class="grades" title="not observed">N/A</td>
-                                    <th class="grades">Score</td>
-                                    <th class="grades">Weight</th>
-                                    <th class="grades">Tot wt</th>
-                                    <th class="grades">Avg</th>
-                                </tr>
-                            </thead>
-                            <cfif NOT len(form.interviewsID )>
-                                <cfset qryQuiz = objInterviews.getQuiz('new')>
-                            <cfelse>
-                                <cfset qryQuiz = objInterviews.getQuiz(form.interviewsID )>
-                            </cfif>
-                            <tbody>
-                                <cfoutput query="qryQuiz">
-                                    <tr>
-                                        <td class="left"><span class="bold">#qryQuiz.currentrow#. #qryQuiz.strCategory#</span>#qryQuiz.strQuestion#</td>
-                                        <cfset intLineResponse = 0>
-                                        <cfloop index="i" from="1" to="#intListLenWeights#">
-                                            <td>
-                                                <input type="radio" 
-                                                name="#qryQuiz.currentrow#rdoResponse"
-                                                title="#listGetAt(lstWtLiterals, i)#"
-                                                value="#i#"
-                                                <cfif qryQuiz.intResponse_value EQ i>
-                                                    checked
-                                                    <cfset intLineResponse = listGetAt(lstGradesWt, i)>
-                                                </cfif>
-                                                >
-                                            </td>
-                                        </cfloop>
-                                        <td>
-                                            <input type="radio" 
-                                                name="#qryQuiz.currentrow#rdoResponse" 
-                                                value="0"
-                                                <cfif #qryQuiz.blnRequired#>
-                                                    disabled
-                                                <cfelseif intLineResponse EQ 0>
-                                                    checked
-                                                </cfif>
-                                            >
-                                        </td>
-                                        <td>
-                                            <span id="#qryQuiz.currentrow#score" value="#intLineResponse#">#intLineResponse#</span>
-                                            <input type="hidden" name="#qryQuiz.currentrow#questionsID" id="#qryQuiz.currentrow#questionsID" value="#qryQuiz.questionsID#">
-                                        </td>
-                                        <td>
-                                            <span id="#qryQuiz.currentrow#weight" value="#intWeight#">#intWeight#</span>
-                                        </td>
-                                        <td>
-                                            <span id="#qryQuiz.currentrow#totWt"value="#intLineResponse#*#intWeight#">#round(#intLineResponse#*#intWeight#)#</span>
-                                        </td>
-                                        <td>
-                                            <span id="#qryQuiz.currentrow#avg"></span>
-                                        </td>
-                                    </tr>
-                                    
-                                    <tr>
-                                        <td class="left" colspan="100">
-                                         Comments:
-                                         </br>
-                                        <textarea 
-                                                title="#qryQuiz.strComment#"
-                                                name="#qryQuiz.currentrow#strComment" id="#qryQuiz.currentrow#strComment"
-                                                rows="2" cols="100"> 
-                                            #qryQuiz.strComment#
-                                        </textarea>
-                                        <td>
-                                    </tr>
-                                </cfoutput>
-                            </tbody>
-                        </table>
-                    </div>
+                </cfoutput>
+                <cfinclude template="incl_interview_header.cfm">
+                <cfinclude template="incl_interview_quiz.cfm">
+                <cfoutput>
                     <input type="hidden" name="recordcount" id="recordcount" value="#qryQuiz.recordcount#">
+                    <input type="hidden" name="lstWtLiterals" id="lstWtLiterals" value="#lstWtLiterals#">
+                    <input type="hidden" name="lstGradesWt" id="lstGradesWt" value="#lstGradesWt#">
                     <input type="hidden" name="strTransaction" id="strTransaction" value="#form.strTransaction#">
                     <input type="hidden" name="evaluationID" id="evaluationID" value="#form.evaluationID#">
                     <input type="hidden" name="addressID" id="addressID" value="#form.addressID#">
-                    <input type="submit" name="submitButton" id="submitButton" value="update" disabled>
+                    <input type="submit" name="submitButton" id="submitButton" value="submit" disabled>
                     <cfif len(form.interviewsID) GT 0>
                         <input type="submit" name="deleteButton" onClick="return fncConfirmDelete();"id="deleteButton" value="Delete">
                     </cfif>
                 </form>
             </cfoutput>
         </div>
+        <!--- <cfif len(strErrorMessage)>
+            <cfdump var="#form#">
+            <cfdump var="#qryQuiz#">
+        </cfif> --->
 
         <cfoutput>
+            <script src="main.js" defer></script>
             <script src="#application.applicationBaseURLPath#/js/beforeunload.js" defer></script>
             <script src="#application.applicationBaseURLPath#/js/validation.js" defer></script>
             <script src="#application.applicationBaseURLPath#/js/ajax.js" defer></script>

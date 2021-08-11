@@ -12,10 +12,6 @@
                     WHERE interviews.ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#form.interviewsID#">
                     AND interviews.evaluation_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#form.evaluationID#">;
             </cfquery>
-            <cfset form.strTransaction = "Add">
-            <cfset strSuccessMessage = "record #form.interviewsID# deleted">
-            <cfset form.interviewsID = ''>
-        <cfelseif lCase(form.strTransaction) EQ "add">
             <cfquery name="addInterview">
                 INSERT INTO candidates.interviews (
                     strPosition,
@@ -36,7 +32,6 @@
                     FROM candidates.interviews
                     WHERE interviews.address_ID = "#form.addressID#" ORDER BY dtmAdded DESC; 
             </cfquery>
-            <cfset form.interviewsID = qryNewInterview.interviewsID>
         <cfelse>
             <cfquery name="updateInterview">
                 UPDATE candidates.interviews
@@ -66,12 +61,17 @@
                     );
                 </cfquery>
             </cfloop>
-            <cfif lCase(form.strTransaction) EQ "add">
-                <cfset strSuccessMessage = "record #form.interviewsID# added">
-                <cfset form.strTransaction = "update">
-            <cfelse>
-                <cfset strSuccessMessage = "record #form.interviewsID# updated">
-            </cfif>
+        </cfif>
+        <cfif len(form.deleteButton) >
+            <cfset form.strTransaction = "Add">
+            <cfset strSuccessMessage = "record #form.interviewsID# deleted">
+            <cfset form.interviewsID = ''>
+        <cfelseif lCase(form.strTransaction) EQ "add">
+            <cfset form.interviewsID = qryNewInterview.interviewsID>
+            <cfset strSuccessMessage = "record #form.interviewsID# added">
+            <cfset form.strTransaction = "update">
+        <cfelse>
+            <cfset strSuccessMessage = "record #form.interviewsID# updated">
         </cfif>
         <cfcatch>
             <cfsavecontent variable = "stcCatchDump"> 
@@ -83,6 +83,7 @@
                     Date: #dateFormat(#now()#, 'mm/dd/yy')# 
                     #cfcatch#">
         <cfset strErrorMessage= "See error log:#cfcatch.message#">
+        <cftransaction action = "rollback"/>
         </cfcatch>
     </cftry>
     

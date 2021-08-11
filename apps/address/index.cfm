@@ -30,7 +30,7 @@
     </cfif>
 </cfif>
 
-<cfif len(form.submitButton) OR len(form.deleteButton)>
+<cfif len(form.submitButton)>
     <cfinclude template = "act_address.cfm">
 </cfif>
 <cfprocessingdirective suppressWhiteSpace = "yes">
@@ -84,7 +84,7 @@
     <body id="bodyID">
         <div>
             <cfoutput>
-                <form name="mainForm" id="mainForm" method="post" action="#cgi.script_name#" onSubmit="fncRemoveBeforeUnloadEvent()"
+                <form name="mainForm" id="mainForm" method="post" action="#cgi.script_name#" 
                     onsubmit="return fncValidateForm()" target="_self">
                     <div id="errorMsgDiv">
                         <cfif arrayLen(aryErrorMessage)>
@@ -162,7 +162,7 @@
                                     
                                     <span  title=" Landline and/or mobile">
                                         Landline/mobile: </span>
-                                    <input type="text" id="intPhone" name="intPhone" size="14" maxLength="16"
+                                    <input type="tel" id="intPhone" name="intPhone" size="14" maxLength="16"
                                                         placeholder="Home"
                                                         title="#form.intPhone#"
                                                         value="#CFfncFormatPhone(form.intPhone)#"
@@ -175,7 +175,7 @@
 
                                     <span  title="#form.strEmail#" >
                                         eMail: </span>
-                                    <input type="text" id="strEmail" name="strEmail" 
+                                    <input type="email" id="strEmail" name="strEmail" 
                                                         size="34" maxLength="255"
                                                         style="text-transform: none;"
                                                         value="#form.strEmail#"
