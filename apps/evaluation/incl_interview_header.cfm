@@ -3,7 +3,7 @@
         <cfoutput>
             <Legend>Interview</legend>
             <span class="interviewSpan">
-                <cfif lCase(strTransaction) EQ "add">
+                <cfif lCase(form.strTransaction) EQ "add">
                     <label class="interviewInputlabel">Email:</label>
                     <input type="text" name="strEmail" id="strEmail"
                             placeholder="example@mail.com"
@@ -61,7 +61,7 @@
 
             <span class="interviewSpan">
                 <label class="interviewInputlabel">Interviewer:</label>
-                <input type="text" name="strInterviewer" id="strInterviewer"  placeholder="Name"  value="#form.strInterviewer#"/>
+                <input type="text" class="caps" name="strInterviewer" id="strInterviewer"  placeholder="Name"  value="#form.strInterviewer#"/>
             </span>
 
             

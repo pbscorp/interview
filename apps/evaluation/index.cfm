@@ -38,7 +38,7 @@
     if (!len(form.interviewsID )) {
         qryQuiz = objInterviews.getQuiz('new', form.evaluationID)
     } else {
-        qryQuiz = objInterviews.getQuiz(form.interviewsID, form.evaluationID );
+        qryQuiz = objInterviews.getQuiz(form.interviewsID, form.evaluationID);
     }
 </cfscript>
 
@@ -57,11 +57,16 @@
                     <div id="errorMsgDiv">
                         <cfif len(strErrorMessage)>
                             <ul><li>#strErrorMessage#</li></ul>
-                        </cfif> 
+                        </cfif>
                     </div>
                     <cfif len(strSuccessMessage)>
                         <div id="successMsgDiv"><ul><li>#strSuccessMessage#</li></ul></div>
-                    </cfif> 
+                    </cfif>
+
+        <!--- <cfif len(strErrorMessage)>
+            <cfdump var="#form#">
+            <cfdump var="#qryQuiz#">
+        </cfif>  --->
                 </cfoutput>
                 <cfinclude template="incl_interview_header.cfm">
                 <cfinclude template="incl_interview_quiz.cfm">
@@ -79,10 +84,6 @@
                 </form>
             </cfoutput>
         </div>
-        <!--- <cfif len(strErrorMessage)>
-            <cfdump var="#form#">
-            <cfdump var="#qryQuiz#">
-        </cfif> --->
 
         <cfoutput>
             <script src="main.js" defer></script>
@@ -134,14 +135,14 @@
                     let m_interviewsID = document.getElementById("interviewsID").value;
                     let m_blnInterviewsID = !isNaN(m_interviewsID);
                     let m_strURL = "#application.applicationBaseURLPath#/apps/address/?";
+                    if (document.getElementById("strEmail") && document.getElementById("strEmail").value.length) {
+                        let m_strEmail = document.getElementById("strEmail").value;
+                        m_strURL += "&strEmail=" + encodeURIComponent(m_strEmail);
+                    }
                     if (m_addressID.length) {
-                        m_strURL += "addressID=" + m_addressID;
+                        m_strURL += "&addressID=" + m_addressID;
                     } else {
                         m_strURL += "&strTransaction=Add";
-                        if (document.getElementById("strEmail") && document.getElementById("strEmail").value.length) {
-                            let m_strEmail = document.getElementById("strEmail").value;
-                            m_strURL += "&strEmail=" + m_strEmail;
-                        }
                     }
                     winAddressWindow=window.open(m_strURL, "adresses", "width=500, height=300, left=300, top=200");
                 }

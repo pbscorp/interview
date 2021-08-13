@@ -1,5 +1,5 @@
-window.addEventListener('load', fncClearMessage);
-    function fncClearMessage () {
+window.addEventListener('load', fncClearSuccessMessage);
+    function fncClearSuccessMessage () {
         setTimeout(function(){  
             if (document.getElementById("successMsgDiv")) {
                 document.getElementById("successMsgDiv").innerHTML = "";
@@ -7,32 +7,47 @@ window.addEventListener('load', fncClearMessage);
         }, 5000);
     }
 
-function fncFormatError(n_element, n_strError, n_blnNoFucus) {
-    let m_blnNoFucus = false;
-    if (n_blnNoFucus) {
-        m_blnNoFucus = true;
+    document.getElementById("mainForm").addEventListener('change', fncClearErrorMessage);
+    function fncClearErrorMessage () {
+        if (document.getElementById("errorMsgDiv")) {
+            document.getElementById("errorMsgDiv").innerText = "";
+        };
     }
-    let m_blnListMode = false;
-    if (document.getElementById("errorMsgDiv") && document.getElementById("errorMsgDiv").innerHTML == "<ul>") {
-        // initialize above when submitting the form
-        m_blnListMode = true;
-    }
-    if (m_blnListMode) {
-        document.getElementById("errorMsgDiv").innerHTML += "<li>" + n_element.title + ' ' + n_strError + "</li>";
-    } else {
-        alert(n_strError);
-        if (!m_blnNoFucus) {
-            n_element.select();
-            n_element.focus();
+
+    var blnListMode = false;
+    function fncFormatError(n_element, n_strError, n_blnNoFucus) {
+        function fncAddLITtolist(n_strErrMsg) {
+            var node = document.createElement("LI");
+            var textnode = document.createTextNode(n_strErrMsg);
+            node.appendChild(textnode);
+            document.getElementById("errMessageUL").appendChild(node);
+        }
+        let m_blnNoFucus = false;
+        let m_strErrMsg = n_element.title.split('|')[0] + ' ' + n_strError;
+        if (n_blnNoFucus) {
+            m_blnNoFucus = true;
+        }
+        if (document.getElementById("errorMsgDiv") && document.getElementById("errorMsgDiv").innerText == "init") {
+            // initialize above when submitting the form
+            document.getElementById("errorMsgDiv").innerHTML = "<UL id='errMessageUL'>";
+            blnListMode = true;
+        }
+        if (blnListMode) {
+            fncAddLITtolist(m_strErrMsg);
+        } else {
+            alert(m_strErrMsg);
+            if (!m_blnNoFucus) {
+                n_element.select();
+                n_element.focus();
+            }
         }
     }
-}
 function fncValidateEmail(n_elementEmail) {
     let m_strMailformat = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
     if (n_elementEmail.value.match(m_strMailformat)) {
         return true;
     } else {
-        fncFormatError(n_elementEmail, "You have entered an invalid email address!");
+        fncFormatError(n_elementEmail, "invalid format");
         return false;
     }
 }
@@ -51,13 +66,17 @@ function fncValidatePhone(n_elementPhone) {
             n_elementPhone.value = fncFormatPhone(m_intPhone);
             return true;
         } else {
-            fncFormatError(n_elementPhone, "Invalid phone number must be 10 digits!");
+            fncFormatError(n_elementPhone, "must be 10 digits.");
             return false;
         }
     }
 }
 function fncValidateZip(n_elementZip) {
-    let m_intZip = n_elementZip.value.replace(/\D/g, '');
+    let m_intZip = n_elementZip.value.replace(/-/g,"");
+    if (isNaN(m_intZip)) {
+        fncFormatError(n_elementZip, "must be numeric.");
+        return false;
+    }
     if (m_intZip.length) {
         if (m_intZip.length == 5) {
             n_elementZip.value = m_intZip;
@@ -67,7 +86,7 @@ function fncValidateZip(n_elementZip) {
             n_elementZip.value = m_intZip.substring(0, 4) + '-' + m_intZip.substring(4, 9);
             return true;
         } else {
-            fncFormatError(n_elementZip, "Invalid zipcode must be 5 or 9 digits");
+            fncFormatError(n_elementZip, "must be 5 or 9 digits");
             return false;
         }
     }

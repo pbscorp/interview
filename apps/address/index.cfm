@@ -3,6 +3,7 @@
 <cfparam name="form.strTransaction" default="#url.strTransaction#">
 <cfparam name="url.addressID" default="">
 <cfparam name="form.addressID" default="#url.addressID#">
+<cfparam name="url.strEmail" default="">
 <cfparam name="form.strNameFirst" default="">
 <cfparam name="form.strNameMiddle" default="">
 <cfparam name="form.strNameLast" default="">
@@ -11,16 +12,14 @@
 <cfparam name="form.strCity" default="">
 <cfparam name="form.strState" default="">
 <cfparam name="form.strZip" default="">
-<cfparam name="form.strEmail" default="">
+<cfparam name="form.strEmail" default="#url.strEmail#">
 <cfparam name="form.intPhone" default="">
 <cfparam name="form.intMobile" default="">
 <cfparam name="form.strName" default="">
 <cfparam name="form.submitButton" default="">
 <cfparam name="form.blnHasError" default="0">
-<cfparam name="form.strErorMessage" default="">
+<cfparam name="strErrorMessage" default="">
 <cfparam name="strSuccessMessage" default="">
-
-<cfset aryErrorMessage = ArrayNew(1)>
 
 <cfif NOT len(form.strTransaction)>
     <cfif len(form.addressID)>
@@ -84,42 +83,43 @@
     <body id="bodyID">
         <div>
             <cfoutput>
-                <form name="mainForm" id="mainForm" method="post" action="#cgi.script_name#" 
+                <form name="mainForm" id="mainForm" method="post" action="#cgi.script_name#?strEmail=#url.strEmail#" 
                     onsubmit="return fncValidateForm()" target="_self">
                     <div id="errorMsgDiv">
-                        <cfif arrayLen(aryErrorMessage)>
-                            <ul>
-                            <cfloop from = "1" to = "#arrayLen(aryErrorMessage)#" index = "i">
-                                <li>#aryErrorMessage[#i#]#</li>
-                            </cfloop>
-                            </ul>
-                        </cfif> 
+                        <cfif len(strErrorMessage)>
+                            <ul><li>#strErrorMessage#</li></ul>
+                        </cfif>
                     </div>
                     <cfif len(strSuccessMessage)>
-                        <div id="successMsgDiv">#strSuccessMessage#</div>
-                    </cfif> 
+                        <div id="successMsgDiv"><ul><li>#strSuccessMessage#</li></ul></div>
+                    </cfif>
+
+        <!--- <cfif len(strErrorMessage)>
+            <cfdump var="#form#">
+            <cfdump var="#qryQuiz#">
+        </cfif>  --->
                     <div id="addressSectionID">
                         <fieldset>
-                            <Legend>Address</legend>
+                            <Legend>#form.strTransaction# Address</legend>
                             <cfoutput>
                                 <div id="addressTableDiv">
-                                    <span  title="#form.strNameFirst# #form.strNameMiddle# #form.strNameLast#">
+                                    <span  title="Full name|#form.strNameFirst# #form.strNameMiddle# #form.strNameLast#">
                                         Full Name: </span>
                                     <input type="text" id="strNameFirst"  name="strNameFirst" 
                                             placeholder="First"
                                             size="9" maxLength="255" 
                                             value="#form.strNameFirst#"
-                                            title="#form.strNameFirst#">
+                                            title="First name|#form.strNameFirst#">
                                     <input type="text" id="strNameMiddle" name="strNameMiddle"
                                             placeholder="M"
                                             size="1" maxLength="45" 
                                             value="#form.strNameMiddle#"
-                                            title="#form.strNameMiddle#">
+                                            title="Middle name|#form.strNameMiddle#">
                                     <input type="text" id="strNameFirst" name="strNameLast" 
                                             placeholder="Last"
                                             size="12" maxLength="255" 
                                             value="#form.strNameLast#"
-                                            title="#form.strNameLast#"></br>
+                                            title="Last name|#form.strNameLast#"></br>
 
                                     <span  title="#form.strAddressLine1# #form.strAddressLine2#" >
                                         Street: </span>
@@ -139,7 +139,7 @@
 
                                     <span  title="#form.strCity# #form.strState# #form.strZip#">
                                         City/State/Zip: </span>
-                                    <input type="text" title="#form.strCity#" id="strCity" name="strCity"
+                                    <input type="text" title="City|#form.strCity#" id="strCity" name="strCity"
                                             size="13" maxLength="45" value="#form.strCity#">
                                     <cfset m_intStrctSize = stcStates.size()>
                                     <cfset  i = 1>
@@ -155,7 +155,7 @@
                                             <option value="#stcStates[i].code#">#stcStates[i].code#|#stcStates[i].state#</option>
                                         </cfloop>
                                     </datalist>
-                                        <input type="text" title="#form.strZip#" id="strZip" name="strZip" 
+                                        <input type="text" title="Zip code|#form.strZip#" id="strZip" name="strZip" 
                                                         size="7" maxLength="10" 
                                                         value="#CFfncFromatZip(form.strZip)#"
                                                         onchange="fncValidateZip(this)"></br>
@@ -164,12 +164,12 @@
                                         Landline/mobile: </span>
                                     <input type="tel" id="intPhone" name="intPhone" size="14" maxLength="16"
                                                         placeholder="Home"
-                                                        title="#form.intPhone#"
+                                                        title="Phone (landline)|#form.intPhone#"
                                                         value="#CFfncFormatPhone(form.intPhone)#"
                                                         onchange="fncValidatePhone(this)">
                                     <input type="text" id="intMobile" name="intMobile" size="14" maxLength="16"
                                                         placeholder="Mobile"
-                                                        title="#form.intMobile#"
+                                                        title="Mobile number|#form.intMobile#"
                                                         value="#CFfncFormatPhone(form.intMobile)#"
                                                         onchange="fncValidatePhone(this)"></br>
 
@@ -179,7 +179,10 @@
                                                         size="34" maxLength="255"
                                                         style="text-transform: none;"
                                                         value="#form.strEmail#"
-                                                        title="#form.strEmail#"
+                                                        title="eMail address|#form.strEmail#"
+                                                <cfif len(url.strEmail)>
+                                                    disabled
+                                                </cfif> 
                                                         onchange="fncValidateEmail(this)"></br>
                                                         
                                     <span>
@@ -205,7 +208,25 @@
         </script>
             <script src="#application.applicationBaseURLPath#/js/beforeunload.js" defer></script>
             <script src="#application.applicationBaseURLPath#/js/validation.js" defer></script>
-        </cfoutput>
+            <script>
+                function fncValidateForm() {
+                    let myForm=document.getElementById('mainForm');
+                    document.getElementById("errorMsgDiv").innerText = "init";
+                    let intErrors = 0;
+                    if ( !fncValidateZip(myForm.strZip)  ) {
+                        intErrors++;
+                    }
+                    if ( !fncValidatePhone(myForm.intPhone) ) {
+                        intErrors++;
+                    }
+                    if (!intErrors) {
+                        return true; 
+                    }
+                    //alert (intErrors + ' intErrors found ');
+                    return false;
+                }
+            </script>
+</cfoutput>
     </body>
 </cfprocessingdirective>
 </HTML>
