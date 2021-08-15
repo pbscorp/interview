@@ -83,8 +83,7 @@
     <body id="bodyID">
         <div>
             <cfoutput>
-                <form name="mainForm" id="mainForm" method="post" action="#cgi.script_name#?strEmail=#url.strEmail#" 
-                    onsubmit="return fncValidateForm()" target="_self">
+                <form name="mainForm" id="mainForm" method="post" action="#cgi.script_name#?strEmail=#url.strEmail#">
                     <div id="errorMsgDiv">
                         <cfif len(strErrorMessage)>
                             <ul><li>#strErrorMessage#</li></ul>
@@ -144,6 +143,7 @@
                                     <cfset m_intStrctSize = stcStates.size()>
                                     <cfset  i = 1>
                                     <input list="datalistStates" id="strState" name="strState" 
+                                        title="State"
                                         value="#form.strState#"
                                         size="2" 
                                         style="text-transform: uppercase;"
@@ -209,14 +209,22 @@
             <script src="#application.applicationBaseURLPath#/js/beforeunload.js" defer></script>
             <script src="#application.applicationBaseURLPath#/js/validation.js" defer></script>
             <script>
-                function fncValidateForm() {
-                    let myForm=document.getElementById('mainForm');
-                    document.getElementById("errorMsgDiv").innerText = "init";
+                function fncValidateForm() {alert(22);
+                    let myForm = document.getElementById('mainForm');
                     let intErrors = 0;
                     if ( !fncValidateZip(myForm.strZip)  ) {
                         intErrors++;
                     }
+                    if ( !fncValidateState(myForm.strState,  'datalistStates') ) {
+                        intErrors++;
+                    }
                     if ( !fncValidatePhone(myForm.intPhone) ) {
+                        intErrors++;
+                    }
+                    if ( !fncValidatePhone(myForm.intMobile) ) {
+                        intErrors++;
+                    }
+                    if ( !fncValidateEmail(myForm.strEmail) ) {
                         intErrors++;
                     }
                     if (!intErrors) {

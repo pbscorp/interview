@@ -46,9 +46,9 @@
                         strAddressLine2 = <cfqueryparam cfsqltype="CF_sql_varchar" value="#ucFirst(form.strAddressLine2, true)#">,
                         strCity = <cfqueryparam cfsqltype="CF_sql_varchar" value="#ucFirst(form.strCity, true)#">,
                         strState = <cfqueryparam cfsqltype="CF_sql_varchar"value="#uCase(form.strState)#">,
-                        strZip = <cfqueryparam cfsqltype="CF_sql_varchar"  value="#reReplace(form.strZip, "[^0-9]", "", "all")#">,
+                        strZip = <cfqueryparam cfsqltype="CF_sql_varchar"  value="#replace(form.strZip, "-", "", "all")#">,
                         strEmail = <cfqueryparam cfsqltype="CF_sql_varchar" value="#form.strEmail#">,
-                        intPhone = <cfqueryparam cfsqltype="cf_sql_integer" value="#replace(form.intPhone, "-", "", "all")#">,
+                        intPhone = <cfqueryparam cfsqltype="cf_sql_integer" value="#reReplace(form.intPhone, "[^0-9]", "", "all")#">,
                         intMobile = <cfqueryparam cfsqltype="cf_sql_integer"value="#reReplace(form.intMobile, "[^0-9]", "", "all")#">
                     WHERE ID =  <cfqueryparam CFSQLTYPE="cf_sql_integer" VALUE="#FORM.addressID#">;
             </cfquery>

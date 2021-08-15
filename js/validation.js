@@ -7,11 +7,24 @@ window.addEventListener('load', fncClearSuccessMessage);
         }, 5000);
     }
 
+    document.getElementById("mainForm").addEventListener('submit', fncRunValidateForm);
+    function fncRunValidateForm (event) {
+        blnListMode = true;
+        document.getElementById("errorMsgDiv").innerHTML = "<UL id='errMessageUL'>";
+        if (!fncValidateForm() ) {
+            event.preventDefault();
+        }
+    }
     document.getElementById("mainForm").addEventListener('change', fncClearErrorMessage);
     function fncClearErrorMessage () {
-        if (document.getElementById("errorMsgDiv")) {
-            document.getElementById("errorMsgDiv").innerText = "";
-        };
+        if (blnListMode) {
+            if (document.getElementById("errorMsgDiv")) {
+                document.getElementById("errorMsgDiv").innerHTML = "<UL id='errMessageUL'>";
+                if ( fncValidateForm() ) {
+                    blnListMode = false;
+                }
+            }
+        }
     }
 
     var blnListMode = false;
@@ -26,11 +39,6 @@ window.addEventListener('load', fncClearSuccessMessage);
         let m_strErrMsg = n_element.title.split('|')[0] + ' ' + n_strError;
         if (n_blnNoFucus) {
             m_blnNoFucus = true;
-        }
-        if (document.getElementById("errorMsgDiv") && document.getElementById("errorMsgDiv").innerText == "init") {
-            // initialize above when submitting the form
-            document.getElementById("errorMsgDiv").innerHTML = "<UL id='errMessageUL'>";
-            blnListMode = true;
         }
         if (blnListMode) {
             fncAddLITtolist(m_strErrMsg);
@@ -99,7 +107,7 @@ function fncValidateState(n_eleState, n_datalistID) {
             return true;
         }
     }
-    fncFormatError(n_eleState, 'error: ' + n_eleState.value.toUpperCase() + ' not in found in state table');
+    fncFormatError(n_eleState, 'not found in state table');
     return false;
 }
 function fncValidateDate(n_elementDate) {
