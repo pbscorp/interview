@@ -42,6 +42,8 @@ window.addEventListener('load', fncClearSuccessMessage);
         }
         if (blnListMode) {
             fncAddLITtolist(m_strErrMsg);
+            n_element.select();
+            n_element.focus();
         } else {
             alert(m_strErrMsg);
             if (!m_blnNoFucus) {
@@ -68,8 +70,12 @@ function fncFormatPhone(n_intPhone) {
 }
 
 function fncValidatePhone(n_elementPhone) {
-    let m_intPhone = n_elementPhone.value.replace(/\D/g, '');
+    let m_intPhone = n_elementPhone.value.replace(/\(|\)| |-|\./gi, "");
     if (m_intPhone.length) {
+        if (isNaN(m_intPhone)) {
+            fncFormatError(n_elementPhone, "must be numeric.");
+            return false;
+        }
         if (m_intPhone.length == 10) {
             n_elementPhone.value = fncFormatPhone(m_intPhone);
             return true;

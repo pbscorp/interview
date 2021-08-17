@@ -16,7 +16,7 @@
                 var intTotQuizStdWt = 0;
                 var intTotQuizScore = 0;
                 function fncCalcQuiz(n_intCurRow, n_intResponse) {
-                    console.clear();
+                    //console.clear();
                     console.log('n_intCurRow = ' + n_intCurRow);
                     intTotQuizWt = 0;
                     intTotQuizStdWt = 0;

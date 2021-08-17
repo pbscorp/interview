@@ -5,7 +5,7 @@
             <span class="interviewSpan">
                 <cfif lCase(form.strTransaction) EQ "add">
                     <label class="interviewInputlabel">Email:</label>
-                    <input type="text" name="strEmail" id="strEmail"
+                    <input type="email" name="strEmail" id="strEmail"
                             placeholder="example@mail.com"
                             onChange="fncGetAddress(this);"
                             value="#form.strEmail#">
@@ -13,7 +13,8 @@
                 <cfelse>
                     <label class="interviewInputlabel">Interview:</label>
                     <select size="1" name="interviewsID" id="interviewsID"
-                        onChange="fncChangeInterviews(this.options[this.selectedIndex]);">
+                        onChange="fncChangeInterviews(this.options[this.selectedIndex]);"
+                        value="#form.interviewsID#">
                         <option value="">Select an Interview</option>
                     <cfoutput query = "qryAllInterviews">
                         <option value="#qryAllInterviews.interviewsID #"
@@ -30,6 +31,7 @@
                     </cfoutput>
                         <option value="add">New Interview</option>
                     </select>
+                    <input type="hidden" name="strEmail" id="strEmail" value="#form.strEmail#">
                 </cfif> 
             </span>
 
@@ -45,7 +47,7 @@
             <span id="candidatesNameSpan" 
                         style="font-size: smaller;
                         vertical-align: top;
-                        <cfif len(form.interviewsID) GT 0>
+                        <cfif len(form.interviewsID) GT 0 || len(form.strEmail) GT 0>
                             visibility: visible;
                         <cfelse> 
                             visibility: hidden;

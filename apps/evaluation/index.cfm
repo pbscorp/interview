@@ -6,7 +6,7 @@
 <cfparam name="form.dtmInterviewDate" default="#dateFormat(#now()#, "yyyy-mm-dd")#">
 <cfparam name="form.strPosition" default="">
 <cfparam name="form.addressID" default="">
-<cfparam name="form.evaluationID" default="1">
+<cfparam name="url.evaluationID" default="1">
 <cfparam name="url.interviewsID" default="">
 <cfparam name="form.interviewsID" default="#url.interviewsID#">
 <cfparam name="form.submitButton" default="">
@@ -23,11 +23,11 @@
 <cfprocessingdirective suppressWhiteSpace = "yes">
 <cfscript>
     objInterviews = createObject('component', 'interview-cfc.candidates');
-    getQuestions = objInterviews.getQuestions(form.evaluationID);
-    qryEvaluation = objInterviews.getEvaluation(form.evaluationID);
-    qryAllInterviews = objInterviews.getInterview('all', form.evaluationID);
+    getQuestions = objInterviews.getQuestions(url.evaluationID);
+    qryEvaluation = objInterviews.getEvaluation(url.evaluationID);
+    qryAllInterviews = objInterviews.getInterview('all', url.evaluationID);
     if ( (!len(strErrorMessage)) && (lCase(form.strTransaction) != "add")) {
-        qryInterview = objInterviews.getInterview(form.interviewsID, form.evaluationID);
+        qryInterview = objInterviews.getInterview(form.interviewsID, url.evaluationID);
         form.strName = qryInterview.strName;
         form.addressID  = qryInterview.addressID;
         form.interviewsID  = qryInterview.interviewsID ;
@@ -36,9 +36,9 @@
         form.strPosition = qryInterview.strPosition;
     }
     if (!len(form.interviewsID )) {
-        qryQuiz = objInterviews.getQuiz('new', form.evaluationID)
+        qryQuiz = objInterviews.getQuiz('new', url.evaluationID)
     } else {
-        qryQuiz = objInterviews.getQuiz(form.interviewsID, form.evaluationID);
+        qryQuiz = objInterviews.getQuiz(form.interviewsID, url.evaluationID);
     }
 </cfscript>
 
@@ -49,50 +49,44 @@
         </cfoutput>
     </head>
     <body id="bodyID">
-        <h2>Interview Review</h2>
-        <div>
-            <cfoutput>
-                <form name="mainForm" id="mainForm" method="post" action="#cgi.script_name#"
-                                        onsubmit="return fncValidateForm()" target="_self">
-                    <div id="errorMsgDiv">
-                        <cfif len(strErrorMessage)>
-                            <ul><li>#strErrorMessage#</li></ul>
-                        </cfif>
-                    </div>
-                    <cfif len(strSuccessMessage)>
-                        <div id="successMsgDiv"><ul><li>#strSuccessMessage#</li></ul></div>
-                    </cfif>
-
-        <!--- <cfif len(strErrorMessage)>
-            <cfdump var="#form#">
-            <cfdump var="#qryQuiz#">
-        </cfif>  --->
-                </cfoutput>
-                <cfinclude template="incl_interview_header.cfm">
-                <cfinclude template="incl_interview_quiz.cfm">
-                <cfoutput>
+        <cfoutput>
+            <div id="errorMsgDiv">
+                <cfif len(strErrorMessage)>
+                    <ul><li>#strErrorMessage#</li></ul>
+                </cfif>
+            </div>
+            <cfif len(strSuccessMessage)>
+                <div id="successMsgDiv"><ul><li>#strSuccessMessage#</li></ul></div>
+            </cfif>
+            <h2>Interview Review</h2>
+            <div>
+                <form name="mainForm" id="mainForm" method="post" action="#cgi.script_name#?evaluationID=#url.evaluationID#">
+        </cfoutput>
+                    <cfinclude template="incl_interview_header.cfm">
+                    <cfinclude template="incl_interview_quiz.cfm">
+        <cfoutput>
                     <input type="hidden" name="recordcount" id="recordcount" value="#qryQuiz.recordcount#">
                     <input type="hidden" name="lstWtLiterals" id="lstWtLiterals" value="#lstWtLiterals#">
                     <input type="hidden" name="lstGradesWt" id="lstGradesWt" value="#lstGradesWt#">
                     <input type="hidden" name="strTransaction" id="strTransaction" value="#form.strTransaction#">
-                    <input type="hidden" name="evaluationID" id="evaluationID" value="#form.evaluationID#">
                     <input type="hidden" name="addressID" id="addressID" value="#form.addressID#">
                     <input type="submit" name="submitButton" id="submitButton" value="submit" disabled>
                     <cfif len(form.interviewsID) GT 0>
                         <input type="submit" name="deleteButton" onClick="return fncConfirmDelete();"id="deleteButton" value="Delete">
                     </cfif>
                 </form>
-            </cfoutput>
-        </div>
-
-        <cfoutput>
+             </div>
             <script src="main.js" defer></script>
-            <script src="#application.applicationBaseURLPath#/js/beforeunload.js" defer></script>
-            <script src="#application.applicationBaseURLPath#/js/validation.js" defer></script>
-            <script src="#application.applicationBaseURLPath#/js/ajax.js" defer></script>
+            <script src="#application.applicationBaseURLPath#/js/beforeunload.js" ></script>
+            <script src="#application.applicationBaseURLPath#/js/validation.js" ></script>
+            <script src="#application.applicationBaseURLPath#/js/ajax.js" ></script>
             <script>
+
                 function fncConfirmDelete () {
-                    return confirm("Delete interview record for #form.strName# \n interviewed on #dateFormat(qryAllInterviews.dtmInterviewDate, 'mm-dd-yyyy')# by #form.strInterviewer# for #form.strPosition# OK");
+                    let m_blnDelete =  confirm("Delete interview record for #form.strName# \n interviewed on #dateFormat(qryAllInterviews.dtmInterviewDate, 'mm-dd-yyyy')# by #form.strInterviewer# for #form.strPosition# OK");
+                    if (m_blnDelete) {
+                        document.getElementById("strTransaction").value = "delete";
+                    }
                 };
                 function fncGetAddress (n_eleEmail) {
                     if (fncValidateEmail(n_eleEmail)) {
@@ -109,6 +103,11 @@
                             n_fncCallback = "fncAddressCallBack");
                     }
                     return false;
+                }
+            </script>
+            <script>
+                if (document.getElementById("strEmail") && document.getElementById("strEmail").value.length) {
+                    fncGetAddress(document.getElementById("strEmail"));
                 }
             </script>
             <script>
