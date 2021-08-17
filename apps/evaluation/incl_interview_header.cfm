@@ -6,6 +6,7 @@
                 <cfif lCase(form.strTransaction) EQ "add">
                     <label class="interviewInputlabel">Email:</label>
                     <input type="email" name="strEmail" id="strEmail"
+                            title="eMail Address|#form.strEmail#"
                             placeholder="example@mail.com"
                             onChange="fncGetAddress(this);"
                             value="#form.strEmail#">
@@ -14,6 +15,7 @@
                     <label class="interviewInputlabel">Interview:</label>
                     <select size="1" name="interviewsID" id="interviewsID"
                         onChange="fncChangeInterviews(this.options[this.selectedIndex]);"
+                        title="Interview|#form.interviewsID#"
                         value="#form.interviewsID#">
                         <option value="">Select an Interview</option>
                     <cfoutput query = "qryAllInterviews">
@@ -55,7 +57,7 @@
                         font-style: italic;">
 
                 <span  style.display="inline" id="candidatesNameTextSpan">
-                #form.strName#
+                    #form.strName#
                 </span>
                 <span class="button" id = "addressButton" onClick="fncEditAddress();">Edit Address</span>
             </span>
@@ -63,13 +65,13 @@
 
             <span class="interviewSpan">
                 <label class="interviewInputlabel">Interviewer:</label>
-                <input type="text" class="caps" name="strInterviewer" id="strInterviewer"  placeholder="Name"  value="#form.strInterviewer#"/>
+                <input type="text" class="caps" name="strInterviewer" title="Interviewer|#form.strInterviewer#" id="strInterviewer" placeholder="Name"  value="#form.strInterviewer#"/>
             </span>
 
             
             <span class="interviewSpan">
                 <label class="interviewInputlabel">Position:</label>
-                <input type="text" name="strPosition" id="strPosition" placeholder="Position"   value="#form.strPosition#"/>
+                <input type="text" name="strPosition" title="Position|#form.strPosition#" id="strPosition" placeholder="Position"   value="#form.strPosition#"/>
             </span>
             <br/>
             <br/>

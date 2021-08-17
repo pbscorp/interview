@@ -52,6 +52,9 @@ h2 {
   text-align: right;
   padding: 5px;
 }
+#errorMsgDiv ul li {
+  padding: 1px;
+}
 #errorMsgDiv {
   font-size: 14px;
   color: red;

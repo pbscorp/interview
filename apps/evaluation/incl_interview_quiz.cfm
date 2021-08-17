@@ -3,7 +3,7 @@
     <div id="quizSectionID">
         <fieldset>
             <Legend>Candidate Evaluation</legend>
-            <p >#qryEvaluation.strEvaluationText#</p>
+            <p>#qryEvaluation.strEvaluationText#</p>
         </fieldset>
 
         <cfset lstGradesWt = qryEvaluation.lstWeight>
@@ -65,7 +65,7 @@
                             <input type="hidden" name="#qryQuiz.currentrow#questionsID" id="#qryQuiz.currentrow#questionsID" value="#qryQuiz.questionsID#">
                             <input type="hidden" class="intQuiz blnResponseBtnChecked" name="#qryQuiz.currentrow#blnResponseBtnChecked" id="#qryQuiz.currentrow#blnRequired" value="#blnResponseBtnChecked#">
                             <input type="hidden" class="intQuiz blnRequired" name="#qryQuiz.currentrow#blnRequired" id="#qryQuiz.currentrow#blnRequired" value="#qryQuiz.blnRequired#">
-                            <input type="hidden" size=4 class="intQuiz score" id="#qryQuiz.currentrow#score" value="#intScore#">
+                            <input type="hidden" size=4 class="intQuiz score" title="Question #qryQuiz.currentrow#) #qryQuiz.strCategory#" id="#qryQuiz.currentrow#score" value="#intScore#">
                             <input type="hidden" size=4 class="intQuiz weight" id="#qryQuiz.currentrow#weight" value="#qryQuiz.intWeight#">
                             <input type="hidden" size=4 class="intQuiz totStdWt" id="#qryQuiz.currentrow#totStdWt"value="">
                             <input type="hidden" size=4 class="intQuiz totWt" id="#qryQuiz.currentrow#totWt"value="#round(#intScore#*#qryQuiz.intWeight#)#">

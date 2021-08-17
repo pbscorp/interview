@@ -60,16 +60,9 @@
             </cfquery>
         </cfif>
         <cfcatch>
-            <cfsavecontent variable = "stcCatchDump"> 
-                <cfdump var="#cfcatch#">
-            </cfsavecontent>
-                <cffile action = "write" 
-                    file = "C:\lucee\tomcat\logs\CFerror\Catch_error#dateFormat(now(), 'yyyy-mm-dd')##timeFormat(now(), 'HHmmss')#.html" 
-                    output = "Created By: #cgi.SCRIPT_NAME# 
-                    Date: #dateFormat(#now()#, 'mm/dd/yy')# time: #timeFormat(#now()#)#
-                    #cfcatch#">
-                    <cfset strErrorMessage= "See error log:#cfcatch.message#">
-                    <cftransaction action = "rollback"/>
+            <cfinclude template="#application.applicationBaseURLPath#/resources/incl_cfcatchError.cfm">
+            <cfset strErrorMessage= "See error log:#cfcatch.message#">
+            <cftransaction action = "rollback"/>
         </cfcatch>
         <cfif NOT len(strErrorMessage)>
             <cfif lCase(form.strTransaction) EQ "delete">

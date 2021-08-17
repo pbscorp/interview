@@ -12,7 +12,11 @@ window.addEventListener('load', fncClearSuccessMessage);
         blnListMode = true;
         document.getElementById("errorMsgDiv").innerHTML = "<UL id='errMessageUL'>";
         if (!fncValidateForm() ) {
+            g_blnFormHasUnsubmittedData = true;
             event.preventDefault();
+            setTimeout(function(){  
+                g_blnFormHasUnsubmittedData = true;
+            }, 2000);
         }
     }
     document.getElementById("mainForm").addEventListener('change', fncClearErrorMessage);
@@ -36,20 +40,23 @@ window.addEventListener('load', fncClearSuccessMessage);
             document.getElementById("errMessageUL").appendChild(node);
         }
         let m_blnNoFucus = false;
-        let m_strErrMsg = n_element.title.split('|')[0] + ' ' + n_strError;
+        let m_strErrMsg = "";
+        if (n_element  != '') {
+            m_strErrMsg += n_element.title.split('|')[0];
+        }
+        m_strErrMsg += ' ' + n_strError;
         if (n_blnNoFucus) {
             m_blnNoFucus = true;
         }
         if (blnListMode) {
             fncAddLITtolist(m_strErrMsg);
-            n_element.select();
-            n_element.focus();
         } else {
             alert(m_strErrMsg);
-            if (!m_blnNoFucus) {
-                n_element.select();
-                n_element.focus();
-            }
+        }
+        
+        if (n_element.select) {
+            n_element.select();
+            n_element.focus();
         }
     }
 function fncValidateEmail(n_elementEmail) {

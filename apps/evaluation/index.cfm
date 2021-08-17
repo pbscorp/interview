@@ -81,58 +81,15 @@
             <script src="#application.applicationBaseURLPath#/js/validation.js" ></script>
             <script src="#application.applicationBaseURLPath#/js/ajax.js" ></script>
             <script>
-
                 function fncConfirmDelete () {
                     let m_blnDelete =  confirm("Delete interview record for #form.strName# \n interviewed on #dateFormat(qryAllInterviews.dtmInterviewDate, 'mm-dd-yyyy')# by #form.strInterviewer# for #form.strPosition# OK");
                     if (m_blnDelete) {
                         document.getElementById("strTransaction").value = "delete";
                     }
                 };
-                function fncGetAddress (n_eleEmail) {
-                    if (fncValidateEmail(n_eleEmail)) {
-                        document.getElementById("candidatesNameSpan").style.visibility = "visible";
-                        document.getElementById("candidatesNameTextSpan").innerHTML = "";
-                        document.getElementById("addressID").value = "";
-                        let m_strEmailAddress = encodeURIComponent(n_eleEmail.value);
-                        fncGetTableValues ( 
-                            n_strDBTable = 'address', 
-                            n_strKeyColumnName ='strEmail',
-                            n_strKeyColumnValue = m_strEmailAddress,
-                            n_lstColumns = 'ID|strNameFirst|strNameMiddle|strNameLast',
-                            n_strOrderByClause = '',
-                            n_fncCallback = "fncAddressCallBack");
-                    }
-                    return false;
-                }
-            </script>
-            <script>
-                if (document.getElementById("strEmail") && document.getElementById("strEmail").value.length) {
-                    fncGetAddress(document.getElementById("strEmail"));
-                }
-            </script>
-            <script>
-                function fncAddressCallBack(n_responseText) {
-                    let i = 0;
-                    let m_aryColNames;
-                    let m_strName;
-                    document.getElementById("candidatesNameSpan").style.visibility = "visible";
-                    if (n_responseText.trim().substring(0, 1) != "[") {
-                        alert(n_responseText.trim());
-                        return;
-                    };
-                    m_aryColNames = JSON.parse(n_responseText);
-                    m_strName = m_aryColNames[0].strNameFirst + ' ';
-                    m_strName += m_aryColNames[0].strNameMiddle + ' ';
-                    m_strName += m_aryColNames[0].strNameLast + ' ';
-                    document.getElementById("candidatesNameTextSpan").innerHTML = m_strName;
-                    document.getElementById("addressID").value = m_aryColNames[0].ID;
-                }
-            </script>
-            <script>
                 function fncEditAddress() {
                     let m_addressID = document.getElementById("addressID").value;
                     let m_interviewsID = document.getElementById("interviewsID").value;
-                    let m_blnInterviewsID = !isNaN(m_interviewsID);
                     let m_strURL = "#application.applicationBaseURLPath#/apps/address/?";
                     if (document.getElementById("strEmail") && document.getElementById("strEmail").value.length) {
                         let m_strEmail = document.getElementById("strEmail").value;
@@ -145,17 +102,40 @@
                     }
                     winAddressWindow=window.open(m_strURL, "adresses", "width=500, height=300, left=300, top=200");
                 }
-            </script>
-            <script>
-                function fncChangeInterviews (n_eleSelect) {
-                    let m_intInterviewsID = n_eleSelect.value;
-                    let m_strThisURL = window.location.href.split("?")[0] + "?strTransaction=";
-                    if (m_intInterviewsID.toLowerCase() == "add") {
-                        m_strThisURL += "add";
-                    } else {
-                        m_strThisURL += "update&interviewsID=" + m_intInterviewsID;
+                function fncValidateForm() {
+                    let myForm = document.getElementById('mainForm');
+                    let m_intErrors = 0;
+                    let m_eleInterviewer = myForm.strInterviewer;
+                    let m_elePosition = myForm.strPosition;
+                    let m_eleInterviewsID = myForm.interviewsID;
+                    let m_strTransaction = myForm.strTransaction.value;
+                    let m_eleEmail = myForm.strEmail;
+                    if (m_strTransaction == 'add' && !m_eleEmail.value.length) {
+                        fncFormatError(m_eleEmail, "must be entered.");
+                        m_intErrors++;
+                    } else if (!m_eleInterviewsID.value.length || isNaN(m_eleInterviewsID.value)) {
+                        fncFormatError(m_eleInterviewsID, "must be selected.");
+                        m_intErrors++;
+                    } 
+                    if (!m_eleInterviewer.value.length) {
+                        fncFormatError(m_eleInterviewer, "must be entered.");
+                        m_intErrors++;
                     }
-                    window.location.href = m_strThisURL;
+                    if (!m_elePosition.value.length) {
+                        fncFormatError(m_elePosition, "must be entered.");
+                        m_intErrors++;
+                    }
+                    for ( i=0;  i < aryScore.length; i++) {
+                        if ( (aryScore[i].value == 0) && (aryBlnRequired[i].value == 1) ) {
+                            fncFormatError(aryScore[i], "is required.");
+                            m_intErrors++;
+                        }
+                    }
+                    if (m_intErrors > 0) {
+                        //fncFormatError('', m_intErrors + " errors encountered.");
+                        return false;
+                    }
+                    return true;
                 }
             </script>
         </cfoutput>      
