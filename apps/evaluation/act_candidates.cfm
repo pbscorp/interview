@@ -82,10 +82,8 @@
         <cfif NOT len(strErrorMessage)>
             <cfif lCase(form.strTransaction) EQ "delete">
                 <cfset strSuccessMessage = "record #form.interviewsID# deleted">    
-                <cfset structClear(form)>
+                <cfset fncStructEmpty(form)>
                 <cfset form.strTransaction = "add">
-                <cfset form.interviewsID = "">
-                <cfset form.strEmail = "">
             <cfelseif lCase(form.strTransaction) EQ "add">
                 <cfset strSuccessMessage = "record #form.interviewsID# added">
                 <cfset form.strTransaction = "update">
@@ -97,3 +95,18 @@
     </cftry>
     
 </cftransaction>
+<cffunction name="fncStructEmpty" >
+    <cfargument name="n_form" type="struct" required />
+    <cfset form.interviewsID = "">
+    <cfset form.addressID = "">
+    <cfset form.strEmail = "">
+    <cfset form.strName = "">
+    <cfset form.strInterviewer = "">
+    <cfset form.dtmInterviewDate = dateFormat(now(), "yyyy-mm-dd")>
+    <cfset form.strPosition = "">
+    <cfloop index="i" from="1" to ="#n_form.recordcount#">
+        <cfset form['#i#rdoResponse'] =  "1"/>
+        <cfset form['#i#strComment'] =  ""/>
+    </cfloop>
+
+</cffunction>

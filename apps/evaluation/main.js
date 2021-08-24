@@ -1,5 +1,10 @@
+if (document.getElementById("strEmail") && document.getElementById("strEmail").value.length) {
+    fncGetAddress(document.getElementById("strEmail"));
+}
+                
 var aryBlnRequired = document.querySelectorAll('.blnRequired');
 var aryBlnResponseBtnChecked = document.querySelectorAll('.blnResponseBtnChecked');
+var aryQuizComments = document.querySelectorAll('.textQuizComments');
 var aryScore = document.querySelectorAll('.score');
 var aryWeight = document.querySelectorAll('.weight');
 var aryTotStdWt = document.querySelectorAll('.totStdWt');
@@ -14,6 +19,7 @@ var intTotQuizWt = 0;
 var intTotQuizStdWt = 0;
 var intTotQuizScore = 0;
 
+var myForm = document.getElementById('mainForm');
 function fncCalcQuiz(n_intCurRow, n_intResponse) {
     //console.clear();
     console.log('n_intCurRow = ' + n_intCurRow);
@@ -68,6 +74,68 @@ function fncCalcQuiz(n_intCurRow, n_intResponse) {
 }
 fncCalcQuiz();
 
+function fncCloseWindow() {
+    window.open("", '_self').window.close();
+}
+
+function fncChangeInterviews (n_eleSelect) {
+    let m_intInterviewsID = n_eleSelect.value;
+    let m_strThisURL = window.location.href.split("?")[0] + "?strTransaction=";
+    if (m_intInterviewsID.toLowerCase() == "add") {
+        m_strThisURL += "add";
+    } else {
+        m_strThisURL += "update&interviewsID=" + m_intInterviewsID;
+    }
+    window.open(m_strThisURL, '_self');
+}
+
+function fncEditAddress() {
+    let m_addressID = document.getElementById("addressID").value;
+    let m_interviewsID = document.getElementById("interviewsID").value;
+    let m_strURL = "../../apps/address/?";
+    if (document.getElementById("strEmail") && document.getElementById("strEmail").value.length) {
+        let m_strEmail = document.getElementById("strEmail").value;
+        m_strURL += "&strEmail=" + encodeURIComponent(m_strEmail);
+    }
+    if (m_addressID.length) {
+        m_strURL += "&addressID=" + m_addressID;
+    } else {
+        m_strURL += "&strTransaction=Add";
+    }
+    winAddressWindow=window.open(m_strURL, "adresses", "width=500, height=300, left=300, top=200");
+}
+
+function fncGetTableValues (n_strDBTable, n_strKeyColumnName, n_strKeyColumnValue, n_lstColumns, n_strOrderByClause, n_fncCallback) {
+    let m_xhttp = new XMLHttpRequest();
+    m_xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            window[n_fncCallback](JSON.parse(this.responseText));
+        }
+    }
+    let m_strURL = document.getElementById("restMapping").value;
+    m_strURL += "api_candidates/get_address?strTable=" + n_strDBTable;
+    m_strURL += "&strKeyColumnName=" + encodeURIComponent(n_strKeyColumnName);
+    m_strURL += "&strKeyColumnValue=" + encodeURIComponent(n_strKeyColumnValue);
+    m_strURL += "&lstColumns=" + encodeURIComponent(n_lstColumns);
+    m_strURL += "&strOrderByClause=" + encodeURIComponent(n_strOrderByClause);
+    m_xhttp.open("GET", m_strURL, true);
+    m_xhttp.setRequestHeader("Content-type", "application/text");
+    m_xhttp.send();
+}
+
+function fncShowHideDetails(n_intRow) {
+    let m_eleTarget = document.getElementById(n_intRow + 'strComment');
+    let n_blnShow = !document.getElementById(n_intRow + 'strDetail').open;
+    if (m_eleTarget.value.trim().length != 0) {
+        n_blnShow = true;
+    }
+    if (n_blnShow) {
+        m_eleTarget.style.display = "initial";
+    } else {
+        m_eleTarget.style.display = "none";
+    }
+}
+
 function fncGetAddress (n_eleEmail) {
     if (fncValidateEmail(n_eleEmail)) {
         document.getElementById("candidatesNameSpan").style.visibility = "visible";
@@ -80,40 +148,76 @@ function fncGetAddress (n_eleEmail) {
             n_strKeyColumnValue = m_strEmailAddress,
             n_lstColumns = 'ID|strNameFirst|strNameMiddle|strNameLast',
             n_strOrderByClause = '',
-            n_fncCallback = "fncAddressCallBack");
+            n_fncCallback = "fncAddressCallBack"
+            );
     }
     return false;
-}
-
-if (document.getElementById("strEmail") && document.getElementById("strEmail").value.length) {
-    fncGetAddress(document.getElementById("strEmail"));
 }
 
 function fncAddressCallBack(n_responseText) {
     let i = 0;
     let m_aryColNames;
     let m_strName;
+    let m_strResponseText = n_responseText.trim();
     document.getElementById("candidatesNameSpan").style.visibility = "visible";
-    if (n_responseText.trim().substring(0, 1) != "[") {
-        alert(n_responseText.trim());
-        return;
+    if (m_strResponseText.substring(0, 1) != "[") {
+        alert(m_strResponseText);
+        //return;
     };
-    m_aryColNames = JSON.parse(n_responseText);
+    m_aryColNames = JSON.parse(m_strResponseText);
     m_strName = m_aryColNames[0].strNameFirst + ' ';
     m_strName += m_aryColNames[0].strNameMiddle + ' ';
     m_strName += m_aryColNames[0].strNameLast + ' ';
     document.getElementById("candidatesNameTextSpan").innerHTML = m_strName;
     document.getElementById("addressID").value = m_aryColNames[0].ID;
 }
-
-
-function fncChangeInterviews (n_eleSelect) {
-    let m_intInterviewsID = n_eleSelect.value;
-    let m_strThisURL = window.location.href.split("?")[0] + "?strTransaction=";
-    if (m_intInterviewsID.toLowerCase() == "add") {
-        m_strThisURL += "add";
-    } else {
-        m_strThisURL += "update&interviewsID=" + m_intInterviewsID;
+function fncValidateInterview() {
+    let m_strTransaction = myForm.strTransaction.value;
+    let m_eleEmail = myForm.strEmail;
+    let m_eleInterviewsID = myForm.interviewsID;
+    if (m_strTransaction == 'add') {
+        if (!m_eleEmail.value.length) {
+            fncFormatError(m_eleEmail, "must be entered.");
+            return false;
+        }
+    } else if (!m_eleInterviewsID.value.length || isNaN(m_eleInterviewsID.value)) {
+        fncFormatError(m_eleInterviewsID, "must be selected.");
+        return false;
     }
-    window.location.href = m_strThisURL;
+    return true;
+}
+
+function fncValidateForm() {
+    let m_intErrors = 0;
+    let m_eleInterviewer = myForm.strInterviewer;
+    let m_elePosition = myForm.strPosition;
+    let m_eleInterviewsID = myForm.interviewsID;
+    if (!fncValidateInterview() ){
+        m_intErrors++;
+    }
+    if (!m_eleInterviewer.value.length) {
+        fncFormatError(m_eleInterviewer, "must be entered.");
+        m_intErrors++;
+    }
+    if (!m_elePosition.value.length) {
+        fncFormatError(m_elePosition, "must be entered.");
+        m_intErrors++;
+    }
+    for ( i=0;  i < aryScore.length; i++) {
+        if ( aryBlnRequired[i].value == 1 )  {
+            if ( aryScore[i].value == 0 ) {
+                fncFormatError(aryScore[i], "is required.");
+                m_intErrors++;
+            }
+            if ( aryQuizComments[i].value.length == 0 ) {
+                fncFormatError(aryQuizComments[i], "are required.");
+                m_intErrors++;
+            }
+        }
+    }
+    if (m_intErrors > 0) {
+        //fncFormatError('', m_intErrors + " errors encountered.");
+        return false;
+    }
+    return true;
 }

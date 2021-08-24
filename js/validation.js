@@ -1,10 +1,21 @@
-window.addEventListener('load', fncClearSuccessMessage);
-    function fncClearSuccessMessage () {
-        setTimeout(function(){  
-            if (document.getElementById("successMsgDiv")) {
+window.addEventListener('load', fncSetMesageDivs);
+    function fncSetMesageDivs () {
+        let m_eleErrorDiv = document.createElement("div");
+        m_eleErrorDiv.id = "errorMsgDiv";
+        document.body.prepend(m_eleErrorDiv);
+        let m_strSuccessMessage = document.getElementById("strSuccessMessage").value;
+        let strErrorMessage = document.getElementById("strErrorMessage").value;
+        if (m_strSuccessMessage.length) {
+            let m_eleSuccessDiv = document.createElement("div");
+            m_eleSuccessDiv.id = "successMsgDiv";
+            m_eleSuccessDiv.innerHTML='<ul><li>' + m_strSuccessMessage + '</li></ul>';
+            document.body.prepend( m_eleSuccessDiv);
+            setTimeout(function(){  
                 document.getElementById("successMsgDiv").innerHTML = "";
-            };
-        }, 5000);
+            }, 5000);
+        } else if (strErrorMessage.length) {
+            fncFormatError('', strErrorMessage);
+        }
     }
 
     document.getElementById("mainForm").addEventListener('submit', fncRunValidateForm);

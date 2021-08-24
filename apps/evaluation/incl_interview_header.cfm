@@ -42,7 +42,7 @@
                 <input type="date" name="dtmInterviewDate" id="dtmInterviewDate"
                     min="#dateFormat(#dateAdd('yyyy', -2, #now()#)#, "yyyy-mm-dd")#" max="#dateFormat(#now()#, "yyyy-mm-dd")#" 
                     value="#dateFormat(form.dtmInterviewDate, 'yyyy-mm-dd')#"
-                    onBlur="fncValidateDate(this);"/>
+                    onBlur="fncValidateInterview();fncValidateDate(this);"/>
             </span>
             <br/>
             <label class="interviewInputlabel"></label>
@@ -65,13 +65,25 @@
 
             <span class="interviewSpan">
                 <label class="interviewInputlabel">Interviewer:</label>
-                <input type="text" class="caps" name="strInterviewer" title="Interviewer|#form.strInterviewer#" id="strInterviewer" placeholder="Name"  value="#form.strInterviewer#"/>
+                <input type="text" class="caps"
+                        name="strInterviewer" 
+                        title="Interviewer|#form.strInterviewer#"
+                        id="strInterviewer"
+                        placeholder="Name"
+                        onChange="fncValidateInterview();"
+                        value="#form.strInterviewer#"/>
             </span>
 
             
             <span class="interviewSpan">
                 <label class="interviewInputlabel">Position:</label>
-                <input type="text" name="strPosition" title="Position|#form.strPosition#" id="strPosition" placeholder="Position"   value="#form.strPosition#"/>
+                <input type="text" 
+                        name="strPosition"
+                        title="Position|#form.strPosition#"
+                        id="strPosition"
+                        placeholder="Position"
+                        onChange="fncValidateInterview();"
+                        value="#form.strPosition#"/>
             </span>
             <br/>
             <br/>

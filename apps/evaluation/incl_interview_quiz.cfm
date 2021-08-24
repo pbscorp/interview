@@ -39,7 +39,20 @@
                         <cfset qryQuiz.strComment = form["#qryQuiz.currentrow#strComment"]>
                     </cfif>
                     <tr>
-                        <td class="left"><details><summary>#qryQuiz.currentrow#. #qryQuiz.strCategory#</summary>#qryQuiz.strQuestion#</details></td>
+                        <td class="left  quizSummaryTD" >
+                            <details id="#qryQuiz.currentrow#strDetail">
+                                <summary 
+                                        onClick="fncShowHideDetails('#qryQuiz.currentrow#')" 
+                                        id="#qryQuiz.currentrow#strSummary">
+                                    <span >
+                                        #qryQuiz.currentrow#. #qryQuiz.strCategory#
+                                    </span>
+                                </summary>
+                                <span class="quizSummarySpan">
+                                #qryQuiz.strQuestion#<br/>Comment:
+                                </span>
+                            </details>
+                        </td>
                         <cfset intScore = 0>
                         <cfset blnResponseBtnChecked = 0>
                         <cfloop index="i" from="1" to="#intListLenWeights#">
@@ -49,7 +62,7 @@
                                 class="intQuiz intResponse"
                                 title="#listGetAt(lstWtLiterals, i)#"
                                 value="#i#"
-                                onclick="fncCalcQuiz(#(#qryQuiz.currentrow# -1)#, this.value);"
+                                onclick="fncValidateInterview();fncCalcQuiz(#(#qryQuiz.currentrow# -1)#, this.value);"
                                 <cfif qryQuiz.intResponse_value EQ i>
                                     <cfset blnResponseBtnChecked = 1>
                                     checked
@@ -77,13 +90,20 @@
                     </tr>
                     
                     <tr>
+                                <!--- col span entire table --->
                         <td class="left" colspan="100">
-                            Comments:
-                            </br>
+                            
                         <textarea 
-                                title="#qryQuiz.strComment#"
-                                name="#qryQuiz.currentrow#strComment" id="#qryQuiz.currentrow#strComment"
-                                rows="2" cols="100"> 
+                                title="Question #qryQuiz.currentrow#) #qryQuiz.strCategory# comments|#qryQuiz.strComment#"
+                                name="#qryQuiz.currentrow#strComment"
+                                <cfif NOT len(qryQuiz.strComment)>
+                                    style="display :none"
+                                </cfif>
+                                onChange="fncValidateInterview();"
+                                id="#qryQuiz.currentrow#strComment"
+                                class="textQuizComments"
+                                rows="3"
+                                cols="95">
                             #qryQuiz.strComment#
                         </textarea>
                         <td>

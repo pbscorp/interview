@@ -1,7 +1,5 @@
 function fncGetTableValues (n_strDBTable, n_strKeyColumnName, n_strKeyColumnValue, n_lstColumns, n_strOrderByClause, n_fncCallback) {
     let m_xhttp = new XMLHttpRequest();
-    let m_parser = new DOMParser();
-    let m_XHTTPRtnColumns = "";
     m_xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             window[n_fncCallback](this.responseText);

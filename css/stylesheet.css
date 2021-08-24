@@ -9,7 +9,7 @@ th {
 span {
   display: inline-block;
 }
-.grades {
+.gradesX {
   font-size: x-small;
 }
 p {
@@ -35,6 +35,13 @@ h2 {
 }
 .caps {
   text-transform: capitalize;
+}
+.quizSummaryTD {
+  width: 300px;
+}
+.quizSummarySpan {
+  font-style: italic;
+  padding: 1px;
 }
 #addressTableDiv {
   background-color: #a4dded;
