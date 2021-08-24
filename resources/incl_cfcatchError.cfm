@@ -1,7 +1,11 @@
 <cfsavecontent variable = "stcCatchDump"> 
     <cfdump var="#cfcatch#" label="cfcatch">
-    <cfdump var="#form#" label="form">
-    <cfdump var="#url#" label="url">
+    <cfif isStruct(form)>
+        <cfdump var="#form#" label="form">
+    </cfif>
+    <cfif isStruct(url)>
+        <cfdump var="#url#" label="url">
+    </cfif>
 </cfsavecontent>
 
 <cffile action = "write" 
