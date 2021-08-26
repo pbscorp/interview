@@ -16,16 +16,16 @@ var aryAvgSpan=document.querySelectorAll('.avgSpan');
 var aryGradesWt = document.getElementById('lstGradesWt').value.split(',');
 var intMaxGrades = Math.max(...aryGradesWt);
 var intTotQuizWt = 0;
-var intTotQuizStdWt = 0;
+var intMaxTotQuizStdWt = 0;
 var intTotQuizScore = 0;
 
 var myForm = document.getElementById('mainForm');
+
 function fncCalcQuiz(n_intCurRow, n_intResponse) {
-    //console.clear();
+    console.clear();
     console.log('n_intCurRow = ' + n_intCurRow);
     intTotQuizWt = 0;
-    intTotQuizStdWt = 0;
-    intTotQuizScore = 0;
+    intMaxTotQuizStdWt = 0;
     let i;
     if (n_intCurRow != undefined) {
         i = n_intCurRow;
@@ -36,7 +36,7 @@ function fncCalcQuiz(n_intCurRow, n_intResponse) {
     for ( i=0;  i < aryScore.length; i++) {
 
         if ( (aryBlnResponseBtnChecked[i].value == 1) && (aryScore[i].value > 0) || (aryBlnRequired[i].value == 1)  ) {
-            intTotQuizStdWt += parseInt(aryWeight[i].value) * intMaxGrades;// maxamum score possible
+            intMaxTotQuizStdWt += parseInt(aryWeight[i].value) * intMaxGrades;// maxamum score possible
         }
         aryTotWt[i].value = 0;
         if ( aryBlnResponseBtnChecked[i].value == 1 ) {
@@ -44,15 +44,16 @@ function fncCalcQuiz(n_intCurRow, n_intResponse) {
             intTotQuizWt += parseInt(aryTotWt[i].value);
         }
         aryRunWt[i].value =  intTotQuizWt;
-        aryTotStdWt[i].value =  intTotQuizStdWt;
+        aryTotStdWt[i].value =  intMaxTotQuizStdWt;
     }
     for ( i=0;  i < aryScore.length; i++) {
         aryRunScore[i].value =  intTotQuizWt;
-        aryTotStdWt[i].value =  intTotQuizStdWt;
-        if (intTotQuizStdWt != 0){
-            aryAvg[i].value =  Math.round( intTotQuizWt / intTotQuizStdWt * 100);
+        aryTotStdWt[i].value =  intMaxTotQuizStdWt;
+        if (intMaxTotQuizStdWt != 0){
+            aryAvg[i].value =  Math.round( intTotQuizWt / intMaxTotQuizStdWt * 100);
         }
         aryAvgSpan[i].innerText = aryAvg[i].value;
+        fncPopulateToolTip(i);
         if (n_intCurRow == i) {
             console.log('n_intCurRow = ' + i);
             console.log('aryBlnResponseBtnChecked = ' + aryBlnResponseBtnChecked[i].value);
@@ -65,17 +66,18 @@ function fncCalcQuiz(n_intCurRow, n_intResponse) {
             console.log('aryRunScore = ' + aryRunScore[i].value);
             console.log('aryAvg = ' + aryAvg[i].value);
             console.log('aryGradesWt = ' + aryAvgSpan[i].value);
+            
         }
     }
     console.log('intMaxGrades = ' + intMaxGrades);
     console.log('intTotQuizWt = ' + intTotQuizWt);
-    console.log('intTotQuizStdWt = ' + intTotQuizStdWt);
+    console.log('intMaxTotQuizStdWt = ' + intMaxTotQuizStdWt);
     console.log('intTotQuizScore = ' + intTotQuizScore);
 }
 fncCalcQuiz();
 
 function fncCloseWindow() {
-    window.open("", '_self').window.close();
+    window.close();
 }
 
 function fncChangeInterviews (n_eleSelect) {
@@ -125,7 +127,7 @@ function fncGetTableValues (n_strDBTable, n_strKeyColumnName, n_strKeyColumnValu
 
 function fncShowHideDetails(n_intRow) {
     let m_eleTarget = document.getElementById(n_intRow + 'strComment');
-    let n_blnShow = !document.getElementById(n_intRow + 'strDetail').open;
+    let n_blnShow = !document.getElementById(n_intRow  + 'strDetail').open;
     if (m_eleTarget.value.trim().length != 0) {
         n_blnShow = true;
     }
@@ -134,6 +136,24 @@ function fncShowHideDetails(n_intRow) {
     } else {
         m_eleTarget.style.display = "none";
     }
+}
+function fncPopulateToolTip(n_inx) {
+    let m_intQuestionsPct = 0;
+    let m_intMaxTotQuizStdWt = intMaxTotQuizStdWt;
+    let m_strExplainText = "This question"
+    let m_intMaxQuestionStdWt = parseInt(aryWeight[n_inx].value) * intMaxGrades;
+    if ( (aryBlnResponseBtnChecked[n_inx].value != 1) || (aryScore[n_inx].value == 0) && (aryBlnRequired[n_inx].value == 0)  ) {
+        m_intMaxTotQuizStdWt = intMaxTotQuizStdWt + m_intMaxQuestionStdWt;
+    }
+     m_intQuestionsPct = ( ( m_intMaxQuestionStdWt / m_intMaxTotQuizStdWt) * 100).toFixed(2);
+    let m_intRow = n_inx + 1;
+    if (aryBlnRequired[n_inx].value == 1) {
+        m_strExplainText += " is required and";
+    }
+    
+    m_strExplainText += " has a maximum weight of " + m_intMaxQuestionStdWt;
+    m_strExplainText += " which is " + m_intQuestionsPct + "% of the total possible of " + m_intMaxTotQuizStdWt;
+    document.getElementById(m_intRow + 'strToolTipText').innerHTML=m_strExplainText;
 }
 
 function fncGetAddress (n_eleEmail) {

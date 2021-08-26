@@ -48,9 +48,15 @@
                                         #qryQuiz.currentrow#. #qryQuiz.strCategory#
                                     </span>
                                 </summary>
-                                <span class="quizSummarySpan">
-                                #qryQuiz.strQuestion#<br/>Comment:
-                                </span>
+                                <div>
+                                    <div class="tooltip float-left"><img src="#application.applicationBaseURLPath#/images/explain.png" alt="explain">
+                                        <span class="tooltiptext" id="#qryQuiz.currentrow#strToolTipText">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Magnam, itaque! Ipsa cumque quasi, nisi qui nobis in maiores dolorem exercitationem animi fugit voluptatum quis deserunt placeat veritatis et rem quam.</span>
+                                    </div>
+                                    <div class="float-left quizSummarySpan">
+                                            #qryQuiz.strQuestion#<br/>Comment:
+                                    </div>
+                                </div>
+
                             </details>
                         </td>
                         <cfset intScore = 0>

@@ -36,12 +36,19 @@ h2 {
 .caps {
   text-transform: capitalize;
 }
+.float-right {
+  float: right;
+}
+.float-left {
+  float: left;
+}
 .quizSummaryTD {
   width: 300px;
 }
 .quizSummarySpan {
   font-style: italic;
   padding: 1px;
+  width: 220px;
 }
 #addressTableDiv {
   background-color: #a4dded;
@@ -100,4 +107,33 @@ span.interviewSpan {
 .button:hover {
   background-color: #cefcf2;
   color: rgb(73, 121, 153);
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+  text-align: left;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 320px;
+  background-color: black;
+  color: #fff;
+  text-align: left;
+  border-radius: 6px;
+  padding: 10px;
+  margin: 5px 0;
+  position: absolute;
+  z-index: 1;
+  top: 15px;
+  left: 35px;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+.tooltip img {
+  width: 15px;
 }

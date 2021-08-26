@@ -9,7 +9,8 @@
         .container {
             position: relative;
             text-align: center;
-            color: white
+            color: white;
+            font-size: 18px;
         }
         
         .centered {
@@ -27,12 +28,18 @@
         function fncLoadSampleCode () {
             window.open('apps/evaluation/index.cfm', '_blank');
         }
+        function fncLoadQuizTest () {
+            window.open('apps/evaluation/quiztest.cfm', '_blank');
+        }
     </script>
 </head>
 <body onload="fncScrollWindow()">
     <div class="container">
       <img src="images/landscape.jpg" alt="Interview" style="width:100%;">
-      <div class="centered" onclick="fncLoadSampleCode();">Evaluation Form</div>
+      <div class="centered" >
+        <p onclick="fncLoadSampleCode();">Evaluation Form</p>
+        <!--- <p onclick="fncLoadQuizTest();">test quiz</p> --->
     </div>
+</div>
 </body>
 </html>

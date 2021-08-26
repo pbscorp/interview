@@ -70,7 +70,7 @@
                     <cfif len(form.interviewsID) GT 0>
                         <input type="submit" name="deleteButton" onClick="return fncConfirmDelete();"id="deleteButton" value="Delete">
                     </cfif>
-                    <input type="button" name="closeButton" id="closeButton" value="close" onClick="fncCloseWindow();">
+                    <input type="button" name="closeButton" id="closeButton" value="close" onClick="window.close();">
                 </form>
              </div>
             <script src="main.js" defer></script>
