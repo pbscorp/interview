@@ -17,7 +17,7 @@
         <table>
             <thead>
                 <tr>
-                    <th>Please Rate The Following Categories</th>
+                    <th style="width:300px">Please Rate The Following Categories</th>
                     <cfloop index="i" from="1" to="#intListLenWeights#">
                         <cfset intWtHdr = listGetAt(lstGradesWt, i)>
                         <cfset strWtHdr = listGetAt(lstWtLiterals, i)>
@@ -26,7 +26,7 @@
                             <span<cfif intWtHdr LT 0 > class="grades red"<cfelse> class="grades"</cfif>>#intWtHdr#</span>
                         </th>
                     </cfloop>
-                    <th class="grades">score</td>
+                    <th class="grades">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
                 </tr>
             </thead>
 
@@ -84,7 +84,7 @@
                             <input type="hidden" name="#qryQuiz.currentrow#questionsID" id="#qryQuiz.currentrow#questionsID" value="#qryQuiz.questionsID#">
                             <input type="hidden" class="intQuiz blnResponseBtnChecked" name="#qryQuiz.currentrow#blnResponseBtnChecked" id="#qryQuiz.currentrow#blnRequired" value="#blnResponseBtnChecked#">
                             <input type="hidden" class="intQuiz blnRequired" name="#qryQuiz.currentrow#blnRequired" id="#qryQuiz.currentrow#blnRequired" value="#qryQuiz.blnRequired#">
-                            <input type="hidden" size=4 class="intQuiz score" title="Question #qryQuiz.currentrow#) #qryQuiz.strCategory#" id="#qryQuiz.currentrow#score" value="#intScore#">
+                            <input type="hidden" size=4 class="intQuiz score" title="#qryQuiz.strCategory#" id="#qryQuiz.currentrow#score" value="#intScore#">
                             <input type="hidden" size=4 class="intQuiz weight" id="#qryQuiz.currentrow#weight" value="#qryQuiz.intWeight#">
                             <input type="hidden" size=4 class="intQuiz totStdWt" id="#qryQuiz.currentrow#totStdWt"value="">
                             <input type="hidden" size=4 class="intQuiz totWt" id="#qryQuiz.currentrow#totWt"value="#round(#intScore#*#qryQuiz.intWeight#)#">

@@ -6,14 +6,15 @@ var aryBlnRequired = document.querySelectorAll('.blnRequired');
 var aryBlnResponseBtnChecked = document.querySelectorAll('.blnResponseBtnChecked');
 var aryQuizComments = document.querySelectorAll('.textQuizComments');
 var aryScore = document.querySelectorAll('.score');
+var aryScoreText = document.querySelectorAll('#qryQuiz.currentrow#rdoResponse');
 var aryWeight = document.querySelectorAll('.weight');
 var aryTotStdWt = document.querySelectorAll('.totStdWt');
 var aryTotWt = document.querySelectorAll('.totWt');
 var aryRunWt = document.querySelectorAll('.runWt');
 var aryRunScore = document.querySelectorAll('.runScore');
 var aryAvg=document.querySelectorAll('.avg');
-var aryAvgSpan=document.querySelectorAll('.avgSpan');
 var aryGradesWt = document.getElementById('lstGradesWt').value.split(',');
+var aryGradesWtText = document.getElementById('lstWtLiterals').value.split(',');
 var intMaxGrades = Math.max(...aryGradesWt);
 var intTotQuizWt = 0;
 var intMaxTotQuizStdWt = 0;
@@ -32,6 +33,11 @@ function fncCalcQuiz(n_intCurRow, n_intResponse) {
         console.log('n_intCurRow = ' + i);
         aryScore[i].value = aryGradesWt[parseInt(n_intResponse) -1];
         aryBlnResponseBtnChecked[i].value = 1;
+        if (document.getElementById('qryAllInterviewsRecordcount').value > 1 ) {
+            document.getElementById('scorebord-container').style.display="block";
+        } else {
+            document.getElementById('scorebord-container').style.display="inline";
+        }
     }
     for ( i=0;  i < aryScore.length; i++) {
 
@@ -52,7 +58,6 @@ function fncCalcQuiz(n_intCurRow, n_intResponse) {
         if (intMaxTotQuizStdWt != 0){
             aryAvg[i].value =  Math.round( intTotQuizWt / intMaxTotQuizStdWt * 100);
         }
-        aryAvgSpan[i].innerText = aryAvg[i].value;
         fncPopulateToolTip(i);
         if (n_intCurRow == i) {
             console.log('n_intCurRow = ' + i);
@@ -65,7 +70,9 @@ function fncCalcQuiz(n_intCurRow, n_intResponse) {
             console.log('aryRunWt = ' + aryRunWt[i].value);
             console.log('aryRunScore = ' + aryRunScore[i].value);
             console.log('aryAvg = ' + aryAvg[i].value);
-            console.log('aryGradesWt = ' + aryAvgSpan[i].value);
+            document.getElementsByName('strScorecardCategory')[0].innerHTML = aryScore[i].title +':';
+            document.getElementsByName('strScorecardCategoryScore')[0].innerHTML = aryGradesWtText[parseInt(n_intResponse) -1];
+            document.getElementsByName('strScorecardWeight')[0].innerHTML = aryAvg[i].value;
             
         }
     }
@@ -76,8 +83,23 @@ function fncCalcQuiz(n_intCurRow, n_intResponse) {
 }
 fncCalcQuiz();
 
-function fncCloseWindow() {
-    window.close();
+function fncPopulateToolTip(n_inx) {
+    let m_intQuestionsPct = 0;
+    let m_intMaxTotQuizStdWt = intMaxTotQuizStdWt;
+    let m_strExplainText = aryScore[n_inx].title; //"This question"
+    let m_intMaxQuestionStdWt = parseInt(aryWeight[n_inx].value) * intMaxGrades;
+    if ( (aryBlnResponseBtnChecked[n_inx].value != 1) || (aryScore[n_inx].value == 0) && (aryBlnRequired[n_inx].value == 0)  ) {
+        m_intMaxTotQuizStdWt = intMaxTotQuizStdWt + m_intMaxQuestionStdWt;
+    }
+     m_intQuestionsPct = ( ( m_intMaxQuestionStdWt / m_intMaxTotQuizStdWt) * 100).toFixed(2);
+    let m_intRow = n_inx + 1;
+    if (aryBlnRequired[n_inx].value == 1) {
+        m_strExplainText += " is required and";
+    }
+    
+    m_strExplainText += " has a maximum weight of " + m_intMaxQuestionStdWt;
+    m_strExplainText += " which is " + m_intQuestionsPct + "% of the total possible of " + m_intMaxTotQuizStdWt;
+    document.getElementById(m_intRow + 'strToolTipText').innerHTML=m_strExplainText;
 }
 
 function fncChangeInterviews (n_eleSelect) {
@@ -137,24 +159,6 @@ function fncShowHideDetails(n_intRow) {
         m_eleTarget.style.display = "none";
     }
 }
-function fncPopulateToolTip(n_inx) {
-    let m_intQuestionsPct = 0;
-    let m_intMaxTotQuizStdWt = intMaxTotQuizStdWt;
-    let m_strExplainText = "This question"
-    let m_intMaxQuestionStdWt = parseInt(aryWeight[n_inx].value) * intMaxGrades;
-    if ( (aryBlnResponseBtnChecked[n_inx].value != 1) || (aryScore[n_inx].value == 0) && (aryBlnRequired[n_inx].value == 0)  ) {
-        m_intMaxTotQuizStdWt = intMaxTotQuizStdWt + m_intMaxQuestionStdWt;
-    }
-     m_intQuestionsPct = ( ( m_intMaxQuestionStdWt / m_intMaxTotQuizStdWt) * 100).toFixed(2);
-    let m_intRow = n_inx + 1;
-    if (aryBlnRequired[n_inx].value == 1) {
-        m_strExplainText += " is required and";
-    }
-    
-    m_strExplainText += " has a maximum weight of " + m_intMaxQuestionStdWt;
-    m_strExplainText += " which is " + m_intQuestionsPct + "% of the total possible of " + m_intMaxTotQuizStdWt;
-    document.getElementById(m_intRow + 'strToolTipText').innerHTML=m_strExplainText;
-}
 
 function fncGetAddress (n_eleEmail) {
     if (fncValidateEmail(n_eleEmail)) {
@@ -188,6 +192,7 @@ function fncAddressCallBack(n_responseText) {
     m_strName = m_aryColNames[0].strNameFirst + ' ';
     m_strName += m_aryColNames[0].strNameMiddle + ' ';
     m_strName += m_aryColNames[0].strNameLast + ' ';
+    document.getElementsByName('strScorecardName')[0].innerHTML = m_strName;
     document.getElementById("candidatesNameTextSpan").innerHTML = m_strName;
     document.getElementById("addressID").value = m_aryColNames[0].ID;
 }

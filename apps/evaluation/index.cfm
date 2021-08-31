@@ -48,6 +48,12 @@
         <cfoutput>
         <link rel="stylesheet" href="#application.applicationBaseURLPath#/css/stylesheet.css">
         </cfoutput>
+        <style>
+        body {
+            width: 700px;
+            margin: auto;
+        }
+        </style>
     </head>
     <body id="bodyID">
         <cfoutput>
@@ -56,6 +62,7 @@
                 <form name="mainForm" id="mainForm" method="post" action="#cgi.script_name#?evaluationID=#url.evaluationID#">
         </cfoutput>
                     <cfinclude template="incl_interview_header.cfm">
+                    <cfinclude template="incl_scoretable.cfm">
                     <cfinclude template="incl_interview_quiz.cfm">
         <cfoutput>
                     <input type="hidden" name="recordcount" id="recordcount" value="#qryQuiz.recordcount#">
@@ -65,6 +72,7 @@
                     <input type="hidden" name="lstWtLiterals" id="lstWtLiterals" value="#lstWtLiterals#">
                     <input type="hidden" name="lstGradesWt" id="lstGradesWt" value="#lstGradesWt#">
                     <input type="hidden" name="strTransaction" id="strTransaction" value="#form.strTransaction#">
+                    <input type="hidden" name="qryAllInterviewsRecordcount" id="qryAllInterviewsRecordcount" value="#qryAllInterviews.recordcount#">
                     <input type="hidden" name="addressID" id="addressID" value="#form.addressID#">
                     <input type="submit" name="submitButton" id="submitButton" value="submit" disabled>
                     <cfif len(form.interviewsID) GT 0>

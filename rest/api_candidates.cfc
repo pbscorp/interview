@@ -42,8 +42,9 @@
                     if (qryGetTable.currentRow < qryGetTable.recordCount) {
                         m_aryRtnColumns &= '},';
                     }
+                    m_aryRtnColumns &= "}";
                 }
-                m_aryRtnColumns &= "}]";
+                m_aryRtnColumns &= "]";
                 if (intColumnCount = 0) {
                     r_result = "no data";
                 } else {

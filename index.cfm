@@ -28,8 +28,8 @@
         function fncLoadSampleCode () {
             window.open('apps/evaluation/index.cfm', '_blank');
         }
-        function fncLoadQuizTest () {
-            window.open('apps/evaluation/quiztest.cfm', '_blank');
+        function fncLoadTest () {
+            window.open('apps/evaluation/incl_scoretable.cfm', '_blank');
         }
     </script>
 </head>
@@ -38,7 +38,7 @@
       <img src="images/landscape.jpg" alt="Interview" style="width:100%;">
       <div class="centered" >
         <p onclick="fncLoadSampleCode();">Evaluation Form</p>
-        <!--- <p onclick="fncLoadQuizTest();">test quiz</p> --->
+        <p onclick="fncLoadTest();">Sccore Table</p>
     </div>
 </div>
 </body>
