@@ -1,6 +1,6 @@
 <c<cfcomponent name="candidates">
     <cffunction name="getQuestions" output="false" returntype="query">
-        <cfargument name="n_ID" type="string" required="no" default="1">
+        <cfargument name="n_ID" type="numeric" required="no" default="1">
         <cfquery name="qryQuestions">
             SELECT questions.ID,
                 questions.intSequence,
@@ -16,12 +16,14 @@
 
     <cffunction name="getInterview" output="false" returntype="query">
         <cfargument name="n_ID" type="string" required="yes" default="0">
-        <cfargument name="n_evaluation_ID" type="string" required="no" default="1">
+        <cfargument name="n_evaluation_ID" type="numeric" required="no" default="1">
+        <cfargument name="n_strPosition" type="string" required="no" default="">
         <cfquery name="qryInterview">
             SELECT interviews.ID as interviewsID,
                 interviews.strInterviewer,
                 interviews.dtmInterviewDate,
                 interviews.strPosition,
+                interviews.intScore,
                 interviews.evaluation_ID,
                 address.ID as addressID,
                 CONCAT(address.strNameFirst, ' ', address.strNameMiddle, ' ', address.strNameLast) as strName,
@@ -36,11 +38,26 @@
             FROM candidates.interviews,  candidates.address
                 WHERE interviews.address_ID = address.ID
                     AND interviews.evaluation_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.n_evaluation_ID#">
+                <cfif len(arguments.n_strPosition)> 
+                    AND interviews.strPosition = <cfqueryparam cfsqltype="cf_sql_char" value="#arguments.n_strPosition#">
+                </cfif>
                 <cfif lCase(arguments.n_ID) NEQ 'all'> 
-                    AND interviews.ID= <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.n_ID#">
+                    AND interviews.ID= <cfqueryparam cfsqltype="cf_sql_char" value="#arguments.n_ID#">
+                <cfelse>
+                    ORDER BY interviews.strPosition DESC, interviews.intScore DESC;
                 </cfif>
         </cfquery>
         <cfreturn qryInterview>
+    </cffunction>
+
+    <cffunction name="getPositions" output="false" returntype="query">
+        <cfargument name="n_evaluation_ID" type="numeric" required="no" default="1">
+        <cfquery name="qryPosisions">
+            SELECT DISTINCT(strPosition) as strPosition
+            FROM candidates.interviews
+                WHERE interviews.evaluation_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.n_evaluation_ID#">
+        </cfquery>
+        <cfreturn qryPosisions>
     </cffunction>
 
     <cffunction name="getstates" output="false" returntype="any">
@@ -52,7 +69,7 @@
     </cffunction>
 
     <cffunction name="getEvaluation" output="false" returntype="query">
-        <cfargument name="n_ID" type="string" required="yes" default="0">
+        <cfargument name="n_ID" type="numeric" required="yes" default="0">
         <cfquery name="qryEvaluation">
            SELECT evaluation.ID,
                     evaluation.strEvaluationText,

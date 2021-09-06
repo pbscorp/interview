@@ -102,6 +102,7 @@ function fncValidatePhone(n_elementPhone) {
             return false;
         }
     }
+    return true;
 }
 function fncValidateZip(n_elementZip) {
     let m_intZip = n_elementZip.value.replace(/-/g,"");
@@ -122,6 +123,7 @@ function fncValidateZip(n_elementZip) {
             return false;
         }
     }
+    return true;
 }
 function fncValidateState(n_eleState, n_datalistID) {
     let aryDatalistStates = document.getElementById(n_datalistID);
@@ -143,4 +145,5 @@ function fncValidateDate(n_elementDate) {
         fncFormatError(n_elementDate, 'error: date must be a valid date between ' + n_elementDate.min + ' and ' + n_elementDate.min, true);
         return false;
     }
+    return true;
 }

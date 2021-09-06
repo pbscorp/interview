@@ -129,11 +129,78 @@
     }
     
     </script> --->
+
     <div class="scorebord-container" id="scorebord-container" style="display: none">
-        <div class="scoreboard">
-            <div class="title"><b>Score</b><br /><span name="strScorecardName"></span><br/></div>
-            <div class="scorecard-weight"><span name="strScorecardWeight"></span></div>
-            <div><em><span name="strScorecardCategory"></span></em></div>
-            <div><b><span name="strScorecardCategoryScore"></span></b></div>
-        </div>
+
+        <cfsavecontent variable="htmlScorebordDiv">
+            <div class="scoreboard">
+                <div class="title"><b>Score</b><br /><span name="strScorecardName"><cfoutput>#form.strName#</cfoutput></span><br/></div>
+                <div class="scorecard-weight"><span name="strScorecardFinalScore"></span></div>
+                <div><em><span name="strScorecardCategory"></span></em></div>
+                <div><b><span name="strScorecardCategoryScore"></span></b></div>
+            </div>
+        </cfsavecontent>
+
+        <cfoutput>#htmlScorebordDiv#</cfoutput>
+        <cfset lstScoreboardCandidates = "">
+        <cfoutput query="qryAllInterviews">
+            <cfif qryAllInterviews.interviewsID NEQ form.interviewsID>
+                <cfif qryAllInterviews.strPosition EQ form.strPosition>
+                    #htmlScorebordDiv#
+                    <cfset lstScoreboardCandidates = listAppend(lstScoreboardCandidates, fncGetCandidateQuizScores(), "|")>
+                </cfif>
+            </cfif>
+        </cfoutput>
     </div>
+    <cffunction name="fncGetCandidateQuizScores" output="false" returntype="any">
+        <cfset QryGetCandidateQuizScores = getCandidateQuizScores(qryAllInterviews.interviewsID)>
+        <cfsavecontent variable="jsonCanddateCompition" >
+                {
+                <cfoutput>
+                "name" : "#qryAllInterviews.strName#",
+                "final score" : "#qryAllInterviews.intScore#",
+                </cfoutput> 
+                <cfoutput query="QryGetCandidateQuizScores">
+                    "#QryGetCandidateQuizScores.strCategory#" : "#listGetAt(lstWtLiterals, QryGetCandidateQuizScores.intResponse_value)#"
+                    <cfif QryGetCandidateQuizScores.currentRow LT QryGetCandidateQuizScores.recordcount>
+                        ,
+                    </cfif>
+                </cfoutput>
+                }
+        </cfsavecontent>
+        <cfreturn jsonCanddateCompition>
+    </cffunction>
+    
+    <cffunction name="getCandidateQuizScores" output="false" returntype="query">
+        <cfargument name="n_interviews_ID" type="numeric" default="">
+        <cfquery name="qryCandidateQuizScores">
+            SELECT 
+                quiz.ID,
+                quiz.intResponse_value,
+                questions.ID as questionsID,
+                questions.strCategory,
+                questions.intWeight
+                
+                FROM candidates.quiz,  candidates.questions
+
+                WHERE quiz.interviews_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.n_interviews_ID#">
+                AND quiz.questions_ID =  questions.ID
+                ORDER BY questions.intSequence ASC;
+
+        </cfquery>
+        <cfreturn qryCandidateQuizScores>
+    </cffunction>
+    <cfif len(lstScoreboardCandidates)>
+        <cfset lstScoreboardCandidates = replace(lstScoreboardCandidates, '|', ',', 'all')>
+    </cfif>
+    <script>
+        const aryScorecardName = document.getElementsByName('strScorecardName');
+        const aryScorecardFinalScore = document.getElementsByName('strScorecardFinalScore');
+        const aryScorecardCategory = document.getElementsByName('strScorecardCategory');
+        const aryScorecardCategoryScore = document.getElementsByName('strScorecardCategoryScore');
+        const g_jsonScoreboardCandidates = [<cfoutput>#lstScoreboardCandidates#</cfoutput>];
+        for (var i = 0; i < aryScorecardName.length; i++) {
+            aryScorecardName[( i + 1)].innerHTML = g_jsonScoreboardCandidates[i]['name'];
+            aryScorecardFinalScore[( i + 1)].innerHTML = g_jsonScoreboardCandidates[i]['final score'];
+        }
+    </script>

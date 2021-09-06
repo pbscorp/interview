@@ -6,6 +6,7 @@
 <cfparam name="form.dtmInterviewDate" default="#dateFormat(#now()#, "yyyy-mm-dd")#">
 <cfparam name="form.strPosition" default="">
 <cfparam name="form.addressID" default="">
+<cfparam name="form.intFinalScore" default="0">
 <cfparam name="url.evaluationID" default="1">
 <cfparam name="url.interviewsID" default="">
 <cfparam name="form.interviewsID" default="#url.interviewsID#">
@@ -15,7 +16,6 @@
 <cfparam name="strErrorMessage" default="">
 <cfparam name="strSuccessMessage" default="">
 
-<cfset aryErrorMessage = ArrayNew(1)>
 <cfif len(form.submitButton) OR len(form.deleteButton)>
     <cfinclude template = "act_candidates.cfm">
 </cfif>
@@ -25,6 +25,9 @@
     objInterviews = createObject('component', 'interview-cfc.candidates');
     getQuestions = objInterviews.getQuestions(url.evaluationID);
     qryEvaluation = objInterviews.getEvaluation(url.evaluationID);
+    lstGradesWt = qryEvaluation.lstWeight;
+    lstWtLiterals = qryEvaluation.lstWtLiterals;
+    intListLenWeights = listLen(lstGradesWt);
     qryAllInterviews = objInterviews.getInterview('all', url.evaluationID);
     if ( (!len(strErrorMessage)) && (lCase(form.strTransaction) != "add")) {
         qryInterview = objInterviews.getInterview(form.interviewsID, url.evaluationID);
@@ -35,7 +38,9 @@
         form.dtmInterviewDate = qryInterview.dtmInterviewDate;
         form.strInterviewer = qryInterview.strInterviewer;
         form.strPosition = qryInterview.strPosition;
+        form.intFinalScore = qryInterview.intScore;
     }
+    qryPositions = objInterviews.getPositions(url.evaluationID, form.strPosition);
     if (!len(form.interviewsID )) {
         qryQuiz = objInterviews.getQuiz('new', url.evaluationID)
     } else {
@@ -68,6 +73,7 @@
                     <input type="hidden" name="recordcount" id="recordcount" value="#qryQuiz.recordcount#">
                     <input type="hidden" name="strErrorMessage" id="strErrorMessage" value="#strErrorMessage#">
                     <input type="hidden" name="strSuccessMessage" id="strSuccessMessage" value="#strSuccessMessage#">
+                    <input type="hidden" name="intFinalScore" id="intFinalScore" value="#form.intFinalScore#">
                     <input type="hidden" name="restMapping" id="restMapping" value="#application.applicationRestMapping#">
                     <input type="hidden" name="lstWtLiterals" id="lstWtLiterals" value="#lstWtLiterals#">
                     <input type="hidden" name="lstGradesWt" id="lstGradesWt" value="#lstGradesWt#">

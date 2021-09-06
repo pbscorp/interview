@@ -6,16 +6,12 @@ var aryBlnRequired = document.querySelectorAll('.blnRequired');
 var aryBlnResponseBtnChecked = document.querySelectorAll('.blnResponseBtnChecked');
 var aryQuizComments = document.querySelectorAll('.textQuizComments');
 var aryScore = document.querySelectorAll('.score');
-var aryScoreText = document.querySelectorAll('#qryQuiz.currentrow#rdoResponse');
 var aryWeight = document.querySelectorAll('.weight');
-var aryTotStdWt = document.querySelectorAll('.totStdWt');
-var aryTotWt = document.querySelectorAll('.totWt');
-var aryRunWt = document.querySelectorAll('.runWt');
-var aryRunScore = document.querySelectorAll('.runScore');
 var aryAvg=document.querySelectorAll('.avg');
 var aryGradesWt = document.getElementById('lstGradesWt').value.split(',');
 var aryGradesWtText = document.getElementById('lstWtLiterals').value.split(',');
 var intMaxGrades = Math.max(...aryGradesWt);
+var intTotQuestionWt = 0;
 var intTotQuizWt = 0;
 var intMaxTotQuizStdWt = 0;
 var intTotQuizScore = 0;
@@ -33,56 +29,59 @@ function fncCalcQuiz(n_intCurRow, n_intResponse) {
         console.log('n_intCurRow = ' + i);
         aryScore[i].value = aryGradesWt[parseInt(n_intResponse) -1];
         aryBlnResponseBtnChecked[i].value = 1;
-        if (document.getElementById('qryAllInterviewsRecordcount').value > 1 ) {
-            document.getElementById('scorebord-container').style.display="block";
-        } else {
-            document.getElementById('scorebord-container').style.display="inline";
-        }
     }
     for ( i=0;  i < aryScore.length; i++) {
 
         if ( (aryBlnResponseBtnChecked[i].value == 1) && (aryScore[i].value > 0) || (aryBlnRequired[i].value == 1)  ) {
             intMaxTotQuizStdWt += parseInt(aryWeight[i].value) * intMaxGrades;// maxamum score possible
         }
-        aryTotWt[i].value = 0;
+        intTotQuestionWt = 0;
         if ( aryBlnResponseBtnChecked[i].value == 1 ) {
-            aryTotWt[i].value =  aryScore[i].value * aryWeight[i].value;
-            intTotQuizWt += parseInt(aryTotWt[i].value);
+            intTotQuestionWt =  aryScore[i].value * aryWeight[i].value;
+            intTotQuizWt += parseInt(intTotQuestionWt);
         }
-        aryRunWt[i].value =  intTotQuizWt;
-        aryTotStdWt[i].value =  intMaxTotQuizStdWt;
     }
     for ( i=0;  i < aryScore.length; i++) {
-        aryRunScore[i].value =  intTotQuizWt;
-        aryTotStdWt[i].value =  intMaxTotQuizStdWt;
         if (intMaxTotQuizStdWt != 0){
             aryAvg[i].value =  Math.round( intTotQuizWt / intMaxTotQuizStdWt * 100);
         }
         fncPopulateToolTip(i);
-        if (n_intCurRow == i) {
-            console.log('n_intCurRow = ' + i);
-            console.log('aryBlnResponseBtnChecked = ' + aryBlnResponseBtnChecked[i].value);
-            console.log('aryBlnRequired = ' + aryBlnRequired[i].value);
-            console.log('aryScore = ' + aryScore[i].value);
-            console.log('aryWeight = ' + aryWeight[i].value);
-            console.log('aryTotStdWt = ' + aryTotStdWt[i].value);
-            console.log('aryTotWt = ' + aryTotWt[i].value);
-            console.log('aryRunWt = ' + aryRunWt[i].value);
-            console.log('aryRunScore = ' + aryRunScore[i].value);
-            console.log('aryAvg = ' + aryAvg[i].value);
-            document.getElementsByName('strScorecardCategory')[0].innerHTML = aryScore[i].title +':';
-            document.getElementsByName('strScorecardCategoryScore')[0].innerHTML = aryGradesWtText[parseInt(n_intResponse) -1];
-            document.getElementsByName('strScorecardWeight')[0].innerHTML = aryAvg[i].value;
-            
+        if (n_intCurRow == i || i == aryScore.length - 1 && !n_intResponse ) {
+            document.getElementsByName('strScorecardFinalScore')[0].innerHTML = aryAvg[0].value;
+            console.log(aryScore[i].title);
+            if (n_intResponse) {
+                fncPopulateScoreCard(i, n_intResponse);
+            }
         }
+    }
+    console.log(document.getElementsByName('strScorecardCategory')[0].innerHTML);
+    if (aryAvg[0].value == 0) {
+        document.getElementById('scorebord-container').style.display="none";
+    } else if (g_jsonScoreboardCandidates.length > 1) {
+        document.getElementById('scorebord-container').style.display="block";
+    } else {
+        document.getElementById('scorebord-container').style.display="inline";
     }
     console.log('intMaxGrades = ' + intMaxGrades);
     console.log('intTotQuizWt = ' + intTotQuizWt);
     console.log('intMaxTotQuizStdWt = ' + intMaxTotQuizStdWt);
     console.log('intTotQuizScore = ' + intTotQuizScore);
+    document.getElementById('intFinalScore').value = aryAvg[0].value;
 }
 fncCalcQuiz();
 
+function fncPopulateScoreCard(n_inx, n_intResponse) {
+    let m_strCategory = aryScore[n_inx].title;
+    aryScorecardCategory[0].innerHTML = m_strCategory + ':';
+    aryScorecardCategoryScore[0].innerHTML = aryGradesWtText[parseInt(n_intResponse) -1];
+    
+    for (var i = 0; i < aryScorecardName.length - 1; i++) {
+        aryScorecardName[(i + 1)].innerHTML = g_jsonScoreboardCandidates[i]['name'];
+        aryScorecardFinalScore[(i + 1)].innerHTML = g_jsonScoreboardCandidates[i]['final score'];
+        aryScorecardCategory[(i + 1)].innerHTML = m_strCategory + ':';
+        aryScorecardCategoryScore[(i + 1)].innerHTML = g_jsonScoreboardCandidates[i][m_strCategory];
+    }
+}
 function fncPopulateToolTip(n_inx) {
     let m_intQuestionsPct = 0;
     let m_intMaxTotQuizStdWt = intMaxTotQuizStdWt;
@@ -189,12 +188,15 @@ function fncAddressCallBack(n_responseText) {
         //return;
     };
     m_aryColNames = JSON.parse(m_strResponseText);
-    m_strName = m_aryColNames[0].strNameFirst + ' ';
-    m_strName += m_aryColNames[0].strNameMiddle + ' ';
-    m_strName += m_aryColNames[0].strNameLast + ' ';
-    document.getElementsByName('strScorecardName')[0].innerHTML = m_strName;
-    document.getElementById("candidatesNameTextSpan").innerHTML = m_strName;
-    document.getElementById("addressID").value = m_aryColNames[0].ID;
+    if (!m_aryColNames.length) {
+        fncEditAddress();
+    } else {
+        m_strName = m_aryColNames[0].strNameFirst + ' ';
+        m_strName += m_aryColNames[0].strNameMiddle + ' ';
+        m_strName += m_aryColNames[0].strNameLast + ' ';
+        document.getElementById("candidatesNameTextSpan").innerHTML = m_strName;
+        document.getElementById("addressID").value = m_aryColNames[0].ID;
+    } 
 }
 function fncValidateInterview() {
     let m_strTransaction = myForm.strTransaction.value;

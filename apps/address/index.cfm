@@ -81,17 +81,6 @@
         </cfscript>
     </head>
     <body id="bodyID">
-        <cfoutput>
-            <div id="errorMsgDiv">
-                <cfif len(strErrorMessage)>
-                    <ul><li>#strErrorMessage#</li></ul>
-                </cfif>
-            </div>
-            <cfif len(strSuccessMessage)>
-                <div id="successMsgDiv"><ul><li>#strSuccessMessage#</li></ul></div>
-            </cfif>
-            <div>
-        </cfoutput>
         <cfoutput><form name="mainForm" id="mainForm" method="post" action="#cgi.script_name#?strEmail=#url.strEmail#"></cfoutput>
         <cfoutput>
             <div id="addressSectionID">
@@ -183,6 +172,8 @@
                                             
                         <span>
                             <input type="hidden" name="strTransaction" id="strTransaction" value="#form.strTransaction#">
+                            <input type="hidden" name="strErrorMessage" id="strErrorMessage" value="#strErrorMessage#">
+                            <input type="hidden" name="strSuccessMessage" id="strSuccessMessage" value="#strSuccessMessage#">
                             <input type="hidden" name="addressID" id="addressID" value="#form.addressID#">
                             <input type="submit" name="submitButton" id="submitButton" value="update" disabled>
                             <input type="button" name="closeButton" id="closeButton" value="close" onClick="window.close();">

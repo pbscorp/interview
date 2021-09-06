@@ -6,9 +6,6 @@
             <p>#qryEvaluation.strEvaluationText#</p>
         </fieldset>
 
-        <cfset lstGradesWt = qryEvaluation.lstWeight>
-        <cfset lstWtLiterals = qryEvaluation.lstWtLiterals>
-        <cfset intListLenWeights = listLen(lstGradesWt)>
         <cfif intListLenWeights GT listLen(lstWtLiterals)>
             <cfdump var="Error in elaluation table Grades Weight #lstGradesWt# #len(lstWtLiterals)#">
             <cfabort>
