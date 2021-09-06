@@ -77,18 +77,13 @@
                                 >
                             </td>
                         </cfloop>
-                        <td>
+                        <td
                             <input type="hidden" name="#qryQuiz.currentrow#questionsID" id="#qryQuiz.currentrow#questionsID" value="#qryQuiz.questionsID#">
                             <input type="hidden" class="intQuiz blnResponseBtnChecked" name="#qryQuiz.currentrow#blnResponseBtnChecked" id="#qryQuiz.currentrow#blnRequired" value="#blnResponseBtnChecked#">
                             <input type="hidden" class="intQuiz blnRequired" name="#qryQuiz.currentrow#blnRequired" id="#qryQuiz.currentrow#blnRequired" value="#qryQuiz.blnRequired#">
                             <input type="hidden" size=4 class="intQuiz score" title="#qryQuiz.strCategory#" id="#qryQuiz.currentrow#score" value="#intScore#">
                             <input type="hidden" size=4 class="intQuiz weight" id="#qryQuiz.currentrow#weight" value="#qryQuiz.intWeight#">
-                            <input type="hidden" size=4 class="intQuiz totStdWt" id="#qryQuiz.currentrow#totStdWt"value="">
-                            <input type="hidden" size=4 class="intQuiz totWt" id="#qryQuiz.currentrow#totWt"value="#round(#intScore#*#qryQuiz.intWeight#)#">
-                            <input type="hidden" size=4 class="intQuiz runWt" id="#qryQuiz.currentrow#runWt"value="0">
-                            <input type="hidden" size=4 class="intQuiz runScore" id="#qryQuiz.currentrow#runScore"value="0">
                             <input type="hidden" size=4 class="intQuiz avg" id="#qryQuiz.currentrow#avg">
-                            <span class="intQuiz avgSpan" id="#qryQuiz.currentrow#avgSpan"></span>
                         </td>
                     </tr>
                     

@@ -12,7 +12,6 @@
         <cfargument Name="strOrderByClause" default="ORDER BY ID DESC" restArgSource="query"/>
         <cfset local.lstColumns =  replace(arguments.lstColumns, "|", ",", "All")>
         <cftry>
-
             <cfoutput>
                 <cfquery name="qryGetTable" datasource="candidates">
                     SELECT #local.lstColumns#
