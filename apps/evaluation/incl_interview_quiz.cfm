@@ -77,7 +77,7 @@
                                 >
                             </td>
                         </cfloop>
-                        <td
+                        <td>
                             <input type="hidden" name="#qryQuiz.currentrow#questionsID" id="#qryQuiz.currentrow#questionsID" value="#qryQuiz.questionsID#">
                             <input type="hidden" class="intQuiz blnResponseBtnChecked" name="#qryQuiz.currentrow#blnResponseBtnChecked" id="#qryQuiz.currentrow#blnRequired" value="#blnResponseBtnChecked#">
                             <input type="hidden" class="intQuiz blnRequired" name="#qryQuiz.currentrow#blnRequired" id="#qryQuiz.currentrow#blnRequired" value="#qryQuiz.blnRequired#">
