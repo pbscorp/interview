@@ -65,9 +65,11 @@ window.addEventListener('load', fncSetMesageDivs);
             alert(m_strErrMsg);
         }
         
-        if (n_element.select) {
-            n_element.select();
-            n_element.focus();
+        if (!m_blnNoFucus) {
+            if (n_element.select) {
+                n_element.select();
+                n_element.focus();
+            }
         }
     }
 function fncValidateEmail(n_elementEmail) {

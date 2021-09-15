@@ -24,6 +24,13 @@ h2 {
 .center {
   text-align: center;
 }
+.required:before {
+  content:" *";
+  color: red;
+}
+.required {
+  color: red;
+}
 .red {
   color: red;
 }

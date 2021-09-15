@@ -24,6 +24,8 @@
                 interviews.dtmInterviewDate,
                 interviews.strPosition,
                 interviews.intScore,
+                interviews.txtInterviewerComments,
+                interviews.dtmInterviewDate,
                 interviews.evaluation_ID,
                 address.ID as addressID,
                 CONCAT(address.strNameFirst, ' ', address.strNameMiddle, ' ', address.strNameLast) as strName,
@@ -135,4 +137,25 @@
         <cfreturn 9999>
     </cffunction>
 
+    <cffunction name="getCandidateQuizScores" output="false" returntype="query">
+        <cfargument name="n_interviews_ID" type="numeric" default="">
+        <cfquery name="qryCandidateQuizScores">
+            SELECT 
+                quiz.ID,
+                quiz.intResponse_value,
+                quiz.strComment,
+                quiz.dtmModified,
+                questions.ID as questionsID,
+                questions.strCategory,
+                questions.intWeight
+                
+                FROM candidates.quiz,  candidates.questions
+
+                WHERE quiz.interviews_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.n_interviews_ID#">
+                AND quiz.questions_ID =  questions.ID
+                ORDER BY questions.intSequence ASC;
+
+        </cfquery>
+        <cfreturn qryCandidateQuizScores>
+    </cffunction>
 </cfcomponent>

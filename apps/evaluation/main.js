@@ -18,11 +18,13 @@ var intTotQuizScore = 0;
 
 var myForm = document.getElementById('mainForm');
 
+var blnKeepingScore = document.getElementById('scorebord-container');
 function fncCalcQuiz(n_intCurRow, n_intResponse) {
     console.clear();
     console.log('n_intCurRow = ' + n_intCurRow);
     intTotQuizWt = 0;
     intMaxTotQuizStdWt = 0;
+    let intFinalScore = 0;
     let i;
     if (n_intCurRow != undefined) {
         i = n_intCurRow;
@@ -43,43 +45,45 @@ function fncCalcQuiz(n_intCurRow, n_intResponse) {
     }
     for ( i=0;  i < aryScore.length; i++) {
         if (intMaxTotQuizStdWt != 0){
-            aryAvg[i].value =  Math.round( intTotQuizWt / intMaxTotQuizStdWt * 100);
+            intFinalScore =  Math.round( intTotQuizWt / intMaxTotQuizStdWt * 100);
         }
         fncPopulateToolTip(i);
-        if (n_intCurRow == i || i == aryScore.length - 1 && !n_intResponse ) {
-            document.getElementsByName('strScorecardFinalScore')[0].innerHTML = aryAvg[0].value;
-            console.log(aryScore[i].title);
-            if (n_intResponse) {
-                fncPopulateScoreCard(i, n_intResponse);
+        if (blnKeepingScore) {
+            if (n_intCurRow == i || i == aryScore.length - 1 && !n_intResponse ) {
+                document.getElementById('intFinalScore').value = intFinalScore;
+                document.getElementsByName('strScorecardFinalScore')[0].innerHTML = intFinalScore;
+                console.log(aryScore[i].title);
+                if (n_intResponse) {
+                    fncPopulateScoreCard(i, n_intResponse);
+                }
             }
         }
     }
-    console.log(document.getElementsByName('strScorecardCategory')[0].innerHTML);
-    if (aryAvg[0].value == 0) {
-        document.getElementById('scorebord-container').style.display="none";
-    } else if (g_jsonScoreboardCandidates.length > 1) {
-        document.getElementById('scorebord-container').style.display="block";
-    } else {
-        document.getElementById('scorebord-container').style.display="inline";
+    if (blnKeepingScore) {
+        console.log(document.getElementsByName('strScorecardCategory')[0].innerHTML);
+        if (intFinalScore == 0) {
+            document.getElementById('scorebord-container').style.display="none";
+        } else if (g_jsonScoreboardCandidates.length > 1) {
+            document.getElementById('scorebord-container').style.display="block";
+        } else {
+            document.getElementById('scorebord-container').style.display="inline";
+        }
     }
-    console.log('intMaxGrades = ' + intMaxGrades);
-    console.log('intTotQuizWt = ' + intTotQuizWt);
-    console.log('intMaxTotQuizStdWt = ' + intMaxTotQuizStdWt);
-    console.log('intTotQuizScore = ' + intTotQuizScore);
-    document.getElementById('intFinalScore').value = aryAvg[0].value;
 }
 fncCalcQuiz();
 
 function fncPopulateScoreCard(n_inx, n_intResponse) {
-    let m_strCategory = aryScore[n_inx].title;
-    aryScorecardCategory[0].innerHTML = m_strCategory + ':';
-    aryScorecardCategoryScore[0].innerHTML = aryGradesWtText[parseInt(n_intResponse) -1];
-    
-    for (var i = 0; i < aryScorecardName.length - 1; i++) {
-        aryScorecardName[(i + 1)].innerHTML = g_jsonScoreboardCandidates[i]['name'];
-        aryScorecardFinalScore[(i + 1)].innerHTML = g_jsonScoreboardCandidates[i]['final score'];
-        aryScorecardCategory[(i + 1)].innerHTML = m_strCategory + ':';
-        aryScorecardCategoryScore[(i + 1)].innerHTML = g_jsonScoreboardCandidates[i][m_strCategory];
+    if (blnKeepingScore) {
+        let m_strCategory = aryScore[n_inx].title;
+        aryScorecardCategory[0].innerHTML = m_strCategory + ':';
+        aryScorecardCategoryScore[0].innerHTML = aryGradesWtText[parseInt(n_intResponse) -1];
+        // document.getElementById('evaluationTextID').className = "evaluationTextScorecard";
+        for (var i = 0; i < aryScorecardName.length - 1; i++) {
+            aryScorecardName[(i + 1)].innerHTML = g_jsonScoreboardCandidates[i]['name'];
+            aryScorecardFinalScore[(i + 1)].innerHTML = g_jsonScoreboardCandidates[i]['final score'];
+            aryScorecardCategory[(i + 1)].innerHTML = m_strCategory + ':';
+            aryScorecardCategoryScore[(i + 1)].innerHTML = g_jsonScoreboardCandidates[i][m_strCategory]['score'];
+        }
     }
 }
 function fncPopulateToolTip(n_inx) {
@@ -146,16 +150,21 @@ function fncGetTableValues (n_strDBTable, n_strKeyColumnName, n_strKeyColumnValu
     m_xhttp.send();
 }
 
-function fncShowHideDetails(n_intRow) {
+function fncShowCommentDetails(n_intRow) {
     let m_eleTarget = document.getElementById(n_intRow + 'strComment');
-    let n_blnShow = !document.getElementById(n_intRow  + 'strDetail').open;
-    if (m_eleTarget.value.trim().length != 0) {
-        n_blnShow = true;
-    }
-    if (n_blnShow) {
-        m_eleTarget.style.display = "initial";
-    } else {
-        m_eleTarget.style.display = "none";
+    //document.getElementById(n_intRow  + 'strDetail').open = true;
+    m_eleTarget.style.display = "initial";
+    m_eleTarget.focus();
+}
+function fncHideCommentDetails(n_intRow) {
+    let m_eleTarget = document.getElementById(n_intRow + 'strComment');
+    //document.getElementById(n_intRow  + 'strDetail').open = false;
+    if (m_eleTarget.value.trim().length == 0) {
+        if (aryBlnRequired[n_intRow -1].value == 1 ) {
+            fncFormatError(m_eleTarget, "are required.", true);
+        } else {
+         m_eleTarget.style.display = "none";
+        }
     }
 }
 

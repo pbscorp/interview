@@ -3,16 +3,18 @@
         <cfoutput>
             <Legend>Interview</legend>
             <span class="interviewSpan">
-                <cfif lCase(form.strTransaction) EQ "add">
-                    <label class="interviewInputlabel">Email:</label>
+                <cfif lCase(form.strTransaction) NEQ "update">
+                    <label class="interviewInputlabel required">Email:</label>
                     <input type="email" name="strEmail" id="strEmail"
                             title="eMail Address|#form.strEmail#"
                             placeholder="example@mail.com"
-                            onChange="fncGetAddress(this);"
+                            <cfif lCase(form.strTransaction) EQ "add">
+                                onChange="fncGetAddress(this);"
+                            </cfif>
                             value="#form.strEmail#">
                     <input type="hidden" name="interviewsID" id="interviewsID" value="#form.interviewsID#">
                 <cfelse>
-                    <label class="interviewInputlabel">Interview:</label>
+                    <label class="interviewInputlabel required">Interview:</label>
                     <select size="1" name="interviewsID" id="interviewsID"
                         onChange="fncChangeInterviews(this.options[this.selectedIndex]);"
                         title="Interview|#form.interviewsID#"
@@ -38,11 +40,11 @@
             </span>
 
             <span class="interviewSpan">
-                <label class="interviewInputlabel">Date:</label>
+                <label class="interviewInputlabel required">Date:</label>
                 <input type="date" name="dtmInterviewDate" id="dtmInterviewDate"
                     min="#dateFormat(#dateAdd('yyyy', -2, #now()#)#, "yyyy-mm-dd")#" max="#dateFormat(#now()#, "yyyy-mm-dd")#" 
                     value="#dateFormat(form.dtmInterviewDate, 'yyyy-mm-dd')#"
-                    onBlur="fncValidateInterview();fncValidateDate(this);"/>
+                    onfocusout="fncValidateInterview();fncValidateDate(this);"/>
             </span>
             <br/>
             <label class="interviewInputlabel"></label>
@@ -59,12 +61,14 @@
                 <span  style.display="inline" id="candidatesNameTextSpan">
                     #form.strName#
                 </span>
-                <span class="button" id = "addressButton" onClick="fncEditAddress();">Edit Address</span>
+                <cfif lCase(form.strTransaction) NEQ "view">
+                    <span class="button" id = "addressButton" onClick="fncEditAddress();">Edit Address</span>
+                </cfif>
             </span>
             <br/>
 
             <span class="interviewSpan">
-                <label class="interviewInputlabel">Interviewer:</label>
+                <label class="interviewInputlabel required">Interviewer:</label>
                 <input type="text" class="caps"
                         name="strInterviewer" 
                         title="Interviewer|#form.strInterviewer#"
@@ -76,7 +80,7 @@
 
             
             <span class="interviewSpan">
-                <label class="interviewInputlabel">Position:</label>
+                <label class="interviewInputlabel required">Position:</label>
                 <input type="text" 
                         name="strPosition"
                         title="Position|#form.strPosition#"

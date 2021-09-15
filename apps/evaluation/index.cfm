@@ -1,4 +1,4 @@
-<cfparam name="url.strTransaction" default="">
+<cfparam name="url.strTransaction" default="update">
 <cfparam name="form.strTransaction" default="#url.strTransaction#">
 <cfparam name="form.strEmail" default="">
 <cfparam name="form.strName" default="">
@@ -7,6 +7,7 @@
 <cfparam name="form.strPosition" default="">
 <cfparam name="form.addressID" default="">
 <cfparam name="form.intFinalScore" default="0">
+<cfparam name="form.txtInterviewerComments" default="">
 <cfparam name="url.evaluationID" default="1">
 <cfparam name="url.interviewsID" default="">
 <cfparam name="form.interviewsID" default="#url.interviewsID#">
@@ -26,6 +27,7 @@
     getQuestions = objInterviews.getQuestions(url.evaluationID);
     qryEvaluation = objInterviews.getEvaluation(url.evaluationID);
     lstGradesWt = qryEvaluation.lstWeight;
+    strEvaluationHTML=qryEvaluation.strEvaluationText & "<span class='required'>asterisk = required entry</span>";
     lstWtLiterals = qryEvaluation.lstWtLiterals;
     intListLenWeights = listLen(lstGradesWt);
     qryAllInterviews = objInterviews.getInterview('all', url.evaluationID);
@@ -39,6 +41,7 @@
         form.strInterviewer = qryInterview.strInterviewer;
         form.strPosition = qryInterview.strPosition;
         form.intFinalScore = qryInterview.intScore;
+        form.txtInterviewerComments = qryInterview.txtInterviewerComments;
     }
     qryPositions = objInterviews.getPositions(url.evaluationID, form.strPosition);
     if (!len(form.interviewsID )) {
@@ -54,20 +57,28 @@
         <link rel="stylesheet" href="#application.applicationBaseURLPath#/css/stylesheet.css">
         </cfoutput>
         <style>
-        body {
-            width: 700px;
-            margin: auto;
-        }
+            body {
+                width: 700px;
+                margin: auto;
+            }
+            body.view-only {
+                    /* background-color:rgba(192,192,192,0.3); */
+                    background-image: url("../../images/view-only.png");
+                    background-repeat: repeat;
+                    background-color: #F8F8F8
+            }
         </style>
     </head>
-    <body id="bodyID">
+    <body id="bodyID" <cfif form.strTransaction EQ "view">class = "view-only"</cfif>>
         <cfoutput>
             <h2>Interview Review</h2>
             <div>
                 <form name="mainForm" id="mainForm" method="post" action="#cgi.script_name#?evaluationID=#url.evaluationID#">
         </cfoutput>
                     <cfinclude template="incl_interview_header.cfm">
-                    <cfinclude template="incl_scoretable.cfm">
+                    <cfif form.strTransaction NEQ "view">
+                        <cfinclude template="incl_scoretable.cfm">
+                    </cfif>
                     <cfinclude template="incl_interview_quiz.cfm">
         <cfoutput>
                     <input type="hidden" name="recordcount" id="recordcount" value="#qryQuiz.recordcount#">
@@ -80,9 +91,13 @@
                     <input type="hidden" name="strTransaction" id="strTransaction" value="#form.strTransaction#">
                     <input type="hidden" name="qryAllInterviewsRecordcount" id="qryAllInterviewsRecordcount" value="#qryAllInterviews.recordcount#">
                     <input type="hidden" name="addressID" id="addressID" value="#form.addressID#">
-                    <input type="submit" name="submitButton" id="submitButton" value="submit" disabled>
-                    <cfif len(form.interviewsID) GT 0>
-                        <input type="submit" name="deleteButton" onClick="return fncConfirmDelete();"id="deleteButton" value="Delete">
+                    <cfif form.strTransaction EQ "view">
+                        <input type="hidden" name="submitButton" id="submitButton" value="">
+                    <cfelse>
+                        <input type="submit" name="submitButton" id="submitButton" value="submit" disabled>
+                        <cfif len(form.interviewsID) GT 0>
+                            <input type="submit" name="deleteButton" onClick="return fncConfirmDelete();"id="deleteButton" value="Delete">
+                        </cfif>
                     </cfif>
                     <input type="button" name="closeButton" id="closeButton" value="close" onClick="window.close();">
                 </form>

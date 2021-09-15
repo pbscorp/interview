@@ -3,7 +3,7 @@
     <div id="quizSectionID">
         <fieldset>
             <Legend>Candidate Evaluation</legend>
-            <p>#qryEvaluation.strEvaluationText#</p>
+                <div id="evaluationTextID" class="evaluationTextScorecard">#strEvaluationHTML#</div>
         </fieldset>
 
         <cfif intListLenWeights GT listLen(lstWtLiterals)>
@@ -38,16 +38,17 @@
                     <tr>
                         <td class="left  quizSummaryTD" >
                             <details id="#qryQuiz.currentrow#strDetail">
-                                <summary 
-                                        onClick="fncShowHideDetails('#qryQuiz.currentrow#')" 
-                                        id="#qryQuiz.currentrow#strSummary">
-                                    <span >
+                                <summary id="#qryQuiz.currentrow#strSummary">
+                                    <span 
+                                    <cfif (qryQuiz.blnRequired == 1) >
+                                        class = "required"
+                                    </cfif>>
                                         #qryQuiz.currentrow#. #qryQuiz.strCategory#
                                     </span>
                                 </summary>
                                 <div>
                                     <div class="tooltip float-left"><img src="#application.applicationBaseURLPath#/images/explain.png" alt="explain">
-                                        <span class="tooltiptext" id="#qryQuiz.currentrow#strToolTipText">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Magnam, itaque! Ipsa cumque quasi, nisi qui nobis in maiores dolorem exercitationem animi fugit voluptatum quis deserunt placeat veritatis et rem quam.</span>
+                                        <span class="tooltiptext" id="#qryQuiz.currentrow#strToolTipText"></span>
                                     </div>
                                     <div class="float-left quizSummarySpan">
                                             #qryQuiz.strQuestion#<br/>Comment:
@@ -65,7 +66,7 @@
                                 class="intQuiz intResponse"
                                 title="#listGetAt(lstWtLiterals, i)#"
                                 value="#i#"
-                                onclick="fncValidateInterview();fncCalcQuiz(#(#qryQuiz.currentrow# -1)#, this.value);"
+                                onclick="fncShowCommentDetails('#qryQuiz.currentrow#');fncValidateInterview();fncCalcQuiz(#(#qryQuiz.currentrow# -1)#, this.value);"
                                 <cfif qryQuiz.intResponse_value EQ i>
                                     <cfset blnResponseBtnChecked = 1>
                                     checked
@@ -98,6 +99,7 @@
                                     style="display :none"
                                 </cfif>
                                 onChange="fncValidateInterview();"
+                                onblur="fncHideCommentDetails('#qryQuiz.currentrow#')"
                                 id="#qryQuiz.currentrow#strComment"
                                 class="textQuizComments"
                                 rows="3"
@@ -109,5 +111,19 @@
                 </cfoutput>
             </tbody>
         </table>
+    </div>
+    <div>
+        <label for="txtFinalComments" class="required">Final Comments</label>
+        <div>Final comments and recommendations for proceeding with the candidate.</div>
+        <textarea 
+                title="Overal Impression|#form.txtInterviewerComments#"
+                name="txtInterviewerComments"
+                id="txtInterviewerComments"
+                onChange="fncValidateInterview();"
+                onblur="fncHideCommentDetails('txtFinalComments')"
+                rows="4"
+                cols="95">
+            #form.txtInterviewerComments#
+        </textarea>
     </div>
 </cfoutput>

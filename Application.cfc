@@ -1,5 +1,5 @@
 ﻿component {
-  this.datasource="candidates"
+  this.datasource="candidates";
 	this.Name = "interview";
   function onApplicationStart() {
       m_jsonAppConfig = fileRead('resources/appconfig.json');
@@ -9,10 +9,17 @@
       application.dirPath =  m_stcAppConfig.dirPath;
       application.serviceMapping = m_stcAppConfig.serviceMapping;
       application.luceepassword = m_stcAppConfig.luceepassword;
-      restInitApplication( 
-              dirPath="#application.dirPath#", 
+      system=createObject("java", "java.lang.System");
+      m_strJavaHome = system.getproperty("java.home");
+      writeoutput(system.getproperty("java.home"));
+      writeoutput(CompareNoCase(m_strJavaHome,"lucee"));
+
+      if (CompareNoCase(m_strJavaHome,"lucee")) {
+          restInitApplication(dirPath="#application.dirPath#", 
               serviceMapping="#application.serviceMapping#", 
-              password="#application.luceepassword#"
-      );
+              password="#application.luceepassword#");
+      } else {
+        restInitApplication( dirPath="C:\lucee\tomcat\webapps\ROOT\samplecode\interview\rest\");
+      }
     }
 }

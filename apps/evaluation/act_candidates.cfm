@@ -23,6 +23,7 @@
                     strPosition,
                     strInterviewer,
                     dtmInterviewDate,
+                    txtInterviewerComments,
                     intScore,
                     evaluation_ID,
                     address_ID
@@ -30,6 +31,7 @@
                     <cfqueryparam cfsqltype="CF_sql_varchar" value="#form.strPosition#">,
                     <cfqueryparam cfsqltype="CF_sql_varchar" value="#ucFirst(form.strInterviewer)#">,
                     <cfqueryparam cfsqltype="cf_sql_date" value="#dateFormat(form.dtmInterviewDate, 'yyyy-mm-dd')#">,
+                    <cfqueryparam cfsqltype="CF_sql_varchar" value="#form.txtInterviewerComments#">,
                     <cfqueryparam cfsqltype="cf_sql_integer" value="#form.intFinalScore#">,
                     <cfqueryparam cfsqltype="cf_sql_integer" value="#url.evaluationID#">,
                     <cfqueryparam cfsqltype="cf_sql_integer" value="#form.addressID#">
@@ -48,6 +50,7 @@
                     strPosition =  <cfqueryparam cfsqltype="CF_sql_varchar" value="#form.strPosition#">,
                     strInterviewer = <cfqueryparam cfsqltype="CF_sql_varchar" value="#ucFirst(form.strInterviewer)#">,
                     dtmInterviewDate = <cfqueryparam cfsqltype="cf_sql_date" value="#dateFormat(form.dtmInterviewDate, 'yyyy-mm-dd')#">,
+                    txtInterviewerComments =  <cfqueryparam cfsqltype="CF_sql_varchar" value="#form.txtInterviewerComments#">,
                     intScore =  <cfqueryparam cfsqltype="cf_sql_integer" value="#form.intFinalScore#">
                 WHERE interviews.ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#form.interviewsID#">;
             </cfquery>
@@ -86,7 +89,7 @@
             <cfif lCase(form.strTransaction) EQ "delete">
                 <cfset strSuccessMessage = "record #form.interviewsID# deleted">    
                 <cfset fncStructEmpty(form)>
-                <cfset form.strTransaction = "">
+                <cfset form.strTransaction = "update">
             <cfelseif lCase(form.strTransaction) EQ "add">
                 <cfset strSuccessMessage = "record #form.interviewsID# added">
                 <cfset form.strTransaction = "update">
