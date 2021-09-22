@@ -16,8 +16,7 @@
 <cfparam name="form.blnHasError" default="0">
 <cfparam name="strErrorMessage" default="">
 <cfparam name="strSuccessMessage" default="">
-
-<cfif len(form.submitButton) OR len(form.deleteButton)>
+<cfif len(form.submitButton) OR len(form.deleteButton) OR len(form.strPosition)>
     <cfinclude template = "act_candidates.cfm">
 </cfif>
 <!DOCTYPE HTML PUBLIC ‘-//W3C//DTD HT\lL 4.0 Transitional//EN’>

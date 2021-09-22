@@ -189,26 +189,27 @@
             opener.document.getElementById("candidatesNameTextSpan").innerHTML = "#form.strName#";
             opener.document.getElementById("addressID").value = "#form.addressID#";
         }
+        document.getElementById("strNameFirst").focus();
+        document.getElementById("strNameFirst").select();
         </script>
             <script src="#application.applicationBaseURLPath#/js/beforeunload.js" defer></script>
             <script src="#application.applicationBaseURLPath#/js/validation.js" defer></script>
             <script>
                 function fncValidateForm() {
-                    let myForm = document.getElementById('mainForm');
                     let m_intErrors = 0;
-                    if ( !fncValidateZip(myForm.strZip)  ) {
+                    if ( !fncValidateZip(mainForm.strZip)  ) {
                         m_intErrors++;
                     }
-                    if ( !fncValidateState(myForm.strState,  'datalistStates') ) {
+                    if ( !fncValidateState(mainForm.strState,  'datalistStates') ) {
                         m_intErrors++;
                     }
-                    if ( !fncValidatePhone(myForm.intPhone) ) {
+                    if ( !fncValidatePhone(mainForm.intPhone) ) {
                         m_intErrors++;
                     }
-                    if ( !fncValidatePhone(myForm.intMobile) ) {
+                    if ( !fncValidatePhone(mainForm.intMobile) ) {
                         m_intErrors++;
                     }
-                    if ( !fncValidateEmail(myForm.strEmail) ) {
+                    if ( !fncValidateEmail(mainForm.strEmail) ) {
                         m_intErrors++;
                     }
                     if (!m_intErrors) {

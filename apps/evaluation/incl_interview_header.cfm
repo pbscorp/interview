@@ -81,13 +81,22 @@
             
             <span class="interviewSpan">
                 <label class="interviewInputlabel required">Position:</label>
-                <input type="text" 
-                        name="strPosition"
-                        title="Position|#form.strPosition#"
-                        id="strPosition"
-                        placeholder="Position"
-                        onChange="fncValidateInterview();"
-                        value="#form.strPosition#"/>
+                    <input list="datalistPositions" 
+                    name="strPosition"
+                    title="Position|#form.strPosition#"
+                    id="strPosition"
+                    placeholder="Position"
+                    value="#form.strPosition#"
+                    <cfif reFindNoCase("add|update", form.strTransaction) >
+                        onChange="fncValidateInterview();fncNewPosition(this, 'datalistPositions');"
+                    </cfif>
+                    onFocus="this.select()">
+                <datalist id="datalistPositions">
+                    <option value="">Position</option>
+                    <cfoutput Query=qryPositions>
+                        <option value="#qryPositions.strPosition#">#qryPositions.strPosition#</option>
+                    </cfoutput>
+                </datalist>
             </span>
             <br/>
             <br/>
@@ -95,3 +104,10 @@
         </cfoutput>
     </fieldset>
 </div>
+<script>
+    function fncNewPosition( ) {
+        g_blnFormHasUnsubmittedData = false;
+        mainForm.removeEventListener('change', fncEnableSubmit);
+        mainForm.submit();
+    }
+</script>

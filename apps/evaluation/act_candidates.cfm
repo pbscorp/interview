@@ -63,6 +63,12 @@
         <cfif lCase(form.strTransaction) NEQ "delete">
             <cfset i = 1>
             <cfloop index="i" from="1" to ="#form.recordcount#">
+                <cfif NOT structKeyExists(form, '#i#rdoResponse')>
+                    <cfset form['#i#rdoResponse'] = "1">
+                </cfif>
+                <cfif NOT structKeyExists(form, '#i#strComment')>
+                    <cfset form['#i#strComment'] = "">
+                </cfif>
                 <cfquery name="addQuiz">
                     INSERT INTO candidates.quiz (
                         intResponse_value,

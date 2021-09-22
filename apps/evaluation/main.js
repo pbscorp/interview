@@ -16,7 +16,6 @@ var intTotQuizWt = 0;
 var intMaxTotQuizStdWt = 0;
 var intTotQuizScore = 0;
 
-var myForm = document.getElementById('mainForm');
 
 var blnKeepingScore = document.getElementById('scorebord-container');
 function fncCalcQuiz(n_intCurRow, n_intResponse) {
@@ -208,9 +207,9 @@ function fncAddressCallBack(n_responseText) {
     } 
 }
 function fncValidateInterview() {
-    let m_strTransaction = myForm.strTransaction.value;
-    let m_eleEmail = myForm.strEmail;
-    let m_eleInterviewsID = myForm.interviewsID;
+    let m_strTransaction = mainForm.strTransaction.value;
+    let m_eleEmail = mainForm.strEmail;
+    let m_eleInterviewsID = mainForm.interviewsID;
     if (m_strTransaction == 'add') {
         if (!m_eleEmail.value.length) {
             fncFormatError(m_eleEmail, "must be entered.");
@@ -225,9 +224,9 @@ function fncValidateInterview() {
 
 function fncValidateForm() {
     let m_intErrors = 0;
-    let m_eleInterviewer = myForm.strInterviewer;
-    let m_elePosition = myForm.strPosition;
-    let m_eleInterviewsID = myForm.interviewsID;
+    let m_eleInterviewer = mainForm.strInterviewer;
+    let m_elePosition = mainForm.strPosition;
+    let m_eleInterviewsID = mainForm.interviewsID;
     if (!fncValidateInterview() ){
         m_intErrors++;
     }
@@ -239,15 +238,18 @@ function fncValidateForm() {
         fncFormatError(m_elePosition, "must be entered.");
         m_intErrors++;
     }
-    for ( i=0;  i < aryScore.length; i++) {
-        if ( aryBlnRequired[i].value == 1 )  {
-            if ( aryScore[i].value == 0 ) {
-                fncFormatError(aryScore[i], "is required.");
-                m_intErrors++;
-            }
-            if ( aryQuizComments[i].value.length == 0 ) {
-                fncFormatError(aryQuizComments[i], "are required.");
-                m_intErrors++;
+    //alert((mainForm.strTransaction.value.toLowerCase().match(/update|add/)));
+    if (mainForm.strTransaction.value.toLowerCase().match(/update|add/)) {
+        for ( i=0;  i < aryScore.length; i++) {
+            if ( aryBlnRequired[i].value == 1 )  {
+                if ( aryScore[i].value == 0 ) {
+                    fncFormatError(aryScore[i], "is required.");
+                    m_intErrors++;
+                }
+                if ( aryQuizComments[i].value.length == 0 ) {
+                    fncFormatError(aryQuizComments[i], "are required.");
+                    m_intErrors++;
+                }
             }
         }
     }
