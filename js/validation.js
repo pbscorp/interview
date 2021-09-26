@@ -1,86 +1,52 @@
-window.addEventListener('load', fncSetMesageDivs);
-    function fncSetMesageDivs () {
-        let m_eleErrorDiv = document.createElement("div");
-        m_eleErrorDiv.id = "errorMsgDiv";
-        document.body.prepend(m_eleErrorDiv);
-        let m_strSuccessMessage = document.getElementById("strSuccessMessage").value;
-        let strErrorMessage = document.getElementById("strErrorMessage").value;
-        if (m_strSuccessMessage.length) {
-            let m_eleSuccessDiv = document.createElement("div");
-            m_eleSuccessDiv.id = "successMsgDiv";
-            m_eleSuccessDiv.innerHTML='<ul><li>' + m_strSuccessMessage + '</li></ul>';
-            document.body.prepend( m_eleSuccessDiv);
-            setTimeout(function(){  
-                document.getElementById("successMsgDiv").innerHTML = "";
-            }, 5000);
-        } else if (strErrorMessage.length) {
-            fncFormatError('', strErrorMessage);
-        }
-    }
-
-    document.getElementById("mainForm").addEventListener('submit', fncRunValidateForm);
-    function fncRunValidateForm (event) {
-        blnListMode = true;
-        document.getElementById("errorMsgDiv").innerHTML = "<UL id='errMessageUL'>";
-        if (!fncValidateForm() ) {
-            g_blnFormHasUnsubmittedData = true;
-            event.preventDefault();
-            setTimeout(function(){  
-                g_blnFormHasUnsubmittedData = true;
-            }, 2000);
-        }
-    }
-    document.getElementById("mainForm").addEventListener('change', fncClearErrorMessage);
-    function fncClearErrorMessage () {
-        if (blnListMode) {
-            if (document.getElementById("errorMsgDiv")) {
-                document.getElementById("errorMsgDiv").innerHTML = "<UL id='errMessageUL'>";
-                if ( fncValidateForm() ) {
-                    blnListMode = false;
-                }
-            }
-        }
-    }
-
-    var blnListMode = false;
-    function fncFormatError(n_element, n_strError, n_blnNoFucus) {
-        function fncAddLITtolist(n_strErrMsg) {
-            var node = document.createElement("LI");
-            var textnode = document.createTextNode(n_strErrMsg);
-            node.appendChild(textnode);
-            document.getElementById("errMessageUL").appendChild(node);
-        }
-        let m_blnNoFucus = false;
-        let m_strErrMsg = "";
-        if (n_element  != '') {
-            m_strErrMsg += n_element.title.split('|')[0];
-        }
-        m_strErrMsg += ' ' + n_strError;
-        if (n_blnNoFucus) {
-            m_blnNoFucus = true;
-        }
-        if (blnListMode) {
-            fncAddLITtolist(m_strErrMsg);
-        } else {
-            alert(m_strErrMsg);
-        }
-        
-        if (!m_blnNoFucus) {
-            if (n_element.select) {
-                n_element.select();
-                n_element.focus();
-            }
-        }
-    }
-function fncValidateEmail(n_elementEmail) {
-    let m_strMailformat = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-    if (n_elementEmail.value.match(m_strMailformat)) {
-        return true;
-    } else {
-        fncFormatError(n_elementEmail, "invalid format");
-        return false;
+window.addEventListener('load', fncSetMessageDiv);
+function fncSetMessageDiv () {
+    let m_eleErrorDiv = document.createElement("div");
+    m_eleErrorDiv.id = "errorMsgDiv";
+    document.body.prepend(m_eleErrorDiv);
+    let m_strSuccessMessage = document.getElementById("strSuccessMessage").value;
+    let strErrorMessage = document.getElementById("strErrorMessage").value;
+    if (m_strSuccessMessage.length) {
+        let m_eleSuccessDiv = document.createElement("div");
+        m_eleSuccessDiv.id = "successMsgDiv";
+        m_eleSuccessDiv.innerHTML='<ul><li>' + m_strSuccessMessage + '</li></ul>';
+        document.body.prepend( m_eleSuccessDiv);
+        setTimeout(function(){  
+            document.getElementById("successMsgDiv").innerHTML = "";
+        }, 5000);
+    } else if (strErrorMessage.length) {
+        fncFormatError('', strErrorMessage);
     }
 }
+let blnPendingErrors = false;
+let g_blnFormHasUnsubmittedData = true;
+document.getElementById("mainForm").addEventListener('submit', fncRunValidateForm);
+function fncRunValidateForm (event) {
+    blnListMode = true;
+    blnPendingErrors = false;
+    document.getElementById("errorMsgDiv").innerHTML = "<UL id='errMessageUL'>";
+    if (!fncValidateForm() ) {
+        //g_blnFormHasUnsubmittedData = true;
+        event.preventDefault();
+        setTimeout(function(){  
+            g_blnFormHasUnsubmittedData = true;
+            blnPendingErrors = true;
+        }, 2000);
+    }
+}
+document.getElementById("mainForm").addEventListener('change', fncClearErrorMessage);
+function fncClearErrorMessage () {
+    if (blnListMode) {
+        blnPendingErrors = false;
+        if (document.getElementById("errorMsgDiv")) {
+            document.getElementById("errorMsgDiv").innerHTML = "<UL id='errMessageUL'>";
+            if ( fncValidateForm() ) {
+                blnListMode = false;
+                blnPendingErrors = true;
+            }
+        }
+    }
+}
+
 
 function fncFormatPhone(n_intPhone) {
     let m_strFormattedPhone = "(" + n_intPhone.substring(0, 3) + ')';

@@ -66,7 +66,7 @@
                                 class="intQuiz intResponse"
                                 title="#listGetAt(lstWtLiterals, i)#"
                                 value="#i#"
-                                onclick="fncShowCommentDetails('#qryQuiz.currentrow#');fncValidateInterview();fncCalcQuiz(#(#qryQuiz.currentrow# -1)#, this.value);"
+                                onclick="fncShowCommentDetails('#qryQuiz.currentrow#', this.value);"
                                 <cfif qryQuiz.intResponse_value EQ i>
                                     <cfset blnResponseBtnChecked = 1>
                                     checked
@@ -113,17 +113,26 @@
         </table>
     </div>
     <div>
-        <label for="txtFinalComments" class="required">Final Comments</label>
+        <label for="txtInterviewerComments" class="required">Final Comments</label>
         <div>Final comments and recommendations for proceeding with the candidate.</div>
         <textarea 
                 title="Overal Impression|#form.txtInterviewerComments#"
                 name="txtInterviewerComments"
                 id="txtInterviewerComments"
                 onChange="fncValidateInterview();"
-                onblur="fncHideCommentDetails('txtFinalComments')"
                 rows="4"
                 cols="95">
             #form.txtInterviewerComments#
         </textarea>
     </div>
 </cfoutput>
+<script>
+    function fncShowCommentDetails(n_intRow, n_intResponse) {
+        if (fncValidateInterview() ) {
+            let m_eleTarget = document.getElementById(n_intRow + 'strComment');
+            m_eleTarget.style.display = "initial";
+            m_eleTarget.focus();
+            fncCalcQuiz(n_intRow -1, n_intResponse);
+        }
+    }
+</script>

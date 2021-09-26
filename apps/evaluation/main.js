@@ -149,12 +149,6 @@ function fncGetTableValues (n_strDBTable, n_strKeyColumnName, n_strKeyColumnValu
     m_xhttp.send();
 }
 
-function fncShowCommentDetails(n_intRow) {
-    let m_eleTarget = document.getElementById(n_intRow + 'strComment');
-    //document.getElementById(n_intRow  + 'strDetail').open = true;
-    m_eleTarget.style.display = "initial";
-    m_eleTarget.focus();
-}
 function fncHideCommentDetails(n_intRow) {
     let m_eleTarget = document.getElementById(n_intRow + 'strComment');
     //document.getElementById(n_intRow  + 'strDetail').open = false;
@@ -162,10 +156,15 @@ function fncHideCommentDetails(n_intRow) {
         if (aryBlnRequired[n_intRow -1].value == 1 ) {
             fncFormatError(m_eleTarget, "are required.", true);
         } else {
-         m_eleTarget.style.display = "none";
+            m_eleTarget.style.display = "none";
         }
     }
 }
+
+function fncScrollToTop() {
+    document.body.scrollTop = 0; // For Safari
+    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+  }
 
 function fncGetAddress (n_eleEmail) {
     if (fncValidateEmail(n_eleEmail)) {
@@ -222,24 +221,79 @@ function fncValidateInterview() {
     return true;
 }
 
+var blnListMode = false;
+function fncFormatError(n_element, n_strError, n_blnNoFucus) {
+    function fncAddListItem(n_strErrMsg) {
+        var node = document.createElement("LI");
+        var textnode = document.createTextNode(n_strErrMsg);
+        node.appendChild(textnode);
+        document.getElementById("errMessageUL").appendChild(node);
+    }
+    function fncIsInUnorderedList(n_strErrMsg) {
+        m_aryErrMsgs = document.getElementById('errMessageUL').getElementsByTagName('li');
+        for (let i = 0; i < m_aryErrMsgs.length; i++) {
+            if (m_aryErrMsgs[i].innerHTML == n_strErrMsg) {
+                return true;
+            }
+        }
+        return false;
+    }
+    let m_blnNoFucus = false;
+    let m_strErrMsg = "";
+    if (n_element  != '') {
+        m_strErrMsg += n_element.title.split('|')[0];
+    }
+    m_strErrMsg += ' ' + n_strError;
+    if (n_blnNoFucus) {
+        m_blnNoFucus = true;
+    }
+    if (blnListMode) {
+        if (!fncIsInUnorderedList(m_strErrMsg)) {
+            fncAddListItem(m_strErrMsg);
+        }
+    } else {
+        alert(m_strErrMsg);
+    }
+    
+    if (!m_blnNoFucus) {
+        if (n_element.select) {
+            n_element.select();
+            n_element.focus();
+        }
+    }
+}
+
+function fncValidateEmail(n_elementEmail) {
+    let m_strMailformat = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+    if (n_elementEmail.value.match(m_strMailformat)) {
+        return true;
+    } else {
+        fncFormatError(n_elementEmail, "invalid format");
+        return false;
+    }
+}
+
 function fncValidateForm() {
     let m_intErrors = 0;
     let m_eleInterviewer = mainForm.strInterviewer;
     let m_elePosition = mainForm.strPosition;
-    let m_eleInterviewsID = mainForm.interviewsID;
+    let m_txtInterviewerComments = mainForm.txtInterviewerComments;
     if (!fncValidateInterview() ){
         m_intErrors++;
     }
-    if (!m_eleInterviewer.value.length) {
-        fncFormatError(m_eleInterviewer, "must be entered.");
-        m_intErrors++;
-    }
-    if (!m_elePosition.value.length) {
-        fncFormatError(m_elePosition, "must be entered.");
-        m_intErrors++;
-    }
-    //alert((mainForm.strTransaction.value.toLowerCase().match(/update|add/)));
     if (mainForm.strTransaction.value.toLowerCase().match(/update|add/)) {
+        if (!m_eleInterviewer.value.length) {
+            fncFormatError(m_eleInterviewer, "must be entered.");
+            m_intErrors++;
+        }
+        if (!m_elePosition.value.length) {
+            fncFormatError(m_elePosition, "must be entered.");
+            m_intErrors++;
+        }
+        if (!m_txtInterviewerComments.value.length) {
+            fncFormatError(m_txtInterviewerComments, "must be entered.");
+            m_intErrors++;
+        }
         for ( i=0;  i < aryScore.length; i++) {
             if ( aryBlnRequired[i].value == 1 )  {
                 if ( aryScore[i].value == 0 ) {
@@ -255,6 +309,7 @@ function fncValidateForm() {
     }
     if (m_intErrors > 0) {
         //fncFormatError('', m_intErrors + " errors encountered.");
+        fncScrollToTop();
         return false;
     }
     return true;
