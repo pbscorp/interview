@@ -1,9 +1,9 @@
-<cfparam name="url.strTransaction" default="update">
+<cfparam name="url.strTransaction" default="">
 <cfparam name="form.strTransaction" default="#url.strTransaction#">
 <cfparam name="form.strEmail" default="">
 <cfparam name="form.strName" default="">
 <cfparam name="form.strInterviewer" default="">
-<cfparam name="form.dtmInterviewDate" default="#dateFormat(#now()#, "yyyy-mm-dd")#">
+<cfparam name="form.dtmInterviewDate" default="#dateFormat(now(), "yyyy-mm-dd")#">
 <cfparam name="form.strPosition" default="">
 <cfparam name="form.addressID" default="">
 <cfparam name="form.intFinalScore" default="0">
@@ -23,7 +23,7 @@
 <cfprocessingdirective suppressWhiteSpace = "yes">
 <cfscript>
     objInterviews = createObject('component', 'interview-cfc.candidates');
-    getQuestions = objInterviews.getQuestions(url.evaluationID);
+    //getQuestions = objInterviews.getQuestions(url.evaluationID);
     qryEvaluation = objInterviews.getEvaluation(url.evaluationID);
     lstGradesWt = qryEvaluation.lstWeight;
     strEvaluationHTML=qryEvaluation.strEvaluationText & "<span class='required'>asterisk = required entry</span>";
@@ -44,7 +44,7 @@
     }
     qryPositions = objInterviews.getPositions(url.evaluationID, form.strPosition);
     if (!len(form.interviewsID )) {
-        qryQuiz = objInterviews.getQuiz('new', url.evaluationID)
+        qryQuiz = objInterviews.getQuiz('new', url.evaluationID);
     } else {
         qryQuiz = objInterviews.getQuiz(form.interviewsID, url.evaluationID);
     }
@@ -105,68 +105,19 @@
             <script src="#application.applicationBaseURLPath#/js/beforeunload.js" ></script>
             <script src="#application.applicationBaseURLPath#/js/validation.js" ></script>
             <script>
-                function fncConfirmDelete () {
-                    let m_blnDelete =  confirm("Delete interview record for #form.strName# \n interviewed on #dateFormat(form.dtmInterviewDate, 'mm-dd-yyyy')# by #form.strInterviewer# for #form.strPosition# OK");
-                    if (m_blnDelete) {
-                        document.getElementById("strTransaction").value = "delete";
-                    }
-                };
+                <cfif lCase(form.strTransaction) EQ "update">
+                    fncEditAddress();
+                </cfif>
+                <cfif len(form.interviewsID) GT 0>
+                    function fncConfirmDelete () {
+                        let m_blnDelete =  confirm("Delete interview record for #form.strName# \n interviewed on #dateFormat(form.dtmInterviewDate, 'mm-dd-yyyy')# by #form.strInterviewer# for #form.strPosition# OK");
+                        if (m_blnDelete) {
+                            document.getElementById("strTransaction").value = "delete";
+                        }
+                    };
+                </cfif>
             </script>
         </cfoutput>
-
-    <script>
-    var blnListMode = false;
-    function fncFormatError(n_element, n_strError, n_blnNoFucus) {
-        function fncAddListItem(n_strErrMsg) {
-            var node = document.createElement("LI");
-            var textnode = document.createTextNode(n_strErrMsg);
-            node.appendChild(textnode);
-            document.getElementById("errMessageUL").appendChild(node);
-        }
-        function fncIsInUnorderedList(n_strErrMsg) {
-            m_aryErrMsgs = document.getElementById('errMessageUL').getElementsByTagName('li');
-            for (let i = 0; i < m_aryErrMsgs.length; i++) {
-                if (m_aryErrMsgs[i].innerHTML == n_strErrMsg) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        let m_blnNoFucus = false;
-        let m_strErrMsg = "";
-        if (n_element  != '') {
-            m_strErrMsg += n_element.title.split('|')[0];
-        }
-        m_strErrMsg += ' ' + n_strError;
-        if (n_blnNoFucus) {
-            m_blnNoFucus = true;
-        }
-        if (blnListMode) {
-            if (!fncIsInUnorderedList(m_strErrMsg)) {
-                fncAddListItem(m_strErrMsg);
-            }
-        } else {
-            alert(m_strErrMsg);
-        }
-        
-        if (!m_blnNoFucus) {
-            if (n_element.select) {
-                n_element.select();
-                n_element.focus();
-            }
-        }
-    }
-    
-    function fncValidateEmail(n_elementEmail) {
-        let m_strMailformat = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-        if (n_elementEmail.value.match(m_strMailformat)) {
-            return true;
-        } else {
-            fncFormatError(n_elementEmail, "invalid format");
-            return false;
-        }
-    }
-</script>
 </body>
 </cfprocessingdirective>
 </HTML>

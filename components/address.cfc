@@ -29,16 +29,18 @@
                 address.intPhone,
                 address.intMobile
             FROM candidates.address
-                <cfif lCase(arguments.n_ID) NEQ 'all'> 
-                    WHERE address.ID= <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.n_ID#">
-                </cfif>
+            <cfif isNumeric(arguments.n_ID)>
+                WHERE address.ID= <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.n_ID#">
+            <cfelseif findNoCase("@", arguments.n_ID) GT -1>
+                WHERE address.strEmail= <cfqueryparam cfsqltype="cf_sql_char" value="#arguments.n_ID#">
+            </cfif> 
         </cfquery>
         <cfreturn qryAddress>
     </cffunction>
 
     <cffunction name="getstates" output="false" returntype="any">
         <cfscript>
-            m_jsonStatesList = fileRead('../data/statecodes.json');
+            m_jsonStatesList = fileRead('#application.applicationBaseFilePath#/data/statecodes.json');
             r_stcStates = deserializeJson(m_jsonStatesList);
             return r_stcStates;
         </cfscript>
@@ -56,7 +58,6 @@
         </cfquery>
         <cfreturn qryEvaluation>
     </cffunction>
-
 
     <cffunction name="getQuiz" output="false" returntype="query">
         <cfargument name="n_interviews_ID" type="string" default="">

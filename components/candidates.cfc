@@ -1,12 +1,19 @@
-<c<cfcomponent name="candidates">
+<cfcomponent name="candidates">
     <cffunction name="getQuestions" output="false" returntype="query">
         <cfargument name="n_ID" type="numeric" required="no" default="1">
-        <cfquery name="qryQuestions">
+        <cfquery name="qryQuestions" datasource="candidates">
+            Select NOW() as CurrentDate;
+        </cfquery>
+        <cfreturn qryQuestions>
+    </cffunction>
+    <cffunction name="getQuestionsXX" output="false" returntype="query">
+        <cfargument name="n_ID" type="numeric" required="no" default="1">
+        <cfquery name="qryQuestions" datasource="candidates">
             SELECT questions.ID,
-                questions.intSequence,
-                questions.strQuestion,
-                questions.intWeight,
-                questions.blnRequired
+                    questions.intSequence,
+                    questions.strQuestion,
+                    questions.intWeight,
+                    questions.blnRequired
             FROM candidates.questions
                 WHERE questions.evaluation_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.n_ID#">
             ORDER BY  questions.intSequence ASC;

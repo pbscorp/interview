@@ -2,7 +2,7 @@ function fncEnableSubmit() {
     document.getElementById("submitButton").disabled = false;
     g_blnFormHasUnsubmittedData = true;
 }
-function fncRemoveBeforeUnloadEvent(n_strDiv) {
+function fncRemoveBeforeUnloadEvent() {
     g_blnFormHasUnsubmittedData = false;
 }
 window.onload = function () {

@@ -48,6 +48,58 @@ function fncClearErrorMessage () {
 }
 
 
+var blnListMode = false;
+function fncFormatError(n_element, n_strError, n_blnNoFucus) {
+    function fncAddListItem(n_strErrMsg) {
+        var node = document.createElement("LI");
+        var textnode = document.createTextNode(n_strErrMsg);
+        node.appendChild(textnode);
+        document.getElementById("errMessageUL").appendChild(node);
+    }
+    function fncIsInUnorderedList(n_strErrMsg) {
+        m_aryErrMsgs = document.getElementById('errMessageUL').getElementsByTagName('li');
+        for (let i = 0; i < m_aryErrMsgs.length; i++) {
+            if (m_aryErrMsgs[i].innerHTML == n_strErrMsg) {
+                return true;
+            }
+        }
+        return false;
+    }
+    let m_blnNoFucus = false;
+    let m_strErrMsg = "";
+    if (n_element  != '') {
+        m_strErrMsg += n_element.title.split('|')[0];
+    }
+    m_strErrMsg += ' ' + n_strError;
+    if (n_blnNoFucus) {
+        m_blnNoFucus = true;
+    }
+    if (blnListMode) {
+        if (!fncIsInUnorderedList(m_strErrMsg)) {
+            fncAddListItem(m_strErrMsg);
+        }
+    } else {
+        alert(m_strErrMsg);
+    }
+    
+    if (!m_blnNoFucus) {
+        if (n_element.select) {
+            n_element.select();
+            n_element.focus();
+        }
+    }
+}
+
+function fncValidateEmail(n_elementEmail) {
+    let m_strMailformat = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+    if (n_elementEmail.value.match(m_strMailformat)) {
+        return true;
+    } else {
+        fncFormatError(n_elementEmail, "invalid format");
+        return false;
+    }
+}
+
 function fncFormatPhone(n_intPhone) {
     let m_strFormattedPhone = "(" + n_intPhone.substring(0, 3) + ')';
     m_strFormattedPhone += " " + n_intPhone.substring(3, 6);

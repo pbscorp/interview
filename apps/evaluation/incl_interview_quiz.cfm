@@ -1,31 +1,34 @@
 
-<cfoutput>
     <div id="quizSectionID">
-        <fieldset>
-            <Legend>Candidate Evaluation</legend>
-                <div id="evaluationTextID" class="evaluationTextScorecard">#strEvaluationHTML#</div>
-        </fieldset>
+        <cfoutput>
+            <fieldset>
+                <Legend>Candidate Evaluation</legend>
+                    <div id="evaluationTextID" class="evaluationTextScorecard">#strEvaluationHTML#</div>
+            </fieldset>
 
-        <cfif intListLenWeights GT listLen(lstWtLiterals)>
-            <cfdump var="Error in elaluation table Grades Weight #lstGradesWt# #len(lstWtLiterals)#">
-            <cfabort>
-        </cfif> 
+            <cfif intListLenWeights GT listLen(lstWtLiterals)>
+                <cfdump var="Error in evaluation table Grades Weight #lstGradesWt# #len(lstWtLiterals)#">
+                <cfabort>
+            </cfif>
+        </cfoutput>
 
         <table>
-            <thead>
-                <tr>
-                    <th style="width:300px">Please Rate The Following Categories</th>
-                    <cfloop index="i" from="1" to="#intListLenWeights#">
-                        <cfset intWtHdr = listGetAt(lstGradesWt, i)>
-                        <cfset strWtHdr = listGetAt(lstWtLiterals, i)>
-                        <th>
-                            <span class="grades">#strWtHdr#</span><br>
-                            <span<cfif intWtHdr LT 0 > class="grades red"<cfelse> class="grades"</cfif>>#intWtHdr#</span>
-                        </th>
-                    </cfloop>
-                    <th class="grades">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
-                </tr>
-            </thead>
+            <cfoutput>
+                <thead>
+                    <tr>
+                        <th style="width:300px">Please Rate The Following Categories</th>
+                        <cfloop index="i" from="1" to="#intListLenWeights#">
+                            <cfset intWtHdr = listGetAt(lstGradesWt, i)>
+                            <cfset strWtHdr = listGetAt(lstWtLiterals, i)>
+                            <th>
+                                <span class="grades">#strWtHdr#</span><br>
+                                <span<cfif intWtHdr LT 0 > class="grades red"<cfelse> class="grades"</cfif>>#intWtHdr#</span>
+                            </th>
+                        </cfloop>
+                        <th class="grades">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                    </tr>
+                </thead>
+            </cfoutput>
 
             <tbody>
                 <cfoutput query="qryQuiz">
@@ -33,14 +36,14 @@
                         <cfset qryQuiz.intResponse_value = form["#qryQuiz.currentrow#rdoResponse"]>
                     </cfif>
                     <cfif structKeyExists(form, "#qryQuiz.currentrow#strComment")>
-                        <cfset qryQuiz.strComment = form["#qryQuiz.currentrow#strComment"]>
+                        <cfset qryQuiz.strComment = trim(form["#qryQuiz.currentrow#strComment"])>
                     </cfif>
                     <tr>
                         <td class="left  quizSummaryTD" >
                             <details id="#qryQuiz.currentrow#strDetail">
                                 <summary id="#qryQuiz.currentrow#strSummary">
                                     <span 
-                                    <cfif (qryQuiz.blnRequired == 1) >
+                                    <cfif (qryQuiz.blnRequired EQ 1) >
                                         class = "required"
                                     </cfif>>
                                         #qryQuiz.currentrow#. #qryQuiz.strCategory#
@@ -72,7 +75,7 @@
                                     checked
                                     <cfset intScore = listGetAt(lstGradesWt, i)>
                                 </cfif>
-                                <cfif (qryQuiz.blnRequired == 1) and i EQ 1>
+                                <cfif (qryQuiz.blnRequired EQ 1) and i EQ 1>
                                     disabled
                                 </cfif>
                                 >
@@ -93,19 +96,17 @@
                         <td class="left" colspan="100">
                             
                         <textarea 
-                                title="Question #qryQuiz.currentrow#) #qryQuiz.strCategory# comments|#qryQuiz.strComment#"
+                                title="Question #qryQuiz.currentrow#) #qryQuiz.strCategory# comments|#trim(qryQuiz.strComment)#"
                                 name="#qryQuiz.currentrow#strComment"
-                                <cfif NOT len(qryQuiz.strComment)>
+                                <cfif NOT len(trim(qryQuiz.strComment))>
                                     style="display :none"
                                 </cfif>
                                 onChange="fncValidateInterview();"
                                 onblur="fncHideCommentDetails('#qryQuiz.currentrow#')"
                                 id="#qryQuiz.currentrow#strComment"
-                                class="textQuizComments"
+                                class="textQuizComments left"
                                 rows="3"
-                                cols="95">
-                            #qryQuiz.strComment#
-                        </textarea>
+                                cols="95">#trim(qryQuiz.strComment)#</textarea>
                         <td>
                     </tr>
                 </cfoutput>
@@ -115,17 +116,16 @@
     <div>
         <label for="txtInterviewerComments" class="required">Final Comments</label>
         <div>Final comments and recommendations for proceeding with the candidate.</div>
-        <textarea 
-                title="Overal Impression|#form.txtInterviewerComments#"
-                name="txtInterviewerComments"
-                id="txtInterviewerComments"
-                onChange="fncValidateInterview();"
-                rows="4"
-                cols="95">
-            #form.txtInterviewerComments#
-        </textarea>
+        <cfoutput>
+            <textarea 
+                    title="Overal Impression|#form.txtInterviewerComments#"
+                    name="txtInterviewerComments"
+                    id="txtInterviewerComments"
+                    onChange="fncValidateInterview();"
+                    rows="4"
+                    cols="95">#trim(form.txtInterviewerComments)#</textarea>
+        </cfoutput>
     </div>
-</cfoutput>
 <script>
     function fncShowCommentDetails(n_intRow, n_intResponse) {
         if (fncValidateInterview() ) {

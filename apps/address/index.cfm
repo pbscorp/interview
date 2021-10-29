@@ -4,6 +4,7 @@
 <cfparam name="url.addressID" default="">
 <cfparam name="form.addressID" default="#url.addressID#">
 <cfparam name="url.strEmail" default="">
+<cfparam name="form.strEmail" default="#url.strEmail#">
 <cfparam name="form.strNameFirst" default="">
 <cfparam name="form.strNameMiddle" default="">
 <cfparam name="form.strNameLast" default="">
@@ -12,22 +13,21 @@
 <cfparam name="form.strCity" default="">
 <cfparam name="form.strState" default="">
 <cfparam name="form.strZip" default="">
-<cfparam name="form.strEmail" default="#url.strEmail#">
-<cfparam name="form.intPhone" default="">
-<cfparam name="form.intMobile" default="">
+<cfparam name="form.intPhone" default="0">
+<cfparam name="form.intMobile" default="0">
 <cfparam name="form.strName" default="">
 <cfparam name="form.submitButton" default="">
 <cfparam name="form.blnHasError" default="0">
 <cfparam name="strErrorMessage" default="">
 <cfparam name="strSuccessMessage" default="">
+<!--- 
 
-<cfif NOT len(form.strTransaction)>
-    <cfif len(form.addressID)>
+    <cfif len(form.strEmail)>
         <cfset form.strTransaction = "update">
     <cfelse>
         <cfset form.strTransaction = "add">
-    </cfif>
-</cfif>
+    </cfif> 
+--->
 
 <cfif len(form.submitButton)>
     <cfinclude template = "act_address.cfm">
@@ -41,8 +41,9 @@
         <cfscript>
             objAddress = createObject('component', 'interview-cfc.address');
             stcStates = objAddress.getstates();
-            if ( (!form.blnHasError) && (lCase(form.strTransaction) != "add")) {
-                qryAddress = objAddress.getAddress(form.addressID );
+            qryAddress = objAddress.getAddress(form.strEmail);
+            if ( (!form.blnHasError) && (qryAddress.recordCount)) {
+                form.strTransaction = "update";
                 form.addressID  = qryAddress.addressID;
                 form.strNameFirst = qryaddress.strNameFirst;
                 form.strNameMiddle = qryaddress.strNameMiddle;
@@ -56,10 +57,15 @@
                 form.strEmail = qryaddress.strEmail;
                 form.intPhone = qryaddress.intPhone;
                 form.intMobile = qryaddress.intMobile;
+            } else {
+                form.strTransaction = "add";
             }
             function CFfncFormatPhone(n_intPhone)   {
                 var m_intPhone = trim(n_intPhone);
-                var r_intPhone = n_intPhone;
+                var r_intPhone = "";
+                if (n_intPhone != 0) {
+                    r_intPhone = n_intPhone;
+                }
                 if(len(n_intPhone) && len(m_intPhone) == 10) {
                     r_intPhone = "(" & mid(m_intPhone, 1, 3) & ") ";
                     r_intPhone &= mid(m_intPhone, 4, 3) & "-";
@@ -185,7 +191,7 @@
     </div>
 
     <script>
-        if (opener) {
+        if (opener) {alert(22)
             opener.document.getElementById("candidatesNameTextSpan").innerHTML = "#form.strName#";
             opener.document.getElementById("addressID").value = "#form.addressID#";
         }

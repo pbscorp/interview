@@ -29,7 +29,7 @@
                     address_ID
                 ) VALUES (
                     <cfqueryparam cfsqltype="CF_sql_varchar" value="#form.strPosition#">,
-                    <cfqueryparam cfsqltype="CF_sql_varchar" value="#ucFirst(form.strInterviewer)#">,
+                    <cfqueryparam cfsqltype="CF_sql_varchar" value="#uCaseFirst(form.strInterviewer)#">,
                     <cfqueryparam cfsqltype="cf_sql_date" value="#dateFormat(form.dtmInterviewDate, 'yyyy-mm-dd')#">,
                     <cfqueryparam cfsqltype="CF_sql_varchar" value="#form.txtInterviewerComments#">,
                     <cfqueryparam cfsqltype="cf_sql_integer" value="#form.intFinalScore#">,
@@ -48,7 +48,7 @@
                 UPDATE candidates.interviews
                 SET
                     strPosition =  <cfqueryparam cfsqltype="CF_sql_varchar" value="#form.strPosition#">,
-                    strInterviewer = <cfqueryparam cfsqltype="CF_sql_varchar" value="#ucFirst(form.strInterviewer)#">,
+                    strInterviewer = <cfqueryparam cfsqltype="CF_sql_varchar" value="#uCaseFirst(form.strInterviewer)#">,
                     dtmInterviewDate = <cfqueryparam cfsqltype="cf_sql_date" value="#dateFormat(form.dtmInterviewDate, 'yyyy-mm-dd')#">,
                     txtInterviewerComments =  <cfqueryparam cfsqltype="CF_sql_varchar" value="#form.txtInterviewerComments#">,
                     intScore =  <cfqueryparam cfsqltype="cf_sql_integer" value="#form.intFinalScore#">
@@ -91,20 +91,20 @@
             <cfset strErrorMessage= "See error log:#cfcatch.message#">
             <cftransaction action = "rollback"/>
         </cfcatch>
-        <cfif NOT len(strErrorMessage)>
-            <cfif lCase(form.strTransaction) EQ "delete">
-                <cfset strSuccessMessage = "record #form.interviewsID# deleted">    
-                <cfset fncStructEmpty(form)>
-                <cfset form.strTransaction = "update">
-            <cfelseif lCase(form.strTransaction) EQ "add">
-                <cfset strSuccessMessage = "record #form.interviewsID# added">
-                <cfset form.strTransaction = "update">
-                <cfset form.interviewsID = qryNewInterview.interviewsID>
-            <cfelse>
-                <cfset strSuccessMessage = "record #form.interviewsID# updated">
-            </cfif>
-        </cfif>
     </cftry>
+    <cfif NOT len(strErrorMessage)>
+        <cfif lCase(form.strTransaction) EQ "delete">
+            <cfset strSuccessMessage = "record #form.interviewsID# deleted">    
+            <cfset fncStructEmpty(form)>
+            <cfset form.strTransaction = "update">
+        <cfelseif lCase(form.strTransaction) EQ "add">
+            <cfset strSuccessMessage = "record #form.interviewsID# added">
+            <cfset form.strTransaction = "update">
+            <cfset form.interviewsID = qryNewInterview.interviewsID>
+        <cfelse>
+            <cfset strSuccessMessage = "record #form.interviewsID# updated">
+        </cfif>
+    </cfif>
     
 </cftransaction>
 <cffunction name="fncStructEmpty" >
@@ -120,5 +120,8 @@
         <cfset form['#i#rdoResponse'] =  "1"/>
         <cfset form['#i#strComment'] =  ""/>
     </cfloop>
-
+</cffunction>
+<cffunction name="uCaseFirst" access="private" output="false" returntype="String">
+    <cfargument name="n_strText" required="false" type="String" default="" />
+    <cfreturn reReplace(lCase(arguments.n_strText), "(\b\w)", "\u\1", "all") />
 </cffunction>
