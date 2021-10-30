@@ -129,6 +129,9 @@ function fncEditAddress() {
     } else {
         m_strURL += "&strTransaction=Add";
     }
+    document.getElementById("candidatesNameSpan").style.visibility = "visible";
+    document.getElementById("candidatesNameTextSpan").innerHTML = "";
+    document.getElementById("addressID").value = "";
     winAddressWindow=window.open(m_strURL, "adresses", "width=500, height=300, left=300, top=200");
 }
 
@@ -190,10 +193,9 @@ function fncAddressCallBack(n_responseText) {
     let m_aryColNames;
     let m_strName;
     let m_strResponseText = n_responseText.trim();
-    document.getElementById("candidatesNameSpan").style.visibility = "visible";
     if (m_strResponseText.substring(0, 1) != "[") {
-        alert(m_strResponseText);
-        //return;
+        fncEditAddress();
+        return;
     };
     m_aryColNames = JSON.parse(m_strResponseText);
     if (!m_aryColNames.length) {
@@ -206,6 +208,7 @@ function fncAddressCallBack(n_responseText) {
         document.getElementById("addressID").value = m_aryColNames[0].ID;
     } 
 }
+
 function fncValidateInterview() {
     let m_strTransaction = mainForm.strTransaction.value;
     let m_eleEmail = mainForm.strEmail;

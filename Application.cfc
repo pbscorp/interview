@@ -23,13 +23,17 @@ component  displayname="Application" hint="Manages Application Flow" output="fal
 	this.ClientStorage = true;
 	this.setDomainCookies = false;
 	this.mappings["/interview-cfc"] = "E:/web/public_html/pbssecure/pbsmenu/pbsfragrance/samplecode/interview/components/";
-
+	if (isDefined("application")) {
+		if (structKeyExists(application, "applicationLogFilePath")) {
+			logFile = "#application.applicationLogFilePath#/applicationLog.txt";
+		}
+	}
 	public boolean function onApplicationStart(){
 		system=createObject("java", "java.lang.System");
 		strJavaHome = system.getproperty("java.home");
-		writeoutput(strJavaHome);
-		writeoutput(findNoCase("lucee", strJavaHome));
-		writeoutput(findNoCase("lucee", strJavaHome) == -1);
+		//writeoutput(strJavaHome);
+		//writeoutput(findNoCase("lucee", strJavaHome));
+		//writeoutput(findNoCase("lucee", strJavaHome) == -1);
 		if (findNoCase("lucee", strJavaHome) < 1) {
 			application.blnLucee = false;
 		} else {
@@ -41,14 +45,13 @@ component  displayname="Application" hint="Manages Application Flow" output="fal
 			application.applicationBaseFilePath = "E:/web/public_html/pbssecure/pbsmenu/pbsfragrance/samplecode/interview";
 			//application.applicationBaseFilePath = "E:/web/public_html/pbssecure/pbsmenu/";// old
 			application.applicationLogFilePath = "E:/web/public_html/pbssecure/pbsmenu/logs";
-			writeDump(application);
-			writeoutput(' yes this is adobe');
+			//writeDump(application);
+			//writeoutput(' yes this is adobe');
 			restInitApplication(
 				"#application.applicationBaseFilePath#/rest\",
-				// "#application.applicationBaseFilePath#pbsfragrance/samplecode/interview/rest\",//old
 				"interview");
 		} else {
-			writeoutput('adobe false');
+			//writeoutput('adobe false');
 			m_jsonAppConfig = fileRead('resources/appconfig.json');
 			m_stcAppConfig = deserializeJson(m_jsonAppConfig);
 			application.applicationBaseURLPath = "/samplecode/interview";
@@ -56,7 +59,6 @@ component  displayname="Application" hint="Manages Application Flow" output="fal
 			application.applicationBaseFilePath = "C:\lucee\tomcat\webapps\ROOT\samplecode\interview";
 			application.applicationLogFilePath = "C:\lucee\tomcat\webapps\ROOT\WEB-INF\lucee\logs";
 			//this.mappings["/interview-cfc"] = "#application.applicationBaseFilePath#/interview/components/";
-
 			application.dirPath =   "C:\lucee\tomcat\webapps\ROOT\samplecode\interview\rest\";
 			application.serviceMapping = "interview";
 			application.luceepassword = "Lpatrick##1";
@@ -67,30 +69,20 @@ component  displayname="Application" hint="Manages Application Flow" output="fal
 				// 		serviceMapping="#application.serviceMapping#", 
 				// 		password="#application.luceepassword#");
 				// }
-				
-			
-			//localhost:8888/rest/interview/api_candidates/get_address?strTable=address&strKeyColumnName=strEmail&strKeyColumnValue=ss%2540pbsmenu.com&lstColumns=ID%7CstrNameFirst%7CstrNameMiddle%7CstrNameLast&strOrderByClause= 500
-			
-			//localhost:8888/rest/interview/api_candidates/get_address?strTable=address&strKeyColumnName=strEmail&strKeyColu
 		}
-
-		// :\lucee\jre-1falseadobe true
+	
 		try {
-		var logWriter = FileOpen("#application.applicationLogFilePath#/testApplicationStop.txt", "append" );
-		FileWriteLine(logWriter,"Application started on :- #now()#");
-		FileClose(logWriter);
+			logFile = "#application.applicationLogFilePath#/applicationLog.txt";
+			var logWriter = fileOpen(logFile, "append" );
+			fileWriteLine(logWriter,"Application started on :- #now()#");
+			fileClose(logWriter);
 		} catch (any e) {
 			writeOutput("Error: " & e.message);
 		};
-		// writeOutput("#application.applicationBaseFilePath#logs/testApplicationStop.txt ");
-		// writeOutput(application.luceepassword);
-		// writeOutput(" application.dirPath = #application.dirPath#");
-		//writeDump(this.datasources);
-			
-		//abort;
 		return true;
 
 	}
+
 
 	public void function onSessionStart(){
 
@@ -98,9 +90,9 @@ component  displayname="Application" hint="Manages Application Flow" output="fal
 		application.myVar = 20; //Setting Application scope variable
 
 		//File write during onSessionStart
-		var logWriter = FileOpen("testApplicationStop.txt", "append");
-		FileWriteLine(logWriter,"Session started on :- #now()#");
-		FileClose(logWriter);
+		var logWriter = fileOpen(logFile, "append");
+		fileWriteLine(logWriter,"Session started on :- #now()#");
+		fileClose(logWriter);
 		return;
 	}
 
@@ -119,9 +111,9 @@ component  displayname="Application" hint="Manages Application Flow" output="fal
 
 		//If appreset is defined in URL scope then reset the application by calling ApplicationStop
 		if( structKeyExists(url, "appReset") ) {
-			var logWriter = FileOpen("testApplicationStop.txt", "append");
-			FileWriteLine(logWriter,"Application stop is going to execute on :- #now()#");
-			FileClose(logWriter);
+			var logWriter = fileOpen(logFile, "append");
+			fileWriteLine(logWriter,"Application stop is going to execute on :- #now()#");
+			fileClose(logWriter);
 
 			ApplicationStop();
 
@@ -134,18 +126,16 @@ component  displayname="Application" hint="Manages Application Flow" output="fal
 	}
 
 	public void function onSessionEnd(struct SessionScope, struct ApplicationScope){
-		//File write during onSessionEnd
-		var logWriter = FileOpen("testApplicationStop.txt", "append");
-		FileWriteLine(logWriter,"Session ended on :- #now()#");
-		FileClose(logWriter);
+		var logWriter = fileOpen(logFile, "append");
+		fileWriteLine(logWriter,"Session ended on :- #now()#");
+		fileClose(logWriter);
 		return;
 	}
 
 	public void function onApplicationEnd(struct ApplicationScope){
-		//File write during onApplicationEnd
-		var logWriter = FileOpen("testApplicationStop.txt", "append");
-		FileWriteLine(logWriter,"Application ended on :- #now()#");
-		FileClose(logWriter);
+		var logWriter = fileOpen(logFile, "append");
+		fileWriteLine(logWriter,"Application ended on :- #now()#");
+		fileClose(logWriter);
 		return;
 	}
 	// if (application.blnLucee) {

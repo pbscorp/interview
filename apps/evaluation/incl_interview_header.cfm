@@ -9,8 +9,11 @@
                             title="eMail Address|#form.strEmail#"
                             placeholder="example@mail.com"
                             <cfif lCase(form.strTransaction) EQ "add">
-                                <!--- onChange="fncGetAddress(this);" --->
-                                onChange="fncEditAddress();"
+                                <cfif application.blnLucee>
+                                    onChange="fncGetAddress(this);"
+                                <cfelse>
+                                    onChange="fncEditAddress();"
+                                </cfif>
                             </cfif>
                             value="#form.strEmail#">
                     <input type="hidden" name="interviewsID" id="interviewsID" value="#form.interviewsID#">

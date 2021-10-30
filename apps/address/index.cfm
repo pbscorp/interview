@@ -191,7 +191,7 @@
     </div>
 
     <script>
-        if (opener) {alert(22)
+        if (opener) {
             opener.document.getElementById("candidatesNameTextSpan").innerHTML = "#form.strName#";
             opener.document.getElementById("addressID").value = "#form.addressID#";
         }
@@ -221,7 +221,6 @@
                     if (!m_intErrors) {
                         return true; 
                     }
-                    //alert (m_intErrors + ' m_intErrors found ');
                     return false;
                 }
             </script>
