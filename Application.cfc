@@ -22,6 +22,7 @@ component  displayname="Application" hint="Manages Application Flow" output="fal
 	this.setClientCookies = true;
 	this.ClientStorage = true;
 	this.setDomainCookies = false;
+	logFile = "applicationLog.txt";
 	this.mappings["/interview-cfc"] = "E:/web/public_html/pbssecure/pbsmenu/pbsfragrance/samplecode/interview/components/";
 	if (isDefined("application")) {
 		if (structKeyExists(application, "applicationLogFilePath")) {
