@@ -1,23 +1,23 @@
 <!--- <cfdump var = "#form#"><cfabort> --->
 <cfparam name="interviewsID" default="">
-<cfif len(form.interviewsID)>
-    <cfset interviewsID = form.interviewsID>
+<cfif len(eForm.interviewsID)>
+    <cfset interviewsID = eForm.interviewsID>
 </cfif>
 <cftransaction>
     <cfset strErrorMessage =  "">
     <cftry>
-        <cfif lCase(form.strTransaction) EQ "delete">
+        <cfif lCase(eForm.strTransaction) EQ "delete">
             <cfquery name="deleteOldRows">
                 DELETE FROM candidates.quiz
-                    WHERE quiz.interviews_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#form.interviewsID#">
+                    WHERE quiz.interviews_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#eForm.interviewsID#">
                     AND quiz.evaluation_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#url.evaluationID#">;
             </cfquery>
             <cfquery name="deleteOldInterview">
                 DELETE FROM candidates.interviews
-                    WHERE interviews.ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#form.interviewsID#">
+                    WHERE interviews.ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#eForm.interviewsID#">
                     AND interviews.evaluation_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#url.evaluationID#">;
             </cfquery>
-        <cfelseif lCase(form.strTransaction) EQ "add">
+        <cfelseif lCase(eForm.strTransaction) EQ "add">
             <cfquery name="addInterview">
                 INSERT INTO candidates.interviews (
                     strPosition,
@@ -28,41 +28,41 @@
                     evaluation_ID,
                     address_ID
                 ) VALUES (
-                    <cfqueryparam cfsqltype="CF_sql_varchar" value="#form.strPosition#">,
-                    <cfqueryparam cfsqltype="CF_sql_varchar" value="#uCaseFirst(form.strInterviewer)#">,
-                    <cfqueryparam cfsqltype="cf_sql_date" value="#dateFormat(form.dtmInterviewDate, 'yyyy-mm-dd')#">,
-                    <cfqueryparam cfsqltype="CF_sql_varchar" value="#form.txtInterviewerComments#">,
-                    <cfqueryparam cfsqltype="cf_sql_integer" value="#form.intFinalScore#">,
+                    <cfqueryparam cfsqltype="CF_sql_varchar" value="#eForm.strPosition#">,
+                    <cfqueryparam cfsqltype="CF_sql_varchar" value="#uCaseFirst(eForm.strInterviewer)#">,
+                    <cfqueryparam cfsqltype="cf_sql_date" value="#dateFormat(eForm.dtmInterviewDate, 'yyyy-mm-dd')#">,
+                    <cfqueryparam cfsqltype="CF_sql_varchar" value="#eForm.txtInterviewerComments#">,
+                    <cfqueryparam cfsqltype="cf_sql_integer" value="#eForm.intFinalScore#">,
                     <cfqueryparam cfsqltype="cf_sql_integer" value="#url.evaluationID#">,
-                    <cfqueryparam cfsqltype="cf_sql_integer" value="#form.addressID#">
+                    <cfqueryparam cfsqltype="cf_sql_integer" value="#eForm.addressID#">
                 );
             </cfquery>
             <cfquery name="qryNewInterview">
                 SELECT ID as interviewsID
                     FROM candidates.interviews
-                    WHERE interviews.address_ID = "#form.addressID#" ORDER BY dtmAdded DESC; 
+                    WHERE interviews.address_ID = "#eForm.addressID#" ORDER BY dtmAdded DESC; 
             </cfquery>
                 <cfset interviewsID = qryNewInterview.interviewsID>
         <cfelse>
             <cfquery name="updateInterview">
                 UPDATE candidates.interviews
                 SET
-                    strPosition =  <cfqueryparam cfsqltype="CF_sql_varchar" value="#form.strPosition#">,
-                    strInterviewer = <cfqueryparam cfsqltype="CF_sql_varchar" value="#uCaseFirst(form.strInterviewer)#">,
-                    dtmInterviewDate = <cfqueryparam cfsqltype="cf_sql_date" value="#dateFormat(form.dtmInterviewDate, 'yyyy-mm-dd')#">,
-                    txtInterviewerComments =  <cfqueryparam cfsqltype="CF_sql_varchar" value="#form.txtInterviewerComments#">,
-                    intScore =  <cfqueryparam cfsqltype="cf_sql_integer" value="#form.intFinalScore#">
-                WHERE interviews.ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#form.interviewsID#">;
+                    strPosition =  <cfqueryparam cfsqltype="CF_sql_varchar" value="#eForm.strPosition#">,
+                    strInterviewer = <cfqueryparam cfsqltype="CF_sql_varchar" value="#uCaseFirst(eForm.strInterviewer)#">,
+                    dtmInterviewDate = <cfqueryparam cfsqltype="cf_sql_date" value="#dateFormat(eForm.dtmInterviewDate, 'yyyy-mm-dd')#">,
+                    txtInterviewerComments =  <cfqueryparam cfsqltype="CF_sql_varchar" value="#eForm.txtInterviewerComments#">,
+                    intScore =  <cfqueryparam cfsqltype="cf_sql_integer" value="#eForm.intFinalScore#">
+                WHERE interviews.ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#eForm.interviewsID#">;
             </cfquery>
             <cfquery name="deleteOldQuiz">
                 DELETE FROM candidates.quiz
-                    WHERE quiz.interviews_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#form.interviewsID#">
+                    WHERE quiz.interviews_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#eForm.interviewsID#">
                     AND quiz.evaluation_ID = <cfqueryparam cfsqltype="cf_sql_integer" value="#url.evaluationID#">;
             </cfquery>
         </cfif>
-        <cfif lCase(form.strTransaction) NEQ "delete">
+        <cfif lCase(eForm.strTransaction) NEQ "delete">
             <cfset i = 1>
-            <cfloop index="i" from="1" to ="#form.recordcount#">
+            <cfloop index="i" from="1" to ="#eForm.recordcount#">
                 <cfif NOT structKeyExists(form, '#i#rdoResponse')>
                     <cfset form['#i#rdoResponse'] = "1">
                 </cfif>
@@ -93,29 +93,29 @@
         </cfcatch>
     </cftry>
     <cfif NOT len(strErrorMessage)>
-        <cfif lCase(form.strTransaction) EQ "delete">
-            <cfset strSuccessMessage = "record #form.interviewsID# deleted">    
+        <cfif lCase(eForm.strTransaction) EQ "delete">
+            <cfset strSuccessMessage = "record #eForm.interviewsID# deleted">    
             <cfset fncStructEmpty(form)>
-            <cfset form.strTransaction = "update">
-        <cfelseif lCase(form.strTransaction) EQ "add">
-            <cfset strSuccessMessage = "record #form.interviewsID# added">
-            <cfset form.strTransaction = "update">
-            <cfset form.interviewsID = qryNewInterview.interviewsID>
+            <cfset eForm.strTransaction = "update">
+        <cfelseif lCase(eForm.strTransaction) EQ "add">
+            <cfset strSuccessMessage = "record #eForm.interviewsID# added">
+            <cfset eForm.strTransaction = "update">
+            <cfset eForm.interviewsID = qryNewInterview.interviewsID>
         <cfelse>
-            <cfset strSuccessMessage = "record #form.interviewsID# updated">
+            <cfset strSuccessMessage = "record #eForm.interviewsID# updated">
         </cfif>
     </cfif>
     
 </cftransaction>
 <cffunction name="fncStructEmpty" >
     <cfargument name="n_form" type="struct" required />
-    <cfset form.interviewsID = "">
-    <cfset form.addressID = "">
-    <cfset form.strEmail = "">
-    <cfset form.strName = "">
-    <cfset form.strInterviewer = "">
-    <cfset form.dtmInterviewDate = dateFormat(now(), "yyyy-mm-dd")>
-    <cfset form.strPosition = "">
+    <cfset eForm.interviewsID = "">
+    <cfset eForm.addressID = "">
+    <cfset eForm.strEmail = "">
+    <cfset eForm.strName = "">
+    <cfset eForm.strInterviewer = "">
+    <cfset eForm.dtmInterviewDate = dateFormat(now(), "yyyy-mm-dd")>
+    <cfset eForm.strPosition = "">
     <cfloop index="i" from="1" to ="#n_form.recordcount#">
         <cfset form['#i#rdoResponse'] =  "1"/>
         <cfset form['#i#strComment'] =  ""/>

@@ -2,29 +2,29 @@
     <fieldset>
         <Legend>Interview</legend>
         <span class="interviewSpan">
-            <cfif reFindNoCase("add|view|delete", form.strTransaction) >
+            <cfif reFindNoCase("add|view|delete", eForm.strTransaction) >
                 <cfoutput>
                     <label class="interviewInputlabel required">Email:</label>
                     <input type="email" name="strEmail" id="strEmail"
-                            title="eMail Address|#form.strEmail#"
+                            title="eMail Address|#eForm.strEmail#"
                             placeholder="example@mail.com"
-                            <cfif lCase(form.strTransaction) EQ "add">
+                            <cfif lCase(eForm.strTransaction) EQ "add">
                                 <cfif application.blnLucee>
                                     onChange="fncGetAddress(this);"
                                 <cfelse>
                                     onChange="fncEditAddress();"
                                 </cfif>
                             </cfif>
-                            value="#form.strEmail#">
-                    <input type="hidden" name="interviewsID" id="interviewsID" value="#form.interviewsID#">
+                            value="#eForm.strEmail#">
+                    <input type="hidden" name="interviewsID" id="interviewsID" value="#eForm.interviewsID#">
                 </cfoutput>
             <cfelse>
                 <cfoutput>
                     <label class="interviewInputlabel required">Interview:</label>
                     <select size="1" name="interviewsID" id="interviewsID"
                         onChange="fncChangeInterviews(this.options[this.selectedIndex]);"
-                        title="Interview|#form.interviewsID#"
-                        value="#form.interviewsID#">
+                        title="Interview|#eForm.interviewsID#"
+                        value="#eForm.interviewsID#">
                         <option value="">Select an Interview</option>
                 </cfoutput>
                 <cfoutput query = "qryAllInterviews">
@@ -33,7 +33,7 @@
                             interviewed on #dateFormat(qryAllInterviews.dtmInterviewDate, 'mm/dd/yyyy')#
                             by #qryAllInterviews.strInterviewer#
                             for #qryAllInterviews.strPosition#"
-                        <cfif qryAllInterviews.interviewsID  EQ form.interviewsID >
+                        <cfif qryAllInterviews.interviewsID  EQ eForm.interviewsID >
                             selected
                         </cfif>
                         >
@@ -42,7 +42,7 @@
                 </cfoutput>
                     <option value="add">New Interview</option>
                 </select>
-                <input type="hidden" name="strEmail" id="strEmail" value="<cfoutput>#form.strEmail#</cfoutput>">
+                <input type="hidden" name="strEmail" id="strEmail" value="<cfoutput>#eForm.strEmail#</cfoutput>">
             </cfif> 
         </span>
         <cfoutput>
@@ -50,7 +50,7 @@
                 <label class="interviewInputlabel required">Date:</label>
                 <input type="date" name="dtmInterviewDate" id="dtmInterviewDate"
                     min="#dateFormat(dateAdd('yyyy', -2, now()), "yyyy-mm-dd")#" max="#dateFormat(now(), "yyyy-mm-dd")#" 
-                    value="#dateFormat(form.dtmInterviewDate, 'yyyy-mm-dd')#"
+                    value="#dateFormat(eForm.dtmInterviewDate, 'yyyy-mm-dd')#"
                     onfocusout="fncValidateInterview();fncValidateDate(this);"/>
             </span>
             <br/>
@@ -58,7 +58,7 @@
             <span id="candidatesNameSpan" 
                         style="font-size: smaller;
                         vertical-align: top;
-                        <cfif len(form.interviewsID) GT 0 || len(form.strEmail) GT 0>
+                        <cfif len(eForm.interviewsID) GT 0 || len(eForm.strEmail) GT 0>
                             visibility: visible;
                         <cfelse> 
                             visibility: hidden;
@@ -66,9 +66,9 @@
                         font-style: italic;">
 
                 <span  style.display="inline" id="candidatesNameTextSpan">
-                    #form.strName#
+                    #eForm.strName#
                 </span>
-                <cfif lCase(form.strTransaction) NEQ "view">
+                <cfif lCase(eForm.strTransaction) NEQ "view">
                     <span class="button" id = "addressButton" onClick="fncEditAddress();">Edit Address</span>
                 </cfif>
             </span>
@@ -78,11 +78,11 @@
                 <label class="interviewInputlabel required">Interviewer:</label>
                 <input type="text" class="caps"
                         name="strInterviewer" 
-                        title="Interviewer|#form.strInterviewer#"
+                        title="Interviewer|#eForm.strInterviewer#"
                         id="strInterviewer"
                         placeholder="Name"
                         onChange="fncValidateInterview();"
-                        value="#form.strInterviewer#"/>
+                        value="#eForm.strInterviewer#"/>
             </span>
 
         </cfoutput>
@@ -92,12 +92,12 @@
             <cfoutput>
                 <input list="datalistPositions" 
                 name="strPosition"
-                title="Position|#form.strPosition#"
+                title="Position|#eForm.strPosition#"
                 id="strPosition"
                 placeholder="Position"
-                value="#form.strPosition#"
+                value="#eForm.strPosition#"
             </cfoutput>
-                <cfif reFindNoCase("add|update", form.strTransaction) >
+                <cfif reFindNoCase("add|update", eForm.strTransaction) >
                     onChange="fncValidateInterview();fncNewPosition(this, 'datalistPositions');"
                 </cfif>
                 onFocus="this.select()">

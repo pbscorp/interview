@@ -118,12 +118,12 @@
         <div>Final comments and recommendations for proceeding with the candidate.</div>
         <cfoutput>
             <textarea 
-                    title="Overal Impression|#form.txtInterviewerComments#"
+                    title="Overal Impression|#eForm.txtInterviewerComments#"
                     name="txtInterviewerComments"
                     id="txtInterviewerComments"
                     onChange="fncValidateInterview();"
                     rows="4"
-                    cols="95">#trim(form.txtInterviewerComments)#</textarea>
+                    cols="95">#trim(eForm.txtInterviewerComments)#</textarea>
         </cfoutput>
     </div>
 <script>

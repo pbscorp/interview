@@ -20,16 +20,9 @@
 <cfparam name="form.blnHasError" default="0">
 <cfparam name="strErrorMessage" default="">
 <cfparam name="strSuccessMessage" default="">
-<!--- 
-
-    <cfif len(form.strEmail)>
-        <cfset form.strTransaction = "update">
-    <cfelse>
-        <cfset form.strTransaction = "add">
-    </cfif> 
---->
-
-<cfif len(form.submitButton)>
+<cfset objUtilities = createObject('component', 'interview-cfc.utilities')>
+<cfset eForm = objUtilities.encodeFormForHTML(form)>
+<cfif len(eForm.submitButton)>
     <cfinclude template = "act_address.cfm">
 </cfif>
 <cfprocessingdirective suppressWhiteSpace = "yes">
@@ -42,23 +35,23 @@
             objAddress = createObject('component', 'interview-cfc.address');
             stcStates = objAddress.getstates();
             qryAddress = objAddress.getAddress(form.strEmail);
-            if ( (!form.blnHasError) && (qryAddress.recordCount)) {
-                form.strTransaction = "update";
-                form.addressID  = qryAddress.addressID;
-                form.strNameFirst = qryaddress.strNameFirst;
-                form.strNameMiddle = qryaddress.strNameMiddle;
-                form.strNameLast = qryaddress.strNameLast;
-                form.strName = qryaddress.strName;
-                form.strAddressLine1 = qryaddress.strAddressLine1;
-                form.strAddressLine2 = qryaddress.strAddressLine2;
-                form.strCity = qryaddress.strCity;
-                form.strState = qryaddress.strState;
-                form.strZip = qryaddress.strZip;
-                form.strEmail = qryaddress.strEmail;
-                form.intPhone = qryaddress.intPhone;
-                form.intMobile = qryaddress.intMobile;
+            if ( (!eForm.blnHasError) && (qryAddress.recordCount)) {
+                eForm.strTransaction = "update";
+                eForm.addressID  = qryAddress.addressID;
+                eForm.strNameFirst = qryaddress.strNameFirst;
+                eForm.strNameMiddle = qryaddress.strNameMiddle;
+                eForm.strNameLast = qryaddress.strNameLast;
+                eForm.strName = qryaddress.strName;
+                eForm.strAddressLine1 = qryaddress.strAddressLine1;
+                eForm.strAddressLine2 = qryaddress.strAddressLine2;
+                eForm.strCity = qryaddress.strCity;
+                eForm.strState = qryaddress.strState;
+                eForm.strZip = qryaddress.strZip;
+                eForm.strEmail = qryaddress.strEmail;
+                eForm.intPhone = qryaddress.intPhone;
+                eForm.intMobile = qryaddress.intMobile;
             } else {
-                form.strTransaction = "add";
+                eForm.strTransaction = "add";
             }
             function CFfncFormatPhone(n_intPhone)   {
                 var m_intPhone = trim(n_intPhone);
@@ -91,51 +84,51 @@
         <cfoutput>
             <div id="addressSectionID">
                 <fieldset>
-                    <Legend>#form.strTransaction# Address</legend>
+                    <Legend>#eForm.strTransaction# Address</legend>
                     <div id="addressTableDiv">
-                        <span  title="Full name|#form.strNameFirst# #form.strNameMiddle# #form.strNameLast#">
+                        <span  title="Full name|#eForm.strNameFirst# #eForm.strNameMiddle# #eForm.strNameLast#">
                             Full Name: </span>
                         <input type="text" id="strNameFirst"  name="strNameFirst" 
                                 placeholder="First"
                                 size="9" maxLength="255" 
-                                value="#form.strNameFirst#"
-                                title="First name|#form.strNameFirst#">
+                                value="#eForm.strNameFirst#"
+                                title="First name|#eForm.strNameFirst#">
                         <input type="text" id="strNameMiddle" name="strNameMiddle"
                                 placeholder="M"
                                 size="1" maxLength="45" 
-                                value="#form.strNameMiddle#"
-                                title="Middle name|#form.strNameMiddle#">
+                                value="#eForm.strNameMiddle#"
+                                title="Middle name|#eForm.strNameMiddle#">
                         <input type="text" id="strNameFirst" name="strNameLast" 
                                 placeholder="Last"
                                 size="12" maxLength="255" 
-                                value="#form.strNameLast#"
-                                title="Last name|#form.strNameLast#"></br>
+                                value="#eForm.strNameLast#"
+                                title="Last name|#eForm.strNameLast#"></br>
 
-                        <span  title="#form.strAddressLine1# #form.strAddressLine2#" >
+                        <span  title="#eForm.strAddressLine1# #eForm.strAddressLine2#" >
                             Street: </span>
                         <input type="text" 
                                 id="strAddressLine1" name="strAddressLine1" 
                                 size="34" maxLength="255" 
-                                value="#form.strAddressLine1#"
-                                title="#form.strAddressLine1#"></br>
+                                value="#eForm.strAddressLine1#"
+                                title="#eForm.strAddressLine1#"></br>
                                 
-                        <span  title="#form.strAddressLine1# #form.strAddressLine2#" >
+                        <span  title="#eForm.strAddressLine1# #eForm.strAddressLine2#" >
                             :</span>
                         <input type="text"
                                 id="strAddressLine2" name="strAddressLine2" 
                                 size="34" maxLength="255"
-                                value="#form.strAddressLine2#"
-                                title="#form.strAddressLine2#"></br>
+                                value="#eForm.strAddressLine2#"
+                                title="#eForm.strAddressLine2#"></br>
 
-                        <span  title="#form.strCity# #form.strState# #form.strZip#">
+                        <span  title="#eForm.strCity# #eForm.strState# #eForm.strZip#">
                             City/State/Zip: </span>
-                        <input type="text" title="City|#form.strCity#" id="strCity" name="strCity"
-                                size="13" maxLength="45" value="#form.strCity#">
+                        <input type="text" title="City|#eForm.strCity#" id="strCity" name="strCity"
+                                size="13" maxLength="45" value="#eForm.strCity#">
                         <cfset m_intStrctSize = stcStates.size()>
                         <cfset  i = 1>
                         <input list="datalistStates" id="strState" name="strState" 
                             title="State"
-                            value="#form.strState#"
+                            value="#eForm.strState#"
                             size="2" 
                             style="text-transform: uppercase;"
                             onFocus="this.select()"
@@ -146,41 +139,41 @@
                                 <option value="#stcStates[i].code#">#stcStates[i].code#|#stcStates[i].state#</option>
                             </cfloop>
                         </datalist>
-                            <input type="text" title="Zip code|#form.strZip#" id="strZip" name="strZip" 
+                            <input type="text" title="Zip code|#eForm.strZip#" id="strZip" name="strZip" 
                                             size="7" maxLength="10" 
-                                            value="#CFfncFromatZip(form.strZip)#"
+                                            value="#CFfncFromatZip(eForm.strZip)#"
                                             onchange="fncValidateZip(this)"></br>
                         
                         <span  title=" Landline and/or mobile">
                             Landline/mobile: </span>
                         <input type="tel" id="intPhone" name="intPhone" size="14" maxLength="16"
                                             placeholder="Home"
-                                            title="Phone (landline)|#form.intPhone#"
-                                            value="#CFfncFormatPhone(form.intPhone)#"
+                                            title="Phone (landline)|#eForm.intPhone#"
+                                            value="#CFfncFormatPhone(eForm.intPhone)#"
                                             onchange="fncValidatePhone(this)">
                         <input type="text" id="intMobile" name="intMobile" size="14" maxLength="16"
                                             placeholder="Mobile"
-                                            title="Mobile number|#form.intMobile#"
-                                            value="#CFfncFormatPhone(form.intMobile)#"
+                                            title="Mobile number|#eForm.intMobile#"
+                                            value="#CFfncFormatPhone(eForm.intMobile)#"
                                             onchange="fncValidatePhone(this)"></br>
 
-                        <span  title="#form.strEmail#" >
+                        <span  title="#eForm.strEmail#" >
                             eMail: </span>
                         <input type="email" id="strEmail" name="strEmail" 
                                             size="34" maxLength="255"
                                             style="text-transform: none;"
-                                            value="#form.strEmail#"
-                                            title="eMail address|#form.strEmail#"
+                                            value="#eForm.strEmail#"
+                                            title="eMail address|#eForm.strEmail#"
                                     <cfif len(url.strEmail)>
                                         disabled
                                     </cfif> 
                                             onchange="fncValidateEmail(this)"></br>
                                             
                         <span>
-                            <input type="hidden" name="strTransaction" id="strTransaction" value="#form.strTransaction#">
+                            <input type="hidden" name="strTransaction" id="strTransaction" value="#eForm.strTransaction#">
                             <input type="hidden" name="strErrorMessage" id="strErrorMessage" value="#strErrorMessage#">
                             <input type="hidden" name="strSuccessMessage" id="strSuccessMessage" value="#strSuccessMessage#">
-                            <input type="hidden" name="addressID" id="addressID" value="#form.addressID#">
+                            <input type="hidden" name="addressID" id="addressID" value="#eForm.addressID#">
                             <input type="submit" name="submitButton" id="submitButton" value="update" disabled>
                             <input type="button" name="closeButton" id="closeButton" value="close" onClick="window.close();">
                         </span>
@@ -192,8 +185,8 @@
 
     <script>
         if (opener) {
-            opener.document.getElementById("candidatesNameTextSpan").innerHTML = "#form.strName#";
-            opener.document.getElementById("addressID").value = "#form.addressID#";
+            opener.document.getElementById("candidatesNameTextSpan").innerHTML = "#eForm.strName#";
+            opener.document.getElementById("addressID").value = "#eForm.addressID#";
         }
         document.getElementById("strNameFirst").focus();
         document.getElementById("strNameFirst").select();

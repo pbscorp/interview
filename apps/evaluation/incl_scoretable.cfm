@@ -44,7 +44,7 @@
         <cfoutput>
             <div class="scoreboard" id="<cfoutput>#0#strScorecardName</cfoutput>">
                 <div class="title"><b>Score</b><br />
-                    <span name="strScorecardName"><cfoutput>#form.strName#</cfoutput></span>
+                    <span name="strScorecardName"><cfoutput>#eForm.strName#</cfoutput></span>
                     <br/>
                 </div>
                 <div class="scorecard-weight">
@@ -59,8 +59,8 @@
         <cfset lstScoreboardCandidates = "">
         <cfset intScorecardCount = 0>
         <cfoutput query="qryAllInterviews">
-            <cfif qryAllInterviews.interviewsID NEQ form.interviewsID>
-                <cfif qryAllInterviews.strPosition EQ form.strPosition>
+            <cfif qryAllInterviews.interviewsID NEQ eForm.interviewsID>
+                <cfif qryAllInterviews.strPosition EQ eForm.strPosition>
                     <cfset intScorecardCount = intScorecardCount + 1>
                     <div class="scoreboard" id="<cfoutput>#intScorecardCount#strScorecardName</cfoutput>" onClick="fncOpenCandidateWindow(#intScorecardCount#)">
                         <div class="title"><b>Score</b><br />
