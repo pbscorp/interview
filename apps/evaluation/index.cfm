@@ -21,7 +21,6 @@
 <cfscript>
     objInterviews = createObject('component', 'interview-cfc.candidates');
     objUtilities = createObject('component', 'interview-cfc.utilities');
-    eForm = objUtilities.encodeFormForHTML(form);
     //getQuestions = objInterviews.getQuestions(url.evaluationID);
     qryEvaluation = objInterviews.getEvaluation(url.evaluationID);
     lstGradesWt = qryEvaluation.lstWeight;
@@ -31,17 +30,18 @@
     qryAllInterviews = objInterviews.getInterview('all', url.evaluationID);
 </cfscript>
 
-<cfif len(eForm.submitButton) OR len(eForm.deleteButton) OR len(eForm.strPosition)>
+<cfif len(form.submitButton) OR len(form.deleteButton) OR len(form.strPosition)>
     <cfinclude template = "act_candidates.cfm">
 </cfif>
 
 <cfscript>
+    eForm = objUtilities.encodeFormForHTML(form);
     if ( (!len(strErrorMessage)) && (lCase(eForm.strTransaction) != "add")) {
         qryInterview = objInterviews.getInterview(eForm.interviewsID, url.evaluationID);
         eForm.strName = qryInterview.strName;
         eForm.addressID  = qryInterview.addressID;
-        eForm.strEmail  = qryInterview.strEmail;
-        eForm.interviewsID  = qryInterview.interviewsID ;
+        eForm.strEmail = qryInterview.strEmail;
+        eForm.interviewsID  = qryInterview.interviewsID;
         eForm.dtmInterviewDate = qryInterview.dtmInterviewDate;
         eForm.strInterviewer = qryInterview.strInterviewer;
         eForm.strPosition = qryInterview.strPosition;

@@ -1,7 +1,7 @@
 <cftransaction>
     <cfset strErrorMessage =  "">
     <cftry>
-        <cfif eForm.strTransaction EQ "add">
+        <cfif form.strTransaction EQ "add">
             <cfquery name="qryAddAddress">
                 INSERT INTO address
                     (strNameFirst,
@@ -16,50 +16,50 @@
                     intPhone,
                     intMobile
                 ) VALUES (
-                    <cfqueryparam cfsqltype="CF_sql_varchar" value="#uCaseFirst(eForm.strNameFirst, true)#">,
-                    <cfqueryparam cfsqltype="CF_sql_varchar" value="#uCaseFirst(eForm.strNameMiddle, true)#">,
-                    <cfqueryparam cfsqltype="CF_sql_varchar" value="#uCaseFirst(eForm.strNameLast, true)#">,
-                    <cfqueryparam cfsqltype="CF_sql_varchar" value="#uCaseFirst(eForm.strAddressLine1, true)#">,
-                    <cfqueryparam cfsqltype="CF_sql_varchar" value="#uCaseFirst(eForm.strAddressLine2, true)#">,
-                    <cfqueryparam cfsqltype="CF_sql_varchar" value="#uCaseFirst(eForm.strCity, true)#">,
-                    <cfqueryparam cfsqltype="CF_sql_varchar" value="#uCase(eForm.strState)#">,
-                    <cfqueryparam cfsqltype="CF_sql_varchar" value="#reReplace(eForm.strZip, "[^0-9]", "", "all")#">,
-                    <cfqueryparam cfsqltype="CF_sql_varchar" value="#eForm.strEmail#">,
-                    <cfqueryparam cfsqltype="cf_sql_integer" value=#reReplace(eForm.intPhone, "[^0-9]", "", "all")#>,
-                    <cfqueryparam cfsqltype="cf_sql_integer" value=#reReplace(eForm.intMobile, "[^0-9]", "", "all")#>
+                    <cfqueryparam cfsqltype="CF_sql_varchar" value="#uCaseFirst(form.strNameFirst, true)#">,
+                    <cfqueryparam cfsqltype="CF_sql_varchar" value="#uCaseFirst(form.strNameMiddle, true)#">,
+                    <cfqueryparam cfsqltype="CF_sql_varchar" value="#uCaseFirst(form.strNameLast, true)#">,
+                    <cfqueryparam cfsqltype="CF_sql_varchar" value="#uCaseFirst(form.strAddressLine1, true)#">,
+                    <cfqueryparam cfsqltype="CF_sql_varchar" value="#uCaseFirst(form.strAddressLine2, true)#">,
+                    <cfqueryparam cfsqltype="CF_sql_varchar" value="#uCaseFirst(form.strCity, true)#">,
+                    <cfqueryparam cfsqltype="CF_sql_varchar" value="#uCase(form.strState)#">,
+                    <cfqueryparam cfsqltype="CF_sql_varchar" value="#reReplace(form.strZip, "[^0-9]", "", "all")#">,
+                    <cfqueryparam cfsqltype="CF_sql_varchar" value="#form.strEmail#">,
+                    <cfqueryparam cfsqltype="cf_sql_integer" value=#reReplace(form.intPhone, "[^0-9]", "", "all")#>,
+                    <cfqueryparam cfsqltype="cf_sql_integer" value=#reReplace(form.intMobile, "[^0-9]", "", "all")#>
                 )
             </cfquery>
             <cfquery name="qryNewAddress">
                 SELECT address.ID as addressID
                     FROM candidates.address
-                    WHERE address.strEmail = "#eForm.strEmail#" ORDER BY address.dtmAdded DESC; 
+                    WHERE address.strEmail = "#form.strEmail#" ORDER BY address.dtmAdded DESC; 
             </cfquery>
-        <cfelseif eForm.strTransaction EQ "update">
+        <cfelseif form.strTransaction EQ "update">
             <cfquery name="qryUpdateAddress">
                 UPDATE candidates.address
                     SET
-                        strNameFirst = <cfqueryparam cfsqltype="CF_sql_varchar" value="#uCaseFirst(eForm.strNameFirst, true)#">,
-                        strNameMiddle = <cfqueryparam cfsqltype="CF_sql_varchar" value="#uCaseFirst(eForm.strNameMiddle, true)#">,
-                        strNameLast = <cfqueryparam cfsqltype="CF_sql_varchar" value="#uCaseFirst(eForm.strNameLast, true)#">,
-                        strAddressLine1 = <cfqueryparam cfsqltype="CF_sql_varchar" value="#uCaseFirst(eForm.strAddressLine1, true)#">,
-                        strAddressLine2 = <cfqueryparam cfsqltype="CF_sql_varchar" value="#uCaseFirst(eForm.strAddressLine2, true)#">,
-                        strCity = <cfqueryparam cfsqltype="CF_sql_varchar" value="#uCaseFirst(eForm.strCity, true)#">,
-                        strState = <cfqueryparam cfsqltype="CF_sql_varchar"value="#uCase(eForm.strState)#">,
-                        strZip = <cfqueryparam cfsqltype="CF_sql_varchar"  value="#replace(eForm.strZip, "-", "", "all")#">,
-                        <cfif len(eForm.intPhone)>
-                            intPhone = <cfqueryparam cfsqltype="cf_sql_integer" value=#reReplace(eForm.intPhone, "[^0-9]", "", "all")#>,
+                        strNameFirst = <cfqueryparam cfsqltype="CF_sql_varchar" value="#uCaseFirst(form.strNameFirst, true)#">,
+                        strNameMiddle = <cfqueryparam cfsqltype="CF_sql_varchar" value="#uCaseFirst(form.strNameMiddle, true)#">,
+                        strNameLast = <cfqueryparam cfsqltype="CF_sql_varchar" value="#uCaseFirst(form.strNameLast, true)#">,
+                        strAddressLine1 = <cfqueryparam cfsqltype="CF_sql_varchar" value="#uCaseFirst(form.strAddressLine1, true)#">,
+                        strAddressLine2 = <cfqueryparam cfsqltype="CF_sql_varchar" value="#uCaseFirst(form.strAddressLine2, true)#">,
+                        strCity = <cfqueryparam cfsqltype="CF_sql_varchar" value="#uCaseFirst(form.strCity, true)#">,
+                        strState = <cfqueryparam cfsqltype="CF_sql_varchar"value="#uCase(form.strState)#">,
+                        strZip = <cfqueryparam cfsqltype="CF_sql_varchar"  value="#replace(form.strZip, "-", "", "all")#">,
+                        <cfif len(form.intPhone)>
+                            intPhone = <cfqueryparam cfsqltype="cf_sql_integer" value=#reReplace(form.intPhone, "[^0-9]", "", "all")#>,
                         </cfif>
-                        <cfif len(eForm.intMobile)>
-                            intMobile = <cfqueryparam cfsqltype="cf_sql_integer"value=#reReplace(eForm.intMobile, "[^0-9]", "", "all")#>,
+                        <cfif len(form.intMobile)>
+                            intMobile = <cfqueryparam cfsqltype="cf_sql_integer"value=#reReplace(form.intMobile, "[^0-9]", "", "all")#>,
                         </cfif>
-                        strEmail = <cfqueryparam cfsqltype="CF_sql_varchar" value="#eForm.strEmail#">
-                    WHERE ID =  <cfqueryparam cfsqltype="cf_sql_integer" value=#eForm.addressID#>;
+                        strEmail = <cfqueryparam cfsqltype="CF_sql_varchar" value="#form.strEmail#">
+                    WHERE ID =  <cfqueryparam cfsqltype="cf_sql_integer" value=#form.addressID#>;
             </cfquery>
             <cfset strSuccessMessage = "record updated">
-        <cfelseif eForm.strTransaction EQ "delete">
+        <cfelseif form.strTransaction EQ "delete">
             <cfquery name="qryDeleteAddress">
                 DELETE FROM address
-                WHERE ID =  <cfqueryparam cfsqltype="cf_sql_integer" value=#eForm.addressID#>;
+                WHERE ID =  <cfqueryparam cfsqltype="cf_sql_integer" value=#form.addressID#>;
             </cfquery>
         </cfif>
         <cfcatch>
@@ -69,16 +69,16 @@
         </cfcatch>
     </cftry>
     <cfif len(strErrorMessage) EQ  0>
-        <cfif lCase(eForm.strTransaction) EQ "delete">
-            <cfset eForm.strTransaction = "Add">
-            <cfset strSuccessMessage = "record #eForm.addressID# deleted">    
-            <cfset eForm.addressID = ''>
-        <cfelseif lCase(eForm.strTransaction) EQ "add">
-            <cfset strSuccessMessage = "record #eForm.addressID# added">
-            <cfset eForm.strTransaction = "update">
-            <cfset eForm.addressID = qryNewAddress.addressID>
+        <cfif lCase(form.strTransaction) EQ "delete">
+            <cfset form.strTransaction = "Add">
+            <cfset strSuccessMessage = "record #form.addressID# deleted">    
+            <cfset form.addressID = ''>
+        <cfelseif lCase(form.strTransaction) EQ "add">
+            <cfset strSuccessMessage = "record #form.addressID# added">
+            <cfset form.strTransaction = "update">
+            <cfset form.addressID = qryNewAddress.addressID>
         <cfelse>
-            <cfset strSuccessMessage = "record #eForm.addressID# updated">
+            <cfset strSuccessMessage = "record #form.addressID# updated">
         </cfif>
     </cfif>
 </cftransaction>

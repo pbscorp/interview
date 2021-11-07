@@ -21,8 +21,7 @@
 <cfparam name="strErrorMessage" default="">
 <cfparam name="strSuccessMessage" default="">
 <cfset objUtilities = createObject('component', 'interview-cfc.utilities')>
-<cfset eForm = objUtilities.encodeFormForHTML(form)>
-<cfif len(eForm.submitButton)>
+<cfif len(form.submitButton)>
     <cfinclude template = "act_address.cfm">
 </cfif>
 <cfprocessingdirective suppressWhiteSpace = "yes">
@@ -35,6 +34,10 @@
             objAddress = createObject('component', 'interview-cfc.address');
             stcStates = objAddress.getstates();
             qryAddress = objAddress.getAddress(form.strEmail);
+            writeDump(form.strEmail);
+            writeDump(qryAddress);
+            writeDump(qryAddress.recordCount);
+            eForm = objUtilities.encodeFormForHTML(form);
             if ( (!eForm.blnHasError) && (qryAddress.recordCount)) {
                 eForm.strTransaction = "update";
                 eForm.addressID  = qryAddress.addressID;
