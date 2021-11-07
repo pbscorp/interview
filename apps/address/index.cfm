@@ -34,9 +34,9 @@
             objAddress = createObject('component', 'interview-cfc.address');
             stcStates = objAddress.getstates();
             qryAddress = objAddress.getAddress(form.strEmail);
-            writeDump(form.strEmail);
-            writeDump(qryAddress);
-            writeDump(qryAddress.recordCount);
+            // writeDump(form.strEmail);
+            // writeDump(qryAddress);
+            // writeDump(qryAddress.recordCount);
             eForm = objUtilities.encodeFormForHTML(form);
             if ( (!eForm.blnHasError) && (qryAddress.recordCount)) {
                 eForm.strTransaction = "update";
