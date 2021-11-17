@@ -18,70 +18,34 @@ component  displayname="Application" hint="Manages Application Flow" output="fal
 	this.applicationTimeout = createTimeSpan(1,0,0,0);
 	this.loginStorage = "cookie";
 	this.sessionManagement = true;
-	this.sessionTimeout = createTimeSpan(0,1,0,0);
+	this.sessionTimeout = createTimeSpan(0,1,0,0);                          
 	this.setClientCookies = true;
 	this.ClientStorage = true;
 	this.setDomainCookies = false;
 	logFile = "applicationLog.txt";
-	this.mappings["/interview-cfc"] = "E:/web/public_html/pbssecure/pbsmenu/pbsfragrance/samplecode/interview/components/";
 	if (isDefined("application")) {
 		if (structKeyExists(application, "applicationLogFilePath")) {
 			logFile = "#application.applicationLogFilePath#/applicationLog.txt";
 		}
 	}
-	public boolean function onApplicationStart(){
-		system=createObject("java", "java.lang.System");
-		strJavaHome = system.getproperty("java.home");
-		//writeoutput(strJavaHome);
-		//writeoutput(findNoCase("lucee", strJavaHome));
-		//writeoutput(findNoCase("lucee", strJavaHome) == -1);
-		if (findNoCase("lucee", strJavaHome) < 1) {
-			application.blnLucee = false;
-		} else {
-			application.blnLucee = true;
-		}
-		if (!application.blnLucee) {
-			application.applicationBaseURLPath = "/pbsfragrance/samplecode/interview";
-			application.applicationRestMapping =  "www.pbsmenu.com/rest/interview/";
-			application.applicationBaseFilePath = "E:/web/public_html/pbssecure/pbsmenu/pbsfragrance/samplecode/interview";
-			//application.applicationBaseFilePath = "E:/web/public_html/pbssecure/pbsmenu/";// old
-			application.applicationLogFilePath = "E:/web/public_html/pbssecure/pbsmenu/logs";
-			//writeDump(application);
-			//writeoutput(' yes this is adobe');
-			restInitApplication(
-				"#application.applicationBaseFilePath#/rest\",
-				"interview");
-		} else {
-			//writeoutput('adobe false');
-			m_jsonAppConfig = fileRead('resources/appconfig.json');
-			m_stcAppConfig = deserializeJson(m_jsonAppConfig);
-			application.applicationBaseURLPath = "/samplecode/interview";
-			application.applicationRestMapping =  "http://localhost:8888/rest/interview/";
-			application.applicationBaseFilePath = "C:\lucee\tomcat\webapps\ROOT\samplecode\interview";
-			application.applicationLogFilePath = "C:\lucee\tomcat\webapps\ROOT\WEB-INF\lucee\logs";
-			//this.mappings["/interview-cfc"] = "#application.applicationBaseFilePath#/interview/components/";
-			application.dirPath =   "C:\lucee\tomcat\webapps\ROOT\samplecode\interview\rest\";
-			application.serviceMapping = "interview";
-			application.luceepassword = "Lpatrick##1";
-			include "fncLuceeMapping.cfml";
-			
-				// function fncLuceeMapping() {
-				// 	restInitApplication(dirPath="#application.dirPath#", 
-				// 		serviceMapping="#application.serviceMapping#", 
-				// 		password="#application.luceepassword#");
-				// }
-		}
-	
-		try {
-			logFile = "#application.applicationLogFilePath#/applicationLog.txt";
-			var logWriter = fileOpen(logFile, "append" );
-			fileWriteLine(logWriter,"Application started on :- #now()#");
-			fileClose(logWriter);
-		} catch (any e) {
-			writeOutput("Error: " & e.message);
-		};
-		return true;
-
+	application.blnLucee = false;
+	application.blnAdobe = false;
+	application.blnZenHosting = false;
+	application.blnLFCHosting = false;
+	application.blnLocalHosting = false;
+	//writeDump(cgi);
+	if (findNoCase("epscodesolutions", cgi.SERVER_NAME) > 0) {
+		application.blnLucee = true;
+		application.blnZenHosting = true;
+        include "incl_appconfig_zen.cfm";
+	} else if (findNoCase("pbsmenu", cgi.SERVER_NAME) > 0) {
+		application.blnAdobe = true;
+		application.blnLFCHosting = true;
+        include "incl_appconfig_lfc.cfm";
+	} else {
+		application.blnLucee = true;
+		application.blnLocalHosting = true;
+        include "incl_appconfig_local.cfm";
 	}
 
 
@@ -115,12 +79,8 @@ component  displayname="Application" hint="Manages Application Flow" output="fal
 			var logWriter = fileOpen(logFile, "append");
 			fileWriteLine(logWriter,"Application stop is going to execute on :- #now()#");
 			fileClose(logWriter);
-
 			ApplicationStop();
-
-			/*
-				We can also call onApplicationStart() function here
-			*/
+			onApplicationStart();
 		}
 
 		return;
