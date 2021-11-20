@@ -1,6 +1,11 @@
 <cfscript>
 	this.mappings["/interview-cfc"] = "E:/web/public_html/pbssecure/pbsmenu/pbsfragrance/samplecode/interview/components/";
     public boolean function onApplicationStart() {
+        application.blnLucee = false;
+        application.blnZenHosting = false;
+        application.blnLocalHosting = false;
+		application.blnAdobe = true;
+		application.blnLFCHosting = true;
         application.applicationBaseURLPath = "/pbsfragrance/samplecode/interview";
         application.applicationRestMapping =  "www.pbsmenu.com/rest/interview/";
         application.applicationBaseFilePath = "E:/web/public_html/pbssecure/pbsmenu/pbsfragrance/samplecode/interview";

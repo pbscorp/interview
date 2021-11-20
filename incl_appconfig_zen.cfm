@@ -1,5 +1,10 @@
 <cfscript>
     public boolean function onApplicationStart() {
+        application.blnAdobe = false;
+        application.blnLFCHosting = false;
+        application.blnLocalHosting = false;
+		application.blnLucee = true;
+		application.blnZenHosting = true;
         application.applicationBaseURLPath = "/samplecode/interview";
         application.applicationRestMapping = "www.epscodesolutions.com/rest/interview/";
         application.applicationBaseFilePath = "D:\home\epscodesolutions.com\wwwroot\samplecode\interview";

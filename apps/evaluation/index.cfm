@@ -27,7 +27,6 @@
     strEvaluationHTML=qryEvaluation.strEvaluationText & "<span class='required'>asterisk = required entry</span>";
     lstWtLiterals = qryEvaluation.lstWtLiterals;
     intListLenWeights = listLen(lstGradesWt);
-    qryAllInterviews = objInterviews.getInterview('all', url.evaluationID);
 </cfscript>
 
 <cfif len(form.submitButton) OR len(form.deleteButton) OR len(form.strPosition)>
@@ -35,6 +34,7 @@
 </cfif>
 
 <cfscript>
+    qryAllInterviews = objInterviews.getInterview('all', url.evaluationID);
     eForm = objUtilities.encodeFormForHTML(form);
     if ( (!len(strErrorMessage)) && (lCase(eForm.strTransaction) != "add")) {
         qryInterview = objInterviews.getInterview(eForm.interviewsID, url.evaluationID);

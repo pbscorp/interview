@@ -33,7 +33,7 @@ component  displayname="Application" hint="Manages Application Flow" output="fal
 	application.blnZenHosting = false;
 	application.blnLFCHosting = false;
 	application.blnLocalHosting = false;
-	//writeDump(cgi);
+	//writeDump(cgi)
 	if (findNoCase("epscodesolutions", cgi.SERVER_NAME) > 0) {
 		application.blnLucee = true;
 		application.blnZenHosting = true;
@@ -66,14 +66,6 @@ component  displayname="Application" hint="Manages Application Flow" output="fal
 	}
 
 	public void function onRequest(string targetPage){
-
-		//Include the Target Page
-		include arguments.targetPage;
-		return;
-	}
-
-	public void function onRequestEnd(){
-
 		//If appreset is defined in URL scope then reset the application by calling ApplicationStop
 		if( structKeyExists(url, "appReset") ) {
 			var logWriter = fileOpen(logFile, "append");
@@ -82,6 +74,14 @@ component  displayname="Application" hint="Manages Application Flow" output="fal
 			ApplicationStop();
 			onApplicationStart();
 		}
+
+		//Include the Target Page
+		include arguments.targetPage;
+		return;
+	}
+
+	public void function onRequestEnd(){
+
 
 		return;
 	}

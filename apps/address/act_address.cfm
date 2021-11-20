@@ -24,7 +24,6 @@
                     <cfqueryparam cfsqltype="CF_sql_varchar" value="#uCaseFirst(form.strCity, true)#">,
                     <cfqueryparam cfsqltype="CF_sql_varchar" value="#uCase(form.strState)#">,
                     <cfqueryparam cfsqltype="CF_sql_varchar" value="#reReplace(form.strZip, "[^0-9]", "", "all")#">,
-                    <cfqueryparam cfsqltype="CF_sql_varchar" value="#form.strEmail#">,
                     <cfif len(form.intPhone)>
                         <cfqueryparam cfsqltype="cf_sql_integer" value=#reReplace(form.intPhone, "[^0-9]", "", "all")#>,
                     <cfelse>
@@ -34,6 +33,7 @@
                         <cfqueryparam cfsqltype="cf_sql_integer" value=#reReplace(form.intMobile, "[^0-9]", "", "all")#>
                     <cfelse>
                         NULL,
+                    <cfqueryparam cfsqltype="CF_sql_varchar" value="#form.strEmail#">
                     </cfif>
                 )
             </cfquery>

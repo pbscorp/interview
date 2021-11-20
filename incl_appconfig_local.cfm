@@ -1,5 +1,10 @@
 <cfscript>
     public boolean function onApplicationStart() {
+        application.blnAdobe = false;
+        application.blnZenHosting = false;
+        application.blnLFCHosting = false;
+		application.blnLucee = true;
+		application.blnLocalHosting = true;
         application.applicationBaseURLPath = "/samplecode/interview";
         application.applicationRestMapping =  "http://localhost:8888/rest/interview/";
         application.applicationBaseFilePath = "C:\lucee\tomcat\webapps\ROOT\samplecode\interview";
