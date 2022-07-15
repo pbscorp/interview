@@ -33,7 +33,6 @@ component  displayname="Application" hint="Manages Application Flow" output="fal
 	application.blnZenHosting = false;
 	application.blnLFCHosting = false;
 	application.blnLocalHosting = false;
-	//writeDump(cgi)
 	if (findNoCase("epscodesolutions", cgi.SERVER_NAME) > 0) {
 		application.blnLucee = true;
 		application.blnZenHosting = true;
@@ -42,6 +41,11 @@ component  displayname="Application" hint="Manages Application Flow" output="fal
 		application.blnAdobe = true;
 		application.blnLFCHosting = true;
         include "incl_appconfig_lfc.cfm";
+		} else if (findNoCase("CFinterview", cgi.CF_TEMPLATE_PATH) > 0) {
+			application.blnAdobe = true;
+			application.blnLFCHosting = true;
+			include "incl_appconfig_adobe.cfm";
+				
 	} else {
 		application.blnLucee = true;
 		application.blnLocalHosting = true;
